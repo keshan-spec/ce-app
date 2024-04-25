@@ -13,18 +13,18 @@ export const Footer: React.FC = () => {
                 </div>
             </Link>
 
-            <a href="discover.html" className="item">
+            <Link href="/discover" className={`item ${pathname == '/discover' ? 'active' : ''}`}>
                 <div className="col">
                     <ion-icon name="search-outline"></ion-icon>
                     <strong>Discover</strong>
                 </div>
-            </a>
-            <a href="garage.html" className="item">
+            </Link>
+            <Link href="/garage" className={`item ${pathname == '/garage' ? 'active' : ''}`}>
                 <div className="col">
                     <ion-icon name="car-sport"></ion-icon>
                     <strong>Garage</strong>
                 </div>
-            </a>
+            </Link>
             <Link href="/posts" className={`item ${pathname == '/posts' ? 'active' : ''}`}>
                 <div className="col">
                     <ion-icon name="id-card-outline"></ion-icon>
@@ -32,12 +32,12 @@ export const Footer: React.FC = () => {
                 </div>
             </Link>
 
-            <a href="profile.html" className="item">
+            <Link href="/profile" className={`item ${pathname == '/profile' ? 'active' : ''}`}>
                 <div className="col">
                     <ion-icon name="person-circle-outline"></ion-icon>
                     <strong>Profile</strong>
                 </div>
-            </a>
+            </Link>
         </div>
     );
 };
