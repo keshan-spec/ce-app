@@ -5,6 +5,7 @@ import "../public/assets/css/style.css";
 import "../public/assets/css/custom.css";
 import Script from "next/script";
 import MainLayout from "./layouts/MainLayout";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
@@ -24,9 +25,17 @@ export default function RootLayout({
         <div id="loader">
           <div className="spinner-border text-primary" role="status"></div>
         </div>
+
+        <NextTopLoader
+          color="#b89855"
+          showSpinner={false}
+          showAtBottom
+        />
+
         <MainLayout>
           {children}
         </MainLayout>
+
         <Script src="assets/js/lib/bootstrap.min.js" strategy="beforeInteractive" />
         <Script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js" />
         <Script src="assets/js/plugins/splide/splide.min.js" strategy="beforeInteractive" />

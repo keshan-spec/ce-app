@@ -1,5 +1,4 @@
 'use client';
-import { useObservedQuery } from "../../context/ObservedQuery";
 import { PostCardSkeleton } from "./PostCardSkeleton";
 import { useEffect, useRef, useState } from 'react';
 import { BiBookBookmark, BiBookmark, BiHeart, BiLike, BiMailSend, BiMapPin, BiShare, BiShareAlt, BiVolumeFull, BiVolumeMute } from "react-icons/bi";
@@ -42,8 +41,8 @@ import React, {
 } from 'react';
 
 import { EmblaCarouselType, EmblaOptionsType } from 'embla-carousel';
-import { Post } from "../../types/posts";
-import clsx from "clsx";
+import { Post } from "@/types/posts";
+import { useObservedQuery } from "@/app/context/ObservedQuery";
 
 type UseDotButtonType = {
     selectedIndex: number;
@@ -164,35 +163,7 @@ const PostCard = ({ post, muted, setMuted }: {
     }, []);
 
     const sharePost = async () => {
-        // Share.canShare().then(async (result) => {
-        //     if (!result.value) {
-        //         // Check if the share plugin is available
-        //         if (!navigator.share) {
-        //             // Web Share API not available, provide alternative sharing method
-        //             alert('Share API not available in this browser. You can manually share the link.');
-        //             return;
-        //         }
 
-        //         // Share using the Web Share API
-        //         try {
-        //             await navigator.share({
-        //                 title: post.post.post_title,
-        //                 text: post.post.post_title,
-        //                 url: post.url,
-        //             });
-        //         } catch (error) {
-        //             console.error('Error sharing:', error);
-        //             alert('Failed to share the post. You can manually share the link.');
-        //         }
-        //     } else {
-        //         await Share.share({
-        //             title: post.post.post_title,
-        //             text: post.post.post_title,
-        //             url: post.url,
-        //             dialogTitle: 'Share post'
-        //         });
-        //     }
-        // });
     };
 
     const renderMedia = () => {
@@ -328,7 +299,7 @@ const PostCard = ({ post, muted, setMuted }: {
     };
 
     return (
-        <div className="relative shadow-md overflow-hidden bg-theme-dark mb-6 max-h-[80vh] text-white" id={`PostMain-${post.id}`}>
+        <div className="relative shadow-md overflow-hidden bg-theme-dark mb-6 text-white" id={`PostMain-${post.id}`}>
             <div className="flex items-center justify-between px-3 py-3">
                 <div className="flex flex-col items-start justify-start">
                     <div className="font-medium text-white text-sm">{post.username ?? "Attendee"}</div>

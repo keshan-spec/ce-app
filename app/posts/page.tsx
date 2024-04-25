@@ -1,4 +1,4 @@
-import { Posts } from '@/app/components/Posts/Posts';
+import { Posts } from "@/components/Posts/Posts";
 
 const Page = () => {
     return (

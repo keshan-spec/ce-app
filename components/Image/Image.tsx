@@ -6,7 +6,7 @@ import {
     useRef,
     useState,
 } from "react";
-import checkInViewIntersectionObserver from "@/app/utils/isInViewPortIntersectionObserver";
+import checkInViewIntersectionObserver from "@/utils/isInViewPortIntersectionObserver";
 import { BiLoader } from "react-icons/bi";
 
 
