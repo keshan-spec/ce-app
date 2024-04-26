@@ -1,7 +1,10 @@
 import { HomePage } from "@/components/Home/Home";
+import ProtectedLayout from "./(protected)/layout";
 
 export default function Home() {
   return (
-    <HomePage />
+    <ProtectedLayout>
+      <HomePage />
+    </ProtectedLayout>
   );
 }

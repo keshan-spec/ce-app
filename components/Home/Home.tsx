@@ -1,51 +1,47 @@
 import { BiCaretRight } from "react-icons/bi";
 import { Carousel } from "../Posts/Posts";
-import { NearYouEvents, TrendingEvents } from "./TrendingEvents";
+import { NearYouEvents, TrendingEvents } from "./Events";
 import Link from "next/link";
+
+const bannerData = [
+    {
+        title: "Great British Motor Show",
+        date: "17th – 20th August",
+        img: "assets/img/sample/photo/home-slider-1.jpg",
+    },
+    {
+        title: "Great British Motor Show",
+        date: "17th – 20th August",
+        img: "assets/img/sample/photo/home-slider-2.jpg",
+    },
+];
 
 const Banner = () => {
     return (
-        <div className="section full mb-4">
+        <div className="section full mb-4 overflow-hidden">
             <Carousel settings={{
                 loop: true,
             }}>
-                <div className="embla__slide">
-                    <div className="carousel-full-img">
-                        <img src="assets/img/sample/photo/home-slider-1.jpg"
-                            alt="alt" className="imaged w-100 square" />
-                    </div>
-                    <div className="slider-home-info-row">
-                        <div className="slider-home-info-left">
-                            <h2> Great British <br />
-                                Motor Show</h2>
-                            <p>17th – 20th August</p>
-                            <div className="slider-home-info-right">
-                                <Link href="#" className="theme-btn-1 ">
-                                    See More <BiCaretRight className="inline" />
-                                </Link>
+                {bannerData.map((banner, index) => (
+                    <div key={index} className="embla__slide relative">
+                        <div className="carousel-full-img">
+                            <img src={banner.img} alt="alt" className="imaged w-100 square" />
+                        </div>
+                        <div className="slider-home-info-row">
+                            <div className="slider-home-info-left">
+                                <h2 className="">
+                                    {banner.title}
+                                </h2>
+                                <p>{banner.date}</p>
+                                <div className="slider-home-info-right">
+                                    <Link href="#" className="theme-btn-1 ">
+                                        See More <BiCaretRight className="inline" />
+                                    </Link>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div className="embla__slide">
-                    <div className="carousel-full-img">
-                        <img src="assets/img/sample/photo/home-slider-2.jpg" alt="alt"
-                            className="imaged w-100 square" />
-                    </div>
-                    <div className="slider-home-info-row">
-                        <div className="slider-home-info-left">
-                            <h2> Great British <br />
-                                Motor Show</h2>
-                            <p>17th – 20th August</p>
-                            <div className="slider-home-info-right">
-                                <Link href="#" className="theme-btn-1 ">
-                                    See More <BiCaretRight className="inline" />
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                ))}
             </Carousel>
         </div>
     );

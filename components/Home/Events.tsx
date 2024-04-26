@@ -1,23 +1,35 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useState } from "react";
 import { BiHeart, BiSolidHeart } from "react-icons/bi";
 import { useQuery } from "react-query";
 import likeAnimation2 from "../lottie/lottie-2.json";
 
 import Lottie from "lottie-react";
 import Link from "next/link";
+
 import { fetchTrendingEvents } from "@/actions/home-actions";
+import { Options } from "@splidejs/splide";
+import { Splide, SplideSlide } from '@splidejs/react-splide';
+import '@splidejs/react-splide/css';
+import { formatEventDate } from "@/utils/dateUtils";
 
-const formatEventDate = (date: string): string => {
-    const eventDate = new Date(date);
-    const options: Intl.DateTimeFormatOptions = {
-        weekday: 'short',
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-    };
-
-    return eventDate.toLocaleDateString('en-US', options);
+const carouselOptions: Options = {
+    perPage: 4,
+    rewind: true,
+    type: "loop",
+    gap: 16,
+    padding: 16,
+    arrows: false,
+    pagination: false,
+    breakpoints: {
+        768: {
+            perPage: 2
+        },
+        991: {
+            perPage: 3
+        }
+    }
 };
 
 export const CarEventCard = ({ event }: { event: any; }) => {
@@ -100,12 +112,12 @@ export const CarEventCard = ({ event }: { event: any; }) => {
 
 export const CarEventCardSkeleton = () => {
     return (
-        <div className="card max-w-sm bg-slate-100 animate-pulse">
-            <div className="news-list-home-slider-img-row">
-                <div className="news-list-home-slider-img skeleton w-full h-full bg-gray-300 animate-pulse">
+        <div className="card max-w-sm bg-slate-100 min-h-64 rounded-xl overflow-hidden">
+            <div className="news-list-home-slider-img-row bg-gray-300 animate-pulse">
+                <div className="news-list-home-slider-img skeleton w-full h-full">
                 </div>
-                <div className="heart-icon m-1">
-                    <BiHeart className="w-6 h-6 text-gray-300 animate-pulse" />
+                <div className="heart-icon m-1 z-50">
+                    <BiHeart className="w-6 h-6 text-gray-400 animate-pulse" />
                 </div>
                 <div className="dates d-flex">
                     <div className="date">
@@ -119,155 +131,89 @@ export const CarEventCardSkeleton = () => {
                 </div>
             </div>
             <div className="card-body pt-2">
-                <div className="news-list-slider-info">
-                    <h3 className="w-1/2 bg-gray-300 animate-pulse"></h3>
-                    <p className="w-1/4 bg-gray-300 animate-pulse"></p>
-                    <p className="w-1/4 bg-gray-300 animate-pulse"></p>
+                <div className="news-list-slider-info w-full">
+                    <h3 className="w-full h-3 bg-gray-300 rounded-lg animate-pulse"></h3>
+                    <p className="w-1/2 h-3 bg-gray-300 rounded-lg animate-pulse"></p>
+                    <p className="w-1/2 h-3 mt-3 bg-gray-300 rounded-lg animate-pulse"></p>
                 </div>
             </div>
         </div>
     );
 };
 
-interface TrendingEventProps {
+interface EventProps {
 }
 
-const carouselOptions = {
-    perPage: 4,
-    rewind: true,
-    type: "loop",
-    gap: 16,
-    padding: 16,
-    arrows: false,
-    pagination: false,
-    breakpoints: {
-        768: {
-            perPage: 2
-        },
-        991: {
-            perPage: 3
-        }
-    }
-};
-
-export const TrendingEvents: React.FC<TrendingEventProps> = ({ }) => {
+export const TrendingEvents: React.FC<EventProps> = ({ }) => {
     const { data, error, isFetching, isLoading } = useQuery<any[], Error>({
         queryKey: ["trendingEvents"],
         queryFn: () => {
             return fetchTrendingEvents();
         },
-        retry: 0,
+        retry: 1,
         refetchOnWindowFocus: false,
+        refetchOnMount: false,
     });
 
-    useEffect(() => {
-        if (!data) {
-            // @ts-ignore
-            new Splide('.carousel-multiple', carouselOptions).mount();
-            return;
-        };
-
-        // @ts-ignore
-        const splide = new Splide('.trending-events', carouselOptions).mount();
-
-        return () => {
-            splide.destroy();
-        };
-    }, [data]);
-
     return (
-        <>
+        <div>
             <div className="header-large-title">
                 <h1 className="title">Trending Events</h1>
             </div>
 
             <div className="section full mt-2 mb-3">
                 {error instanceof Error && <p className="px-3">Error: {error?.message ?? "An error occured"}</p>}
-                <div className="trending-events splide carousel-multiple-wrapper">
-                    <div className="splide__track">
-                        <ul className="splide__list">
-                            {data && data?.map((event: any, idx) => (
-                                <li className="splide__slide card" key={idx}>
-                                    <CarEventCard event={event} />
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
+                <Splide options={carouselOptions}>
+                    {(isLoading || isFetching) && (
+                        <SplideSlide>
+                            <CarEventCardSkeleton />
+                        </SplideSlide>
+                    )}
 
-                {(isLoading || isFetching) && (
-                    <div className="carousel-multiple splide carousel-multiple-wrapper">
-                        <div className="splide__track">
-                            <ul className="splide__list">
-                                <li className="splide__slide">
-                                    <CarEventCardSkeleton />
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                )}
+                    {data && data?.map((event: any, idx) => (
+                        <SplideSlide className="card" key={idx}>
+                            <CarEventCard event={event} />
+                        </SplideSlide>
+                    ))}
+                </Splide>
             </div>
-        </>
+        </div>
     );
 };
 
-export const NearYouEvents: React.FC<TrendingEventProps> = ({ }) => {
+export const NearYouEvents: React.FC<EventProps> = ({ }) => {
     const { data, error, isFetching, isLoading } = useQuery<any[], Error>({
         queryKey: ["close-events"],
         queryFn: () => {
             return fetchTrendingEvents();
         },
-        retry: 0,
+        retry: 1,
         refetchOnWindowFocus: false,
+        refetchOnMount: false,
     });
 
-    useEffect(() => {
-        if (!data) {
-            // @ts-ignore
-            new Splide('.carousel-multiple', carouselOptions).mount();
-            return;
-        };
-
-        // @ts-ignore
-        const splide = new Splide('.near-events', carouselOptions).mount();
-
-        return () => {
-            splide.destroy();
-        };
-    }, [data]);
-
     return (
-        <>
+        <div>
             <div className="header-large-title">
-                <h1 className="title">Near You</h1>
+                <h1 className="title">Near Your</h1>
             </div>
 
             <div className="section full mt-2 mb-3">
                 {error instanceof Error && <p className="px-3">Error: {error?.message ?? "An error occured"}</p>}
-                <div className="near-events splide carousel-multiple-wrapper">
-                    <div className="splide__track">
-                        <ul className="splide__list">
-                            {data && data?.map((event: any, idx) => (
-                                <li className="splide__slide card" key={idx}>
-                                    <CarEventCard event={event} />
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
+                <Splide options={carouselOptions}>
+                    {(isLoading || isFetching) && (
+                        <SplideSlide>
+                            <CarEventCardSkeleton />
+                        </SplideSlide>
+                    )}
 
-                {(isLoading || isFetching) && (
-                    <div className="carousel-multiple splide carousel-multiple-wrapper">
-                        <div className="splide__track">
-                            <ul className="splide__list">
-                                <li className="splide__slide">
-                                    <CarEventCardSkeleton />
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                )}
+                    {data && data?.map((event: any, idx) => (
+                        <SplideSlide className="card" key={idx}>
+                            <CarEventCard event={event} />
+                        </SplideSlide>
+                    ))}
+                </Splide>
             </div>
-        </>
+        </div>
     );
 };
