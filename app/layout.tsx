@@ -5,11 +5,12 @@ import { ClientLayout } from "./layouts/ClientLayout";
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
 
-import "./globals.css";
 import "../public/assets/css/style.css";
 import "../public/assets/css/custom.css";
-import { Loader } from "@/components/Loader";
+import "./globals.css";
+
 import Script from "next/script";
+// import OneSignal from 'react-onesignal';
 
 const inter = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
@@ -18,12 +19,30 @@ export const metadata: Metadata = {
   description: "CarEvents is a platform for car enthusiasts to share their passion for cars.",
 };
 
+// async function initOneSignal() {
+//   try {
+//     await OneSignal.init({ appId: 'a4c4e8da-6b85-478f-a458-6a3a4c5ceb39' });
+
+//     OneSignal.Notifications.addEventListener('click', async (e) => {
+//       let clickData = await e.notification;
+//     });
+
+//     OneSignal.Notifications.requestPermission()
+//       .then((value) => {
+//         console.log('Notification permission granted', value);
+//       });
+//   } catch (error) {
+//     console.error('Error initializing OneSignal', error);
+//   }
+// }
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const session = await auth();
+  // await initOneSignal();
 
   return (
     <html lang="en">
@@ -37,6 +56,7 @@ export default async function RootLayout({
             showAtBottom
           />
           <ClientLayout>
+
             {children}
           </ClientLayout>
         </SessionProvider>

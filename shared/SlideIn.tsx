@@ -1,5 +1,5 @@
+'use client';
 import { Transition } from '@headlessui/react';
-import { clsx } from 'clsx';
 
 interface SlideInFromBottomToTopProps {
     isOpen: boolean;
@@ -27,19 +27,24 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
     return (
         <Transition
             show={isOpen}
-            className="z-10 w-full fixed bottom-0 inset-x-0 bg-white h-full px-5"
-            style={{ height }}
-            {...transitionClasses}
+            className="z-10 w-full fixed bottom-0 inset-x-0 bg-white h-full overflow-scroll"
+            style={{ height, position: 'fixed', zIndex: 9999 }}
+            enter={transitionClasses.enter}
+            enterFrom={transitionClasses.enterFrom}
+            enterTo={transitionClasses.enterTo}
+            leave={transitionClasses.leave}
+            leaveFrom={transitionClasses.leaveFrom}
+            leaveTo={transitionClasses.leaveTo}
         >
-            <div className="flex justify-start w-full mt-5 overflow-scroll">
+            <div className="flex justify-start w-full my-2 px-3">
                 <button
                     onClick={() => onClose()}
-                    className="text-md text-black mb-3 cursor-pointer font-bold"
+                    className="text-md text-black cursor-pointer font-bold"
                 >
                     &#x2715;
                 </button>
             </div>
-            <div className="flex flex-col items-center w-full mt-3">
+            <div className="flex flex-col items-center w-full">
                 {children}
             </div>
         </Transition>

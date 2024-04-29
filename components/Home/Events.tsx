@@ -6,13 +6,16 @@ import { useQuery } from "react-query";
 import likeAnimation2 from "../lottie/lottie-2.json";
 
 import Lottie from "lottie-react";
-import Link from "next/link";
 
-import { fetchTrendingEvents } from "@/actions/home-actions";
+import { fetchTrendingEvents, maybeFavoriteEvent } from "@/actions/home-actions";
 import { Options } from "@splidejs/splide";
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
 import { formatEventDate } from "@/utils/dateUtils";
+import SlideInFromBottomToTop from "@/shared/SlideIn";
+import { ViewEvent } from "../Posts/ViewPost";
+import { useObservedQuery } from "@/app/context/ObservedQuery";
+import { useUser } from "@/hooks/useUser";
 
 const carouselOptions: Options = {
     perPage: 4,
@@ -32,14 +35,21 @@ const carouselOptions: Options = {
     }
 };
 
-export const CarEventCard = ({ event }: { event: any; }) => {
+export const CarEventCard = ({ event, onClick }: { event: any; onClick: (id: string) => void; }) => {
+    const { isLoggedIn } = useUser();
+
     const startMonth = new Date(event.start_date).toLocaleString('default', { month: 'short' });
     const startDay = new Date(event.start_date).getDate();
 
-    const [isLiked, setIsLiked] = useState<boolean>(false);
+    const [isLiked, setIsLiked] = useState<boolean>(event.is_liked ?? false);
     const [isAnimationPlaying, setIsAnimationPlaying] = useState<boolean>(false);
 
     const likePost = async (postId: string) => {
+        if (!isLoggedIn) {
+            alert("Please login to like event");
+            return;
+        }
+
         const prevStatus = isLiked;
 
         // Optimistic UI
@@ -49,11 +59,23 @@ export const CarEventCard = ({ event }: { event: any; }) => {
             setIsAnimationPlaying(true);
         }
 
-        // TODO: API call to like post
-
         setTimeout(() => {
             setIsAnimationPlaying(false);
         }, 1500);
+
+        try {
+            // TODO: API call to like post
+            const response = await maybeFavoriteEvent(postId);
+
+            if (response) {
+                event.is_liked = !isLiked;
+            }
+        } catch (error) {
+            // Rollback
+            setIsLiked(prevStatus);
+            alert("Oops! Unable to save event");
+            console.log(error);
+        }
     };
 
     const renderLike = () => {
@@ -93,19 +115,19 @@ export const CarEventCard = ({ event }: { event: any; }) => {
                 </div>
             </div>
 
-            <Link href={`/events/${event.id}`} passHref className="cursor-pointer">
-                <div className="card-body pt-2">
-                    <div className="news-list-slider-info flex flex-col justify-start h-full">
-                        <div className="flex flex-col">
-                            <h3>
-                                {event.title}
-                            </h3>
-                            <p>{formatEventDate(event.start_date)}</p>
-                        </div>
-                        <p>{event.location}</p>
+            {/* <Link href={`/events/${event.id}`} passHref className="cursor-pointer"> */}
+            <div className="card-body pt-2 cursor-pointer" onClick={() => onClick(event.id)}>
+                <div className="news-list-slider-info flex flex-col justify-start h-full">
+                    <div className="flex flex-col">
+                        <h3>
+                            {event.title}
+                        </h3>
+                        <p>{formatEventDate(event.start_date)}</p>
                     </div>
+                    <p>{event.location}</p>
                 </div>
-            </Link>
+            </div>
+            {/* </Link> */}
         </>
     );
 };
@@ -146,17 +168,25 @@ interface EventProps {
 
 export const TrendingEvents: React.FC<EventProps> = ({ }) => {
     const { data, error, isFetching, isLoading } = useQuery<any[], Error>({
-        queryKey: ["trendingEvents"],
+        queryKey: ["trending-events"],
         queryFn: () => {
             return fetchTrendingEvents();
         },
         retry: 1,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
+        cacheTime: 1000,
+        staleTime: 1000,
     });
 
+    const [activeEvent, setActiveEvent] = useState<string>();
+
     return (
-        <div>
+        <>
+            <SlideInFromBottomToTop isOpen={activeEvent ? true : false} onClose={() => setActiveEvent(undefined)}>
+                {activeEvent && <ViewEvent eventId={activeEvent} />}
+            </SlideInFromBottomToTop>
+
             <div className="header-large-title">
                 <h1 className="title">Trending Events</h1>
             </div>
@@ -172,12 +202,12 @@ export const TrendingEvents: React.FC<EventProps> = ({ }) => {
 
                     {data && data?.map((event: any, idx) => (
                         <SplideSlide className="card" key={idx}>
-                            <CarEventCard event={event} />
+                            <CarEventCard event={event} onClick={(id) => setActiveEvent(id)} />
                         </SplideSlide>
                     ))}
                 </Splide>
             </div>
-        </div>
+        </>
     );
 };
 
@@ -192,8 +222,14 @@ export const NearYouEvents: React.FC<EventProps> = ({ }) => {
         refetchOnMount: false,
     });
 
+    const [activeEvent, setActiveEvent] = useState<string>();
+
     return (
         <div>
+            <SlideInFromBottomToTop isOpen={activeEvent ? true : false} onClose={() => setActiveEvent(undefined)}>
+                {activeEvent && <ViewEvent eventId={activeEvent} />}
+            </SlideInFromBottomToTop>
+
             <div className="header-large-title">
                 <h1 className="title">Near Your</h1>
             </div>
@@ -209,7 +245,9 @@ export const NearYouEvents: React.FC<EventProps> = ({ }) => {
 
                     {data && data?.map((event: any, idx) => (
                         <SplideSlide className="card" key={idx}>
-                            <CarEventCard event={event} />
+                            <CarEventCard event={event} onClick={
+                                (id) => setActiveEvent(id)
+                            } />
                         </SplideSlide>
                     ))}
                 </Splide>

@@ -1,6 +1,7 @@
 body {
 	font-family: 'Poppins-Regular';
 }
+
 @font-face {
 	font-family: 'LeagueSpartan-Bold';
 	src: url('../fonts/LeagueSpartan-Bold.eot');
@@ -9,6 +10,7 @@ body {
 	font-style: normal;
 	font-display: swap;
 }
+
 @font-face {
 	font-family: 'LeagueSpartan-Medium';
 	src: url('../fonts/LeagueSpartan-Medium.eot');
@@ -17,14 +19,16 @@ body {
 	font-style: normal;
 	font-display: swap;
 }
+
 @font-face {
 	font-family: 'LeagueSpartan-Regular';
 	src: url('../fonts/LeagueSpartan-Regular.eot');
 	src: url('../fonts/LeagueSpartan-Regular.eot?#iefix') format('embedded-opentype'), url('../fonts/LeagueSpartan-Regular.woff2') format('woff2'), url('../fonts/LeagueSpartan-Regular.woff') format('woff'), url('../fonts/LeagueSpartan-Regular.ttf') format('truetype'), url('../fonts/LeagueSpartan-Regular.svg#LeagueSpartan-Regular') format('svg');
 	font-weight: normal;
 	font-style: normal;
-	font-display: swap;     
-} 
+	font-display: swap;
+}
+
 @font-face {
 	font-family: 'LeagueSpartan-SemiBold';
 	src: url('../fonts/LeagueSpartan-SemiBold.eot');
@@ -33,6 +37,7 @@ body {
 	font-style: normal;
 	font-display: swap;
 }
+
 @font-face {
 	font-family: 'Poppins-Bold';
 	src: url('../fonts/Poppins-Bold.eot');
@@ -41,6 +46,7 @@ body {
 	font-style: normal;
 	font-display: swap;
 }
+
 @font-face {
 	font-family: 'Poppins-SemiBold';
 	src: url('../fonts/Poppins-SemiBold.eot');
@@ -49,6 +55,7 @@ body {
 	font-style: normal;
 	font-display: swap;
 }
+
 @font-face {
 	font-family: 'Poppins-Regular';
 	src: url('../fonts/Poppins-Regular.eot');
@@ -63,12 +70,15 @@ body {
 	justify-content: center;
 	align-items: center;
 }
+
 body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	margin: 0px 4px !important;
 }
+
 .header-row-wrapper2 .nav-tabs li {
 	margin: 0px 1px !important;
 }
+
 .header-row-wrapper2 .nav-tabs li a {
 	background: #1f1f1f !important;
 	color: #fff !important;
@@ -77,15 +87,156 @@ body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	font-family: 'Poppins-SemiBold';
 	height: 26px !important;
 }
+
 .home-tabs-wrapper .tab-panele-content-body {
 	padding: 12px 20px;
 }
+
 .tab-panele-content-body p {
 	font-size: 14px;
 	color: #000;
 }
+
 .header-row-wrapper2 .nav-tabs li a.active {
 	background: #ae9159 !important;
+}
+
+/******* Product-Details Page CSS *******/
+.product-details-section {
+	float: left;
+	width: 100%;
+}
+
+.product-details-section .product-details-title {
+	text-align: center;
+	font-size: 27px;
+	color: #333333;
+	font-family: 'LeagueSpartan-Medium';
+	line-height: 34px;
+}
+
+.product-details-info-row {
+	text-align: center;
+	padding: 0px 15px;
+	margin-top: 24px;
+	margin-bottom: 31px;
+	float: left;
+	width: 100%;
+}
+
+.product-details-section .product-ul {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.product-details-section .product-ul ul {
+	padding: 0px;
+	margin: 0px;
+}
+
+.product-details-section .product-ul ul li {
+	margin-bottom: 11px;
+	font-size: 16px;
+	color: #333333;
+	list-style: none;
+	line-height: 25px;
+}
+
+.product-ul ul li ion-icon {
+	color: #b89855;
+	margin-right: 8px;
+	font-size: 22px;
+	vertical-align: middle;
+}
+
+.product-share-btn {
+	float: left;
+	width: 100%;
+	text-align: center;
+}
+
+.product-share-btn a {
+	background: #f1f1f1;
+	padding: 10px 28px;
+	color: #333333;
+	display: inline-block;
+	font-size: 19px;
+	text-transform: uppercase;
+}
+
+.product-share-btn a ion-icon {
+	margin-right: 8px;
+	vertical-align: middle;
+}
+
+.product-details-btn-row {
+	float: left;
+	width: 100%;
+	margin-top: 26px;
+	display: flex;
+	border-top: solid 1px #e3e3e3;
+	padding-top: 20px;
+}
+
+.product-details-btn-row .product-btn {
+	margin-right: 3px;
+	width: 50%;
+}
+
+.product-btn button.product-button {
+	padding: 6px 4px;
+	width: 100%;
+	float: left;
+	font-size: 13px;
+	border: none;
+	color: #fff;
+	background: #b89855;
+	border-radius: 5px;
+}
+
+.product-btn button.product-button ion-icon {
+	margin-right: 3px;
+	vertical-align: middle;
+}
+
+.product-btn button.product-button.buy-tickets {
+	background: #2e2e2e;
+}
+
+.product-tab-section {
+	float: left;
+	width: 100%;
+}
+
+.product-tab-section .product-tab-wrapper {
+	padding: 0px 15px;
+}
+
+.product-tab-wrapper ul.nav {
+	background: none;
+}
+
+.product-tab-section .product-tab-wrapper ul.nav li a {
+	background: #ebebeb !important;
+	color: #131313 !important;
+	font-size: 10px !important;
+	padding: 6px 2px !important;
+	margin: 0px !important;
+	font-family: 'LeagueSpartan-Medium';
+	height: auto !important;
+	border-radius: 100px !important;
+	box-shadow: none !important;
+}
+
+.product-tab-section .product-tab-wrapper ul.nav li a.active {
+	background: #ae9159 !important;
+	color: #fff !important;
+}
+
+.product-tab-content p {
+	color: #333333;
+	font-size: 13px;
+	line-height: 26px;
 }
 
 .header-row-wrapper2 {
@@ -94,13 +245,19 @@ body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	padding: 22px 0 15px 0;
 	background-color: #000;
 }
+
 .appHeader.scrolled.bg-primary {
 	background: #000000 !important;
 }
-.appBottomMenu .item.active i.bi, .appBottomMenu .item.active i.icon, .appBottomMenu .item.active ion-icon, .appBottomMenu .item.active strong {
+
+.appBottomMenu .item.active i.bi,
+.appBottomMenu .item.active i.icon,
+.appBottomMenu .item.active ion-icon,
+.appBottomMenu .item.active strong {
 	color: #ae9159 !important;
 	font-weight: 500;
 }
+
 .appHeader .right .headerButton {
 	color: #000000 !important;
 	background: #fff;
@@ -110,15 +267,19 @@ body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	margin-left: 9px;
 	min-width: 30px;
 }
+
 .appHeader .right .headerButton ion-icon {
 	font-size: 21px !important;
 }
+
 .appHeader.scrolled.bg-primary .headerButton {
 	color: #ffffff;
 }
+
 .appHeader.scrolled.bg-primary.is-active .headerButton {
 	color: #000 !important;
 }
+
 .slider-home-info-row {
 	padding: 7px 22px;
 	position: absolute;
@@ -127,6 +288,7 @@ body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	height: 100%;
 	padding-bottom: 63px;
 }
+
 .slider-home-info-row h2 {
 	font-size: 50px;
 	color: #fff;
@@ -134,6 +296,7 @@ body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	line-height: 59px;
 	font-family: 'Poppins-Bold';
 }
+
 .slider-home-info-row p {
 	margin-bottom: 0px;
 	font-size: 28px;
@@ -141,6 +304,7 @@ body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	margin-top: 14px;
 	font-family: 'Poppins-SemiBold';
 }
+
 .slider-home-info-row a.theme-btn-1 {
 	border: solid 1px #b89855;
 	padding: 3px 16px;
@@ -151,29 +315,35 @@ body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	display: inline-block;
 	font-family: 'Poppins-SemiBold';
 }
+
 .slider-home-info-right {
 	margin-top: 23px;
 }
+
 .news-list-home-slider-img-row {
 	position: relative;
 	overflow: hidden;
 }
+
 .news-list-home-slider-img {
 	padding-top: 83%;
 	background: no-repeat center center / cover;
 	position: relative;
 }
+
 .news-list-home-slider-img-row .heart-icon {
 	position: absolute;
 	right: 2px;
 	top: 6px;
 	cursor: pointer;
 }
+
 .news-list-home-slider-img-row .heart-icon .fas.fa-heart {
 	font-size: 20px;
 	color: #fff;
 	box-shadow: rgb(149 157 165 / 20%) 0px 8px 24px;
 }
+
 .news-list-home-slider-img-row .dates {
 	position: absolute;
 	right: 0;
@@ -182,18 +352,21 @@ body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	color: #fff;
 	text-align: center;
 }
+
 .news-list-home-slider-img-row .date {
 	margin: 2px 0;
 	padding: 0 8px;
 	border-right: 1px solid #fff;
 	text-transform: uppercase;
 }
+
 .news-list-home-slider-img-row .date p {
 	margin: 0;
 	line-height: 16px;
 	font-family: 'LeagueSpartan-Regular';
 	font-size: 11px;
 }
+
 .news-list-home-slider-img-row .date h5 {
 	margin: 0;
 	font-size: 15px;
@@ -201,6 +374,7 @@ body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	font-family: 'LeagueSpartan-SemiBold';
 	color: #fff;
 }
+
 .news-list-slider-info h3 {
 	margin-bottom: 7px;
 	font-size: 12px;
@@ -209,12 +383,14 @@ body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	font-family: 'LeagueSpartan-Medium';
 	font-weight: normal;
 }
+
 .news-list-slider-info p {
 	margin-bottom: 0px;
 	font-size: 11px;
 	color: #9c9c9c;
 	font-family: 'LeagueSpartan-Medium';
 }
+
 .slider-home-info-row:after {
 	content: "";
 	width: 100%;
@@ -226,6 +402,7 @@ body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	background-image: linear-gradient(to right, #000000ad, hwb(0deg 100% 0% / 0%));
 	top: 0;
 }
+
 .slider-home-info-left {
 	position: relative;
 	z-index: 66666;
@@ -234,28 +411,34 @@ body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	flex-flow: column;
 	justify-content: flex-end;
 }
+
 .appBottomMenu .item strong {
 	font-family: 'LeagueSpartan-Medium';
 }
+
 .header-large-title .title {
 	font-family: 'LeagueSpartan-SemiBold';
 	font-size: 38px;
 }
+
 .news-list-home-slider-img-row .heart-icon ion-icon {
 	font-size: 26px;
 	color: #fff;
 	filter: drop-shadow(5px 5px 10px #666);
 }
+
 .slider-home-info-row a.theme-btn-1 ion-icon {
 	vertical-align: middle;
 	margin-left: 3px;
 	font-size: 16px;
 }
+
 #appCapsule {
 	float: left;
 	width: 100%;
 	padding-bottom: 60px;
 }
+
 .header-panels {
 	float: left;
 	width: 100%;
@@ -263,10 +446,12 @@ body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	padding-bottom: 13px;
 	padding-top: 11px;
 }
+
 .header-panels .header-panels-row {
 	float: left;
 	width: 100%;
 }
+
 .header-panels .header-panels-row ul {
 	padding: 0px;
 	margin: 0px;
@@ -274,6 +459,7 @@ body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	align-items: center;
 	justify-content: center;
 }
+
 .header-panels .header-panels-row ul li {
 	display: inline-block;
 	display: flex;
@@ -282,6 +468,7 @@ body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	width: 100%;
 	margin: 0px 2px;
 }
+
 .header-panels .header-panels-row ul li a {
 	background: #1f1f1f;
 	display: flex;
@@ -294,87 +481,108 @@ body .header-row-wrapper2 .nav-tabs.capsuled .nav-item .nav-link {
 	justify-content: center;
 	border-radius: 100px;
 }
+
 .header-panels .header-panels-row ul li a ion-icon {
 	font-size: 14px;
 	margin-right: 4px;
 	margin-top: 6px;
 }
+
 .header-panels .header-panels-row ul li a.active {
 	background: #ae9159;
 }
+
 .header-panels .header-panels-row ul li a:hover {
 	background: #ae9159;
 }
+
 .bg-primary {
 	background: #ae9159 !important;
 }
+
 .profileBox {
 	background: #f6f6f6 !important;
 }
+
 .appHeader.scrolled.bg-primary.is-active {
 	background: #000000 !important;
 }
+
 .header-logo {
 	width: 40px;
 	margin-top: 8px;
 }
+
 .card .card-body {
 	padding: 10px 10px !important;
 }
+
 .carousel-multiple-wrapper .card {
 	position: relative;
 	overflow: hidden;
 }
+
 .news-list-home-slider-img-row .date:last-child {
 	border-right: none;
 }
-.badge-danger, a.badge-danger {
+
+.badge-danger,
+a.badge-danger {
 	background: #b89855 !important;
 }
+
 .appHeader.scrolled.bg-primary.is-active .left .headerButton {
 	color: #fff !important;
 }
+
 .appHeader .left a.headerButton ion-icon {
 	font-size: 38px !important;
 }
+
 .header-row-wrapper2 .nav.nav-tabs.capsuled {
 	background: none;
 	padding: 0px 12px;
 }
+
 .header-row-wrapper2 .nav-tabs li a ion-icon {
 	font-size: 13px !important;
 }
+
 @media only screen and (max-width: 767px) {
-.slider-home-info-row h2 {
-	font-size: 21px;
-	line-height: 29px;
-}
-.slider-home-info-row p {
-	font-size: 15px;
-	margin-top: 5px;
-}
-.slider-home-info-right {
-	margin-top: 9px;
-}
-.slider-home-info-row {
-	padding: 7px 22px;
-	bottom: 0;
-	width: 100%;
-	height: 100%;
-	padding-bottom: 24px;
-}
-.header-large-title .title {
-	font-size: 30px;
-}
+	.slider-home-info-row h2 {
+		font-size: 21px;
+		line-height: 29px;
+	}
 
-.appHeader.scrolled.bg-primary {
-    background: #000000 !important;
-    min-height: 56px;
-}
+	.slider-home-info-row p {
+		font-size: 15px;
+		margin-top: 5px;
+	}
 
-#appCapsule.home {
-	padding-top: 100px !important;
-}
+	.slider-home-info-right {
+		margin-top: 9px;
+	}
+
+	.slider-home-info-row {
+		padding: 7px 22px;
+		bottom: 0;
+		width: 100%;
+		height: 100%;
+		padding-bottom: 24px;
+	}
+
+	.header-large-title .title {
+		font-size: 30px;
+	}
+
+	.appHeader.scrolled.bg-primary {
+		background: #000000 !important;
+		min-height: 56px;
+	}
+
+	#appCapsule.home {
+		padding-top: 100px !important;
+	}
 
 
 }
