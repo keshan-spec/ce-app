@@ -17,6 +17,9 @@ const config: Config = {
         "theme-dark": "#0f0f0f",
         "theme-dark-100": "#474747",
       },
+      height: {
+        'inherit': 'inherit'
+      }
     },
   },
   plugins: [],

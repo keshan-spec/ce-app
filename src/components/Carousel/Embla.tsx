@@ -9,8 +9,17 @@ import {
 import { DotButton, useDotButton } from './EmbalDotButtons';
 import NcImage from '../Image/Image';
 
+export type IGallery = {
+    src: string;
+    alt?: string;
+    width?: number;
+    height?: number;
+    mimeType?: string;
+    type?: string;
+};
+
 type PropType = {
-    slides: string[];
+    slides: IGallery[];
     options?: EmblaOptionsType;
     showDotButtons?: boolean;
     showArrowButtons?: boolean;
@@ -44,7 +53,15 @@ const EmblaCarousel: React.FC<PropType> = ({
                     {slides.map((slide, index) => (
                         <div className="embla__slide h-full" key={index}>
                             <div className="embla__slide__number w-full h-full">
-                                <NcImage src={slide} alt="" className='object-contain w-full' />
+                                <NcImage
+                                    src={slide.src}
+                                    imageDimension={{
+                                        height: slide.height || 400,
+                                        width: slide.width || 400
+                                    }}
+                                    alt={slide.alt || "CarEvents Image"}
+                                    className='object-contain w-full'
+                                />
                             </div>
                         </div>
                     ))}

@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect } from 'react';
 import { useInfiniteQuery } from 'react-query';
 import { Post } from '../../types/posts';
+import { fetchPosts } from '@/actions/post-actions';
 
 interface ObservedQueryContextProps {
     data: any; // Replace 'any' with the type of your data
@@ -23,12 +24,6 @@ export const useObservedQuery = (): ObservedQueryContextProps => {
     return useContext(ObservedQueryContext);
 };
 
-const fetchPosts = async (page: number) => {
-    const response = await fetch(`https://wordpress-889362-4267074.cloudwaysapps.com/uk/wp-json/app/v1/get-posts?page=${page}&limit=10`);
-    const data = await response.json();
-    return data;
-};
-
 export const ObservedQueryProvider = ({ children }: any) => {
     const { isLoading, error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
         queryKey: ['posts'],
@@ -38,6 +33,7 @@ export const ObservedQueryProvider = ({ children }: any) => {
         getNextPageParam: (lastPage: { total_pages: number, data: Post[], limit: number; }, pages: any[]) => {
             const maxPages = Math.ceil(lastPage.total_pages / lastPage.limit);
             const nextPage = pages.length + 1;
+            console.log('Pages:', pages.length, 'Next Page:', nextPage, 'Max Pages:', maxPages);
             return nextPage <= maxPages ? nextPage : undefined;
         },
         refetchOnWindowFocus: false,

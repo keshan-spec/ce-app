@@ -5,7 +5,10 @@ export type Post = {
     caption: string;
     post_date: string;
     location: string;
+    likes_count: number;
+    comments_count: number;
     media: PostMedia[];
+    is_liked: boolean;
 };
 
 export interface PostMedia {

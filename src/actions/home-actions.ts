@@ -1,16 +1,7 @@
 "use server";
 
-import { auth } from "@/auth";
+import { getSessionUser } from "./auth-actions";
 
-const getSessionUser = async () => {
-    const session = await auth();
-
-    if (!session) {
-        throw new Error("No session found");
-    }
-
-    return session.user;
-};
 
 export const fetchTrendingEvents = async () => {
     let user;

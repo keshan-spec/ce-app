@@ -1,37 +1,10 @@
 'use client';
 import { PostCardSkeleton } from "./PostCardSkeleton";
-import { useEffect, useRef, useState } from 'react';
-import { BiBookBookmark, BiBookmark, BiHeart, BiLike, BiMailSend, BiMapPin, BiShare, BiShareAlt, BiVolumeFull, BiVolumeMute } from "react-icons/bi";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { BiBookBookmark, BiBookmark, BiComment, BiHeart, BiLike, BiMailSend, BiMapPin, BiShare, BiShareAlt, BiSolidHeart, BiVolumeFull, BiVolumeMute } from "react-icons/bi";
 import NcImage from "../Image/Image";
 
 import { Share } from '@capacitor/share';
-
-const formatPostDate = (date: string) => {
-    // format to relative time, like less than a minute ago, 1 minute ago, 1 hour ago, etc.
-    const postDate = new Date(date);
-    const currentDate = new Date();
-    const timeDifference = currentDate.getTime() - postDate.getTime();
-    const seconds = timeDifference / 1000;
-    const minutes = seconds / 60;
-    const hours = minutes / 60;
-    const days = hours / 24;
-    const months = days / 30;
-    const years = months / 12;
-
-    if (seconds < 60) {
-        return `${Math.floor(seconds)} seconds ago`;
-    } else if (minutes < 60) {
-        return `${Math.floor(minutes)} minutes ago`;
-    } else if (hours < 24) {
-        return `${Math.floor(hours)} hours ago`;
-    } else if (days < 30) {
-        return `${Math.floor(days)} days ago`;
-    } else if (months < 12) {
-        return `${Math.floor(months)} months ago`;
-    } else {
-        return `${Math.floor(years)} years ago`;
-    }
-};
 
 import useEmblaCarousel from 'embla-carousel-react';
 
@@ -43,55 +16,16 @@ import React, {
 import { EmblaCarouselType, EmblaOptionsType } from 'embla-carousel';
 import { Post } from "@/types/posts";
 import { useObservedQuery } from "@/app/context/ObservedQuery";
+import { maybeLikePost } from "@/actions/post-actions";
+import { useUser } from "@/hooks/useUser";
+import SlideInFromBottomToTop from "@/shared/SlideIn";
+import { ComentsSection } from "./ComentSection";
+import clsx from "clsx";
+import { formatPostDate } from "@/utils/dateUtils";
+import AutoHeight from 'embla-carousel-auto-height';
+import { useDotButton } from "../Carousel/EmbalDotButtons";
 
-type UseDotButtonType = {
-    selectedIndex: number;
-    scrollSnaps: number[];
-    onDotButtonClick: (index: number) => void;
-};
-
-export const useDotButton = (
-    emblaApi: EmblaCarouselType | undefined,
-    onButtonClick?: (emblaApi: EmblaCarouselType) => void
-): UseDotButtonType => {
-    const [selectedIndex, setSelectedIndex] = useState(0);
-    const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
-
-    const onDotButtonClick = useCallback(
-        (index: number) => {
-            if (!emblaApi) return;
-            emblaApi.scrollTo(index);
-            if (onButtonClick) onButtonClick(emblaApi);
-        },
-        [emblaApi, onButtonClick]
-    );
-
-    const onInit = useCallback((emblaApi: EmblaCarouselType) => {
-        setScrollSnaps(emblaApi.scrollSnapList());
-    }, []);
-
-    const onSelect = useCallback((emblaApi: EmblaCarouselType) => {
-        setSelectedIndex(emblaApi.selectedScrollSnap());
-    }, []);
-
-    useEffect(() => {
-        if (!emblaApi) return;
-
-        onInit(emblaApi);
-        onSelect(emblaApi);
-        emblaApi.on('reInit', onInit);
-        emblaApi.on('reInit', onSelect);
-        emblaApi.on('select', onSelect);
-    }, [emblaApi, onInit, onSelect]);
-
-    return {
-        selectedIndex,
-        scrollSnaps,
-        onDotButtonClick
-    };
-};
-
-type PropType = PropsWithChildren<
+type DotButtonPropType = PropsWithChildren<
     React.DetailedHTMLProps<
         React.ButtonHTMLAttributes<HTMLButtonElement>,
         HTMLButtonElement
@@ -115,7 +49,7 @@ export const Carousel = ({ children, settings = { loop: false } }: CarouselProps
     );
 };
 
-export const DotButton: React.FC<PropType> = (props) => {
+export const DotButton: React.FC<DotButtonPropType> = (props) => {
     const { children, ...restProps } = props;
 
     return (
@@ -127,15 +61,22 @@ export const DotButton: React.FC<PropType> = (props) => {
     );
 };
 
-const PostCard = ({ post, muted, setMuted }: {
+const PostCard = ({ post, muted, setMuted, openComments }: {
     post: Post,
     muted: boolean,
     setMuted: React.Dispatch<React.SetStateAction<boolean>>;
+    openComments: (postId: number) => void;
 }) => {
+    console.log(post);
+
+    const { isLoggedIn } = useUser();
+
     const videoRef = useRef<HTMLVideoElement>(null);
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
-
     const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi);
+
+    const [isLiked, setIsLiked] = useState<boolean>(post.is_liked);
+
 
     useEffect(() => {
         const video = videoRef.current;
@@ -166,7 +107,42 @@ const PostCard = ({ post, muted, setMuted }: {
 
     };
 
-    const renderMedia = () => {
+    const onLikePost = async () => {
+        if (!isLoggedIn) {
+            alert("Please login to like event");
+            return;
+        }
+
+        const prevStatus = isLiked;
+
+        // Optimistic UI
+        setIsLiked(!isLiked);
+        post.likes_count += isLiked ? -1 : 1;
+
+        try {
+            const response = await maybeLikePost(post.id);
+
+            if (response) {
+                post.is_liked = !isLiked;
+            }
+        } catch (error) {
+            // Rollback
+            setIsLiked(prevStatus);
+            post.likes_count += prevStatus ? 1 : -1;
+            alert("Oops! Unable to like post");
+            console.log(error);
+        }
+    };
+
+    const renderLike = () => {
+        return (
+            <div className="flex flex-col items-center justify-start">
+                {!isLiked ? <BiHeart className="w-5 h-5 text-gray-300" onClick={onLikePost} /> : <BiSolidHeart className="w-5 h-5 text-red-600" onClick={onLikePost} />}
+            </div>
+        );
+    };
+
+    const renderMedia = useMemo(() => {
         const { media } = post;
 
         if (media.length === 0) {
@@ -180,7 +156,7 @@ const PostCard = ({ post, muted, setMuted }: {
 
         if (media.length === 1) {
             return (
-                <div>
+                <div onDoubleClick={onLikePost}>
                     {firstMedia.media_type === 'image' && (
                         <NcImage src={firstMedia.media_url} alt={firstMedia.media_alt} className="object-contain w-full" imageDimension={{
                             width: firstMediaWidth,
@@ -207,19 +183,28 @@ const PostCard = ({ post, muted, setMuted }: {
                     )}
                     <div className="flex flex-col p-2 gap-y-2">
                         <div className="flex gap-1 w-full justify-between text-xl">
-                            <div className="flex gap-1 min-w-24 items-center justify-start">
-                                <BiHeart />
+                            <div className="flex gap-1 min-w-24 items-start justify-start">
+                                {renderLike()}
+                                <BiComment onClick={() => openComments(post.id)} />
                                 <BiShareAlt />
                             </div>
 
-                            <div className="flex min-w-24 items-center justify-end">
+                            <div className="flex min-w-24 items-start justify-end">
                                 <BiBookmark />
                             </div>
                         </div>
+
+                        <span className="text-xs">{post.likes_count ?? 0} likes</span>
+
                         <div className="font-medium flex items-center gap-1 text-sm truncate w-48 md:w-full lg:w-full" title={post.caption}>
                             <div className=" text-white text-xs">{post.username ?? "Attendee"}</div>
                             <span className="text-white/80 text-xs"> {post.caption}</span>
                         </div>
+                        {post.comments_count ? (
+                            <span className="text-white/60 text-xs cursor-pointer" onClick={() => openComments(post.id)}>
+                                View  {post.comments_count > 1 ? `all ${post.comments_count} comments` : `comment`}
+                            </span>
+                        ) : null}
                         <div className="text-white/60 text-xs">{formatPostDate(post.post_date)}</div>
                     </div>
                 </div>
@@ -227,7 +212,7 @@ const PostCard = ({ post, muted, setMuted }: {
         }
 
         return (
-            <div className="embla" ref={emblaRef}>
+            <div className="embla" ref={emblaRef} onDoubleClick={onLikePost}>
                 <div className="embla__container">
                     {media.map((item, index) => (
                         <div key={item.id} className="embla__slide">
@@ -260,23 +245,18 @@ const PostCard = ({ post, muted, setMuted }: {
                 </div>
                 <div className="flex flex-col p-2 gap-y-2">
                     <div className="flex gap-1 w-full justify-between text-xl">
-                        <div className="flex gap-1 min-w-24 items-center justify-start">
-                            <BiHeart />
+                        <div className="flex gap-1 min-w-24 items-start justify-start">
+                            {renderLike()}
+                            <BiComment onClick={() => openComments(post.id)} />
                             <BiShareAlt />
                         </div>
 
-                        <div className="flex gap-1 min-w-24 items-center justify-center max-w-20">
+                        <div className="flex gap-1 min-w-24 items-start justify-center max-w-20">
                             {scrollSnaps.map((_, index) => {
                                 return (
                                     <DotButton
                                         key={index}
                                         onClick={() => onDotButtonClick(index)}
-                                    // if over 5 dots, show only 5 dots and show the rest as they scroll
-                                    // className={clsx(
-                                    //     index > 5 && selectedIndex < 4 ? 'opacity-50' : 'block',
-                                    //     index < 5 && selectedIndex >= 4 ? 'opacity-50' : 'block',
-                                    //     'group'
-                                    // )}
                                     >
                                         <div className={`w-1.5 h-1.5 rounded-full ${selectedIndex === index ? 'bg-blue-500' : 'bg-gray-300'}`} />
                                     </DotButton>
@@ -284,19 +264,27 @@ const PostCard = ({ post, muted, setMuted }: {
                             })}
                         </div>
 
-                        <div className="flex min-w-24 items-center justify-end">
+                        <div className="flex min-w-24 items-start justify-end">
                             <BiBookmark />
                         </div>
                     </div>
+
+                    <span className="text-xs">{post.likes_count ?? 0} likes</span>
+
                     <div className="font-medium flex items-center gap-1 text-sm truncate w-48 md:w-full lg:w-full" title={post.caption}>
                         <div className=" text-white text-xs">{post.username ?? "Attendee"}</div>
                         <span className="text-white/80 text-xs"> {post.caption}</span>
                     </div>
+                    {post.comments_count ? (
+                        <span className="text-white/60 text-xs cursor-pointer" onClick={() => openComments(post.id)}>
+                            View  {post.comments_count > 1 ? `all ${post.comments_count} comments` : `comment`}
+                        </span>
+                    ) : null}
                     <div className="text-white/60 text-xs">{formatPostDate(post.post_date)}</div>
                 </div>
             </div>
         );
-    };
+    }, [post, muted, isLiked, selectedIndex, scrollSnaps]);
 
     return (
         <div className="relative shadow-md overflow-hidden bg-theme-dark mb-6 text-white" id={`PostMain-${post.id}`}>
@@ -309,7 +297,7 @@ const PostCard = ({ post, muted, setMuted }: {
                 </div>
             </div>
 
-            {renderMedia()}
+            {renderMedia}
         </div>
     );
 };
@@ -318,18 +306,58 @@ export const Posts: React.FC = () => {
     const { data, isFetching, isLoading, hasNextPage, isFetchingNextPage } = useObservedQuery();
     const [muted, setMuted] = useState(true); // State to track muted state
 
+    const [activeSection, setActiveSection] = useState<number | undefined>();
+
+    const handleOpenComments = useCallback((postId: number) => {
+        if (activeSection) {
+            setActiveSection(undefined);
+
+            setTimeout(() => {
+                setActiveSection(postId);
+            }, 500);
+            return;
+        }
+
+        setActiveSection(postId);
+    }, [activeSection]);
+
+    const getCommentCount = () => {
+        const postId = activeSection;
+        const post = data?.pages.find((page: any) => page.data.find((post: Post) => post.id === postId));
+
+        if (!post) return 0;
+
+        return post.data.find((post: Post) => post.id === postId)?.comments_count ?? 0;
+    };
+
     return (
         <div className="w-full bg-theme-dark">
-            {/* <div className="offcanvas-body"> */}
-            <ul className="listview flush transparent no-line image-listview max-w-md mx-auto">
+            <SlideInFromBottomToTop
+                isOpen={activeSection ? true : false}
+                onClose={() => setActiveSection(undefined)}
+                height={"80%"}
+                title={`${getCommentCount()} comments`}
+                stickyScroll={true}
+            >
+                {activeSection && <ComentsSection postId={activeSection} />}
+            </SlideInFromBottomToTop>
+
+            <ul className={clsx(
+                "listview flush transparent no-line image-listview max-w-md mx-auto",
+            )}>
                 {data && data.pages.map((page: any) => (
                     page.data.map((post: Post) => (
-                        <PostCard key={post.id} post={post} muted={muted} setMuted={setMuted} />
+                        <PostCard
+                            key={post.id}
+                            post={post}
+                            muted={muted}
+                            setMuted={setMuted}
+                            openComments={handleOpenComments}
+                        />
                     ))
                 ))}
                 {isFetching && <PostCardSkeleton />}
             </ul>
-            {/* </div> */}
         </div>
     );
 };

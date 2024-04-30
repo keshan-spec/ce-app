@@ -1,11 +1,14 @@
 'use client';
 import { Transition } from '@headlessui/react';
+import clsx from 'clsx';
 
 interface SlideInFromBottomToTopProps {
     isOpen: boolean;
     children: React.ReactNode;
     height?: string | number;
     onClose: () => void;
+    title?: string;
+    stickyScroll?: boolean;
 }
 
 // https://www.skies.dev/headless-ui-transitions
@@ -22,12 +25,17 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
     children,
     isOpen,
     height = '100%',
-    onClose
+    title,
+    onClose,
+    stickyScroll = false,
 }) => {
     return (
         <Transition
             show={isOpen}
-            className="z-10 w-full fixed bottom-0 inset-x-0 bg-white h-full overflow-scroll"
+            className={clsx(
+                "z-10 w-full fixed bottom-0 inset-x-0 bg-white h-full rounded-t-lg",
+                !stickyScroll && 'overflow-scroll'
+            )}
             style={{ height, position: 'fixed', zIndex: 9999 }}
             enter={transitionClasses.enter}
             enterFrom={transitionClasses.enterFrom}
@@ -36,15 +44,20 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
             leaveFrom={transitionClasses.leaveFrom}
             leaveTo={transitionClasses.leaveTo}
         >
-            <div className="flex justify-start w-full my-2 px-3">
+            <div className="flex justify-between items-center w-full my-2 pb-1 px-3 border-b">
                 <button
                     onClick={() => onClose()}
                     className="text-md text-black cursor-pointer font-bold"
                 >
                     &#x2715;
                 </button>
+                {title && <span className="text-sm font-semibold">{title}</span>}
+                <span></span>
             </div>
-            <div className="flex flex-col items-center w-full">
+            <div className={clsx(
+                "flex flex-col items-center w-full",
+                stickyScroll && 'overflow-scroll h-inherit'
+            )}>
                 {children}
             </div>
         </Transition>

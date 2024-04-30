@@ -6,6 +6,19 @@ import { AuthError } from "next-auth";
 
 const API_URL = process.env.HEADLESS_CMS_API_URL ?? "https://www.carevents.com";
 
+import { auth } from "@/auth";
+
+export const getSessionUser = async () => {
+    const session = await auth();
+
+    if (!session) {
+        throw new Error("No session found");
+    }
+
+    return session.user;
+};
+
+
 export const verifyUser = async (credentials: { email: string; password: string; }) => {
     try {
         const response = await fetch(`${API_URL}/wp-json/ticket_scanner/v1/verify_user`, {

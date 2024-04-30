@@ -3,7 +3,7 @@ import { IonIcon } from "@ionic/react";
 import { calendarClearOutline, heart, location, shareSocial, ticketOutline } from "ionicons/icons";
 import { useQuery } from "react-query";
 import { fetchEvent, maybeFavoriteEvent } from "@/actions/home-actions";
-import EmblaCarousel from "../Carousel/Embla";
+import EmblaCarousel, { IGallery } from "../Carousel/Embla";
 import { useUser } from "@/hooks/useUser";
 import { useEffect, useState } from "react";
 import { BiHeart, BiSolidHeart } from "react-icons/bi";
@@ -74,16 +74,34 @@ export const ViewEvent: React.FC<ViewEventProps> = ({ eventId }) => {
         return !isLiked ? <BiHeart className="w-5 h-5 text-gray-300" /> : <BiSolidHeart className="w-5 h-5 text-white" />;
     };
 
+    const craeteSlides = (): IGallery[] => {
+        const slides: IGallery[] = data.gallery.map((img: any) => {
+            return {
+                src: img.url,
+                alt: img.alt,
+                width: img.width,
+                height: img.height,
+            };
+        });
+
+        return [
+            {
+                src: data.cover_photo.url,
+                alt: data.cover_photo.alt,
+                width: data.cover_photo.width,
+                height: data.cover_photo.height,
+            },
+            ...slides,
+        ];
+    };
+
 
     return (
         <>
             {(isLoading || isFetching) && <ViewEventSkeleton />}
             {error && <div>{error.message}</div>}
             {data && <>
-                <EmblaCarousel slides={[
-                    data.cover_photo,
-                    ...data.gallery.map((img: any) => img.url),
-                ]} />
+                <EmblaCarousel slides={craeteSlides()} />
 
                 <div className="product-details-section">
                     <div className="product-details-info-row">
@@ -151,13 +169,13 @@ export const ViewEvent: React.FC<ViewEventProps> = ({ eventId }) => {
                                             <div dangerouslySetInnerHTML={{ __html: data.description }}></div>
                                         </div>
                                     </div>
-                                    <div className="tab-pane fade" id="location" role="tabpanel">
+                                    <div className="tab-pane fade min-h-[200px]" id="location" role="tabpanel">
                                         {data.location}
                                     </div>
-                                    <div className="tab-pane fade" id="gallery" role="tabpanel">
+                                    <div className="tab-pane fade min-h-[200px]" id="gallery" role="tabpanel">
 
                                     </div>
-                                    <div className="tab-pane fade" id="comments" role="tabpanel">
+                                    <div className="tab-pane fade min-h-[200px]" id="comments" role="tabpanel">
 
                                     </div>
                                 </div>

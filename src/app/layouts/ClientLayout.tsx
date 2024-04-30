@@ -22,7 +22,7 @@ export const ClientLayout = ({
             <ObservedQueryProvider>
                 {children}
             </ObservedQueryProvider>
-            <ReactQueryDevtools initialIsOpen={false} />
+            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </QueryClientProvider>
     );
 };

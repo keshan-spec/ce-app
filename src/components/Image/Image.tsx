@@ -90,7 +90,7 @@ const NcImage: FC<NcImageProps> = ({
         return (
             <div
                 className={`w-full h-full flex items-center justify-center bg-theme-dark/70 dark:bg-custom-900 text-neutral-100 dark:text-neutral-500 ${placeholderClassName}`}
-                style={{ height: imageDimension.height }}
+                style={{ height: imageDimension.height, width: "100%" }}
             >
                 <BiLoader className="animate-spin text-xl w-full text-white" />
             </div>
@@ -103,10 +103,11 @@ const NcImage: FC<NcImageProps> = ({
 
     return (
         <div
-            className={`nc-NcImage lg:min-w-0 ${containerClassName}`}
+            className={`nc-NcImage lg:min-w-0 w-full ${containerClassName}`}
             data-nc-id="NcImage"
             ref={_containerRef}
         >
+            {/* {renderLoadingPlaceholderMemo} */}
             {__src && imageLoaded ? (
                 <img src={__src} className={`w-full ${className}`} alt={alt} {...args} loading="lazy" />
             ) : renderLoadingPlaceholderMemo}
