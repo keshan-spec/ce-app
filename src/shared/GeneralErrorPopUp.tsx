@@ -2,11 +2,12 @@
 import { useSearchParams } from "next/navigation";
 import PopUp from "./Dialog";
 import { useRouter } from "next/navigation";
-
+import { useState } from "react";
 
 export const GeneralErrorPopUp: React.FC = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
+    const [hasError, setError] = useState<boolean>(!!searchParams.get('error'));
 
     const getErrorMessage = () => {
         const error = searchParams.get('error');
@@ -35,9 +36,8 @@ export const GeneralErrorPopUp: React.FC = () => {
         );
     };
 
-    const hasError = !!searchParams.get('error');
-
     const onClose = () => {
+        setError(false);
         router.push('/');
     };
 
