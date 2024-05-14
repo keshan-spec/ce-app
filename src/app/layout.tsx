@@ -5,9 +5,9 @@ import { ClientLayout } from "./layouts/ClientLayout";
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
 
+import "./globals.css";
 import "../../public/assets/css/style.css";
 import "../../public/assets/css/custom.css";
-import "./globals.css";
 
 import Script from "next/script";
 // import OneSignal from 'react-onesignal';

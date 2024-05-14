@@ -1,6 +1,7 @@
 'use client';
 import { Transition } from '@headlessui/react';
 import clsx from 'clsx';
+import { useEffect } from 'react';
 
 interface SlideInFromBottomToTopProps {
     isOpen: boolean;
@@ -29,6 +30,14 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
     onClose,
     stickyScroll = false,
 }) => {
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+    }, [isOpen]);
+
     return (
         <Transition
             show={isOpen}

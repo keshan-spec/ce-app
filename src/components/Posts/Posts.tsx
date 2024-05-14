@@ -104,7 +104,16 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
     }, []);
 
     const sharePost = async () => {
-
+        try {
+            await Share.share({
+                title: "Share Event",
+                text: post.caption,
+                url: window.location.href,
+                dialogTitle: "Share Event",
+            });
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const onLikePost = async () => {
@@ -186,7 +195,7 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
                             <div className="flex gap-1 min-w-24 items-start justify-start">
                                 {renderLike()}
                                 <BiComment onClick={() => openComments(post.id)} />
-                                <BiShareAlt />
+                                <BiShareAlt onClick={sharePost} />
                             </div>
 
                             <div className="flex min-w-24 items-start justify-end">
@@ -248,7 +257,7 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
                         <div className="flex gap-1 min-w-24 items-start justify-start">
                             {renderLike()}
                             <BiComment onClick={() => openComments(post.id)} />
-                            <BiShareAlt />
+                            <BiShareAlt onClick={sharePost} />
                         </div>
 
                         <div className="flex gap-1 min-w-24 items-start justify-center max-w-20">
