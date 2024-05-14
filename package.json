@@ -18,6 +18,7 @@
     "clsx": "^2.1.1",
     "embla-carousel-auto-height": "^8.0.2",
     "embla-carousel-react": "^8.0.2",
+    "html5-qrcode": "^2.3.8",
     "ionicons": "^7.3.1",
     "lottie-react": "^2.4.0",
     "next": "14.2.2",

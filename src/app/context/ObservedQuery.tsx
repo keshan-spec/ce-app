@@ -33,7 +33,6 @@ export const ObservedQueryProvider = ({ children }: any) => {
         getNextPageParam: (lastPage: { total_pages: number, data: Post[], limit: number; }, pages: any[]) => {
             const maxPages = Math.ceil(lastPage.total_pages / lastPage.limit);
             const nextPage = pages.length + 1;
-            console.log('Pages:', pages.length, 'Next Page:', nextPage, 'Max Pages:', maxPages);
             return nextPage <= maxPages ? nextPage : undefined;
         },
         refetchOnWindowFocus: false,

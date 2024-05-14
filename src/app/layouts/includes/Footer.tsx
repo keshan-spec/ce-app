@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 
 export const Footer: React.FC = () => {
     const pathname = usePathname();
-
     return (
         <div className="appBottomMenu">
             <Link href="/" className={`item ${pathname == '/' ? 'active' : ''}`}>
@@ -27,14 +26,14 @@ export const Footer: React.FC = () => {
                     <strong>Garage</strong>
                 </div>
             </Link>
-            <Link href="/posts" className={`item ${pathname == '/posts' ? 'active' : ''}`}>
+            <Link href="/posts" className={`item ${pathname.includes('/posts') ? 'active' : ''}`}>
                 <div className="col">
                     <IonIcon icon={idCardOutline} />
                     <strong>Social</strong>
                 </div>
             </Link>
 
-            <Link href="/profile" className={`item ${pathname == '/profile' ? 'active' : ''}`}>
+            <Link href="/profile" className={`item ${pathname.includes('/profile') ? 'active' : ''}`}>
                 <div className="col">
                     <IonIcon icon={personCircleOutline} />
                     <strong>Profile</strong>

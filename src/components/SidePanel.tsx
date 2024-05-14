@@ -50,10 +50,14 @@ export const SidePanel: React.FC = () => {
             </div>
             <div className="sidebar-buttons">
                 {isLoggedIn && (
-                    <ThemeBtn className="w-full" onClick={() => {
-                        handleSignOut();
-                    }}>
-                        Sign Out <BiLogOutCircle className="ml-2" />
+                    <ThemeBtn
+                        className="w-full"
+                        onClick={() => {
+                            handleSignOut();
+                        }}
+                        icon="fas fa-sign-out-alt"
+                    >
+                        Sign Out
                     </ThemeBtn>
                 )}
 

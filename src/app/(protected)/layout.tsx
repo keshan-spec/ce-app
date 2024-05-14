@@ -1,3 +1,4 @@
+import { GeneralErrorPopUp } from "@/shared/GeneralErrorPopUp";
 import MainLayout from "../layouts/MainLayout";
 
 export default function ProtectedLayout({
@@ -7,6 +8,7 @@ export default function ProtectedLayout({
 }>) {
     return (
         <MainLayout>
+            <GeneralErrorPopUp />
             {children}
         </MainLayout>
     );

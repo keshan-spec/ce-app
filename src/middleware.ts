@@ -1,3 +1,4 @@
+import { getIDFromQrCode } from "./actions/qr-actions";
 import { auth } from "./auth";
 
 import {
@@ -41,6 +42,24 @@ export default auth((req) => {
         //     nextUrl
         // ));
     }
+
+    if (req.nextUrl.pathname === '/qr' || req.nextUrl.pathname.startsWith('/qr/')) {
+        // Get `id` from URL path or query parameter
+        const [, , idFromPath] = req.nextUrl.pathname.split('/');
+
+        if (idFromPath) {
+            return getIDFromQrCode(idFromPath).then((data) => {
+                const id = data?.data?.linked_to;
+                return Response.redirect(new URL(`/profile/${id}`, nextUrl));
+            }).catch((e) => {
+                console.error('Error getting ID from QR code', e);
+                const redirectUrl = new URL('/', nextUrl);
+                redirectUrl.searchParams.set('error', 'invalid-qr');
+                return Response.redirect(redirectUrl);
+            });
+        }
+    }
+
 
     return null;
 });

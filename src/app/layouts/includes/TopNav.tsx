@@ -17,7 +17,7 @@ export const TopNav: React.FC = () => {
                 </div>
                 <div className="header-logo">
                     <Link href="/">
-                        <img src="assets/img/sample/photo/C-Square.svg" alt="" />
+                        <img src="/assets/img/sample/photo/C-Square.svg" alt="" />
                     </Link>
                 </div>
                 <div className="right">
