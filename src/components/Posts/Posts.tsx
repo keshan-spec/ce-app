@@ -67,8 +67,6 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
     setMuted: React.Dispatch<React.SetStateAction<boolean>>;
     openComments: (postId: number) => void;
 }) => {
-    console.log(post);
-
     const { isLoggedIn } = useUser();
 
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -312,7 +310,7 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
 };
 
 export const Posts: React.FC = () => {
-    const { data, isFetching, isLoading, hasNextPage, isFetchingNextPage } = useObservedQuery();
+    const { data, isFetching } = useObservedQuery();
     const [muted, setMuted] = useState(true); // State to track muted state
 
     const [activeSection, setActiveSection] = useState<number | undefined>();
@@ -339,8 +337,15 @@ export const Posts: React.FC = () => {
         return post.data.find((post: Post) => post.id === postId)?.comments_count ?? 0;
     };
 
+    const memoizedSkeleton = useMemo(() => {
+        return <>
+            <PostCardSkeleton />
+            <PostCardSkeleton />
+        </>;
+    }, []);
+
     return (
-        <div className="w-full bg-theme-dark">
+        <div className="w-full h-full bg-theme-dark">
             <SlideInFromBottomToTop
                 isOpen={activeSection ? true : false}
                 onClose={() => setActiveSection(undefined)}
@@ -365,7 +370,7 @@ export const Posts: React.FC = () => {
                         />
                     ))
                 ))}
-                {isFetching && <PostCardSkeleton />}
+                {isFetching && memoizedSkeleton}
             </ul>
         </div>
     );
