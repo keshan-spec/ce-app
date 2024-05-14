@@ -1,7 +1,7 @@
 'use client';
 import { PostCardSkeleton } from "./PostCardSkeleton";
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { BiBookBookmark, BiBookmark, BiComment, BiHeart, BiLike, BiMailSend, BiMapPin, BiShare, BiShareAlt, BiSolidHeart, BiVolumeFull, BiVolumeMute } from "react-icons/bi";
+import { BiBookmark, BiComment, BiHeart, BiMapPin, BiShareAlt, BiSolidHeart, BiVolumeFull, BiVolumeMute } from "react-icons/bi";
 import NcImage from "../Image/Image";
 
 import { Share } from '@capacitor/share';
@@ -70,7 +70,7 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
     const { isLoggedIn } = useUser();
 
     const videoRef = useRef<HTMLVideoElement>(null);
-    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
+    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false }, [AutoHeight({ delay: 5000, stopOnInteraction: false })]);
     const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi);
 
     const [isLiked, setIsLiked] = useState<boolean>(post.is_liked);
@@ -158,17 +158,21 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
 
         // Get the dimensions of the first media
         const firstMedia = media[0];
-        const firstMediaWidth = firstMedia.media_width;
-        const firstMediaHeight = firstMedia.media_height;
+        const firstMediaWidth = parseInt(firstMedia.media_width);
+        const firstMediaHeight = parseInt(firstMedia.media_height);
 
         if (media.length === 1) {
             return (
                 <div onDoubleClick={onLikePost}>
                     {firstMedia.media_type === 'image' && (
-                        <NcImage src={firstMedia.media_url} alt={firstMedia.media_alt} className="object-contain w-full" imageDimension={{
-                            width: firstMediaWidth,
-                            height: firstMediaHeight
-                        }} />
+                        <NcImage
+                            src={firstMedia.media_url}
+                            alt={firstMedia.media_alt}
+                            className="object-contain w-full"
+                            imageDimension={{
+                                width: firstMediaWidth || 400,
+                                height: firstMediaHeight || 400
+                            }} />
                     )}
 
                     {firstMedia.media_type === 'video' && (
@@ -219,36 +223,42 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
         }
 
         return (
-            <div className="embla" ref={emblaRef} onDoubleClick={onLikePost}>
-                <div className="embla__container">
-                    {media.map((item, index) => (
-                        <div key={item.id} className="embla__slide">
-                            {item.media_type === 'image' && (
-                                <NcImage src={item.media_url} alt={item.media_alt} className="object-contain w-full" imageDimension={{
-                                    width: item.media_width,
-                                    height: item.media_height
-                                }} />
-                            )}
+            <div className="embla" onDoubleClick={onLikePost}>
+                <div className="embla__viewport" ref={emblaRef}>
+                    <div className="embla__container">
+                        {media.map((item, index) => {
+                            return (
+                                <div key={item.id} className="embla__slide h-full">
+                                    <div className="embla__slide__number w-full h-full">
+                                        {item.media_type === 'image' && (
+                                            <NcImage src={item.media_url} alt={item.media_alt} className="object-contain w-full" imageDimension={{
+                                                width: parseInt(item.media_width) || 400,
+                                                height: parseInt(item.media_height) || 400
+                                            }} />
+                                        )}
 
-                            {item.media_type === 'video' && (
-                                <>
-                                    <video
-                                        loop
-                                        muted={muted}
-                                        id={`video-${item.id}`}
-                                        className="object-contain w-full cursor-pointer"
-                                        ref={videoRef}
-                                        onClick={() => videoRef.current?.paused ? videoRef.current?.play() : videoRef.current?.pause()}
-                                    >
-                                        <source src={item.media_url} type={item.media_mime_type} />
-                                    </video>
-                                    <button className="absolute bottom-3 left-3 text-white hidden group-hover:block p-2 bg-black/40 rounded-full" onClick={() => setMuted(prevMuted => !prevMuted)}>
-                                        {muted ? <BiVolumeMute /> : <BiVolumeFull />}
-                                    </button>
-                                </>
-                            )}
-                        </div>
-                    ))}
+                                        {item.media_type === 'video' && (
+                                            <>
+                                                <video
+                                                    loop
+                                                    muted={muted}
+                                                    id={`video-${item.id}`}
+                                                    className="object-contain w-full cursor-pointer"
+                                                    ref={videoRef}
+                                                    onClick={() => videoRef.current?.paused ? videoRef.current?.play() : videoRef.current?.pause()}
+                                                >
+                                                    <source src={item.media_url} type={item.media_mime_type} />
+                                                </video>
+                                                <button className="absolute bottom-3 left-3 text-white hidden group-hover:block p-2 bg-black/40 rounded-full" onClick={() => setMuted(prevMuted => !prevMuted)}>
+                                                    {muted ? <BiVolumeMute /> : <BiVolumeFull />}
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
                 <div className="flex flex-col p-2 gap-y-2">
                     <div className="flex gap-1 w-full justify-between text-xl">

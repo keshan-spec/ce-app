@@ -18,6 +18,6 @@ export interface PostMedia {
     media_url: string;
     media_alt: string;
     media_mime_type: string;
-    media_width: number;
-    media_height: number;
+    media_width: string;
+    media_height: string;
 }
