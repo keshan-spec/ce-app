@@ -13,7 +13,7 @@ import React, {
     useCallback,
 } from 'react';
 
-import { EmblaCarouselType, EmblaOptionsType } from 'embla-carousel';
+import { EmblaOptionsType, EmblaCarouselType } from 'embla-carousel';
 import { Post } from "@/types/posts";
 import { useObservedQuery } from "@/app/context/ObservedQuery";
 import { maybeLikePost } from "@/actions/post-actions";
@@ -101,6 +101,25 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
         };
     }, []);
 
+    // when swipe to next slide, pause the video
+    useEffect(() => {
+        const video = videoRef.current;
+
+        if (!video) return;
+
+        const onUserScroll = (e: any) => {
+            // const slidesInView = emblaApi?.slidesInView(); // <-- Pass true to the slidesInView method
+            // console.log(slidesInView);
+            video.pause();
+        };
+
+        emblaApi?.on('select', onUserScroll);
+
+        return () => {
+            emblaApi?.off('select', onUserScroll);
+        };
+    }, [emblaApi]);
+
     const sharePost = async () => {
         try {
             await Share.share({
@@ -156,102 +175,49 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
             return null;
         }
 
-        // Get the dimensions of the first media
-        const firstMedia = media[0];
-        const firstMediaWidth = parseInt(firstMedia.media_width);
-        const firstMediaHeight = parseInt(firstMedia.media_height);
-
-        if (media.length === 1) {
-            return (
-                <div onDoubleClick={onLikePost}>
-                    {firstMedia.media_type === 'image' && (
-                        <NcImage
-                            src={firstMedia.media_url}
-                            alt={firstMedia.media_alt}
-                            className="object-contain w-full"
-                            imageDimension={{
-                                width: firstMediaWidth || 400,
-                                height: firstMediaHeight || 400
-                            }} />
-                    )}
-
-                    {firstMedia.media_type === 'video' && (
-                        <>
-                            <video
-                                loop
-                                muted={muted}
-                                id={`video-${firstMedia.id}`}
-                                className="object-contain w-full cursor-pointer"
-                                ref={videoRef}
-                                onClick={() => videoRef.current?.paused ? videoRef.current?.play() : videoRef.current?.pause()}
-                            >
-                                <source src={firstMedia.media_url} type={firstMedia.media_mime_type} />
-                            </video>
-                            <button className="absolute bottom-3 left-3 text-white hidden group-hover:block p-2 bg-black/40 rounded-full" onClick={() => setMuted(prevMuted => !prevMuted)}>
-                                {muted ? <BiVolumeMute /> : <BiVolumeFull />}
-                            </button>
-                        </>
-                    )}
-                    <div className="flex flex-col p-2 gap-y-2">
-                        <div className="flex gap-1 w-full justify-between text-xl">
-                            <div className="flex gap-1 min-w-24 items-start justify-start">
-                                {renderLike()}
-                                <BiComment onClick={() => openComments(post.id)} />
-                                <BiShareAlt onClick={sharePost} />
-                            </div>
-
-                            <div className="flex min-w-24 items-start justify-end">
-                                <BiBookmark />
-                            </div>
-                        </div>
-
-                        <span className="text-xs">{post.likes_count ?? 0} likes</span>
-
-                        <div className="font-medium flex items-center gap-1 text-sm truncate w-48 md:w-full lg:w-full" title={post.caption}>
-                            <div className=" text-white text-xs">{post.username ?? "Attendee"}</div>
-                            <span className="text-white/80 text-xs"> {post.caption}</span>
-                        </div>
-                        {post.comments_count ? (
-                            <span className="text-white/60 text-xs cursor-pointer" onClick={() => openComments(post.id)}>
-                                View  {post.comments_count > 1 ? `all ${post.comments_count} comments` : `comment`}
-                            </span>
-                        ) : null}
-                        <div className="text-white/60 text-xs">{formatPostDate(post.post_date)}</div>
-                    </div>
-                </div>
-            );
-        }
-
         return (
             <div className="embla" onDoubleClick={onLikePost}>
                 <div className="embla__viewport" ref={emblaRef}>
                     <div className="embla__container">
                         {media.map((item, index) => {
+                            const calculatedHeight = parseInt(item.media_height) ? parseInt(item.media_height) - 50 : 400;
+                            const maxHeight = calculatedHeight > 600 ? 600 : calculatedHeight;
+
                             return (
-                                <div key={item.id} className="embla__slide h-full">
+                                <div key={item.id} className={clsx(
+                                    "embla__slide h-full group",
+                                    item.media_type === 'video' && "embla__slide--video"
+                                )}>
                                     <div className="embla__slide__number w-full h-full">
                                         {item.media_type === 'image' && (
                                             <NcImage src={item.media_url} alt={item.media_alt} className="object-contain w-full" imageDimension={{
                                                 width: parseInt(item.media_width) || 400,
-                                                height: parseInt(item.media_height) || 400
+                                                height: maxHeight || 400
                                             }} />
                                         )}
 
                                         {item.media_type === 'video' && (
                                             <>
-                                                <video
-                                                    loop
-                                                    muted={muted}
-                                                    id={`video-${item.id}`}
-                                                    className="object-contain w-full cursor-pointer"
-                                                    ref={videoRef}
-                                                    onClick={() => videoRef.current?.paused ? videoRef.current?.play() : videoRef.current?.pause()}
+                                                <div
+                                                    className={`w-full h-full flex items-center justify-center relative`}
+                                                    style={{ width: item.media_width, height: maxHeight }}
                                                 >
-                                                    <source src={item.media_url} type={item.media_mime_type} />
-                                                </video>
-                                                <button className="absolute bottom-3 left-3 text-white hidden group-hover:block p-2 bg-black/40 rounded-full" onClick={() => setMuted(prevMuted => !prevMuted)}>
-                                                    {muted ? <BiVolumeMute /> : <BiVolumeFull />}
-                                                </button>
+                                                    <video
+                                                        loop
+                                                        muted={muted}
+                                                        id={`video-${item.id}`}
+                                                        className="object-contain w-full cursor-pointer"
+                                                        ref={videoRef}
+                                                        width={parseInt(item.media_width) || 400}
+                                                        height={parseInt(item.media_height) || 400}
+                                                        onClick={() => videoRef.current?.paused ? videoRef.current?.play() : videoRef.current?.pause()}
+                                                    >
+                                                        <source src={item.media_url} type={item.media_mime_type} />
+                                                    </video>
+                                                    <button className="absolute bottom-3 left-3 text-white hidden group-hover:block p-2 bg-black/40 rounded-full" onClick={() => setMuted(prevMuted => !prevMuted)}>
+                                                        {muted ? <BiVolumeMute /> : <BiVolumeFull />}
+                                                    </button>
+                                                </div>
                                             </>
                                         )}
                                     </div>
@@ -267,19 +233,20 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
                             <BiComment onClick={() => openComments(post.id)} />
                             <BiShareAlt onClick={sharePost} />
                         </div>
-
-                        <div className="flex gap-1 min-w-24 items-start justify-center max-w-20">
-                            {scrollSnaps.map((_, index) => {
-                                return (
-                                    <DotButton
-                                        key={index}
-                                        onClick={() => onDotButtonClick(index)}
-                                    >
-                                        <div className={`w-1.5 h-1.5 rounded-full ${selectedIndex === index ? 'bg-blue-500' : 'bg-gray-300'}`} />
-                                    </DotButton>
-                                );
-                            })}
-                        </div>
+                        {media.length > 1 && (
+                            <div className="flex gap-1 min-w-24 items-start justify-center max-w-20">
+                                {scrollSnaps.map((_, index) => {
+                                    return (
+                                        <DotButton
+                                            key={index}
+                                            onClick={() => onDotButtonClick(index)}
+                                        >
+                                            <div className={`w-1.5 h-1.5 rounded-full ${selectedIndex === index ? 'bg-blue-500' : 'bg-gray-300'}`} />
+                                        </DotButton>
+                                    );
+                                })}
+                            </div>
+                        )}
 
                         <div className="flex min-w-24 items-start justify-end">
                             <BiBookmark />
