@@ -3,7 +3,7 @@ import { useUser } from "@/hooks/useUser";
 import { formatPostDate } from "@/utils/dateUtils";
 import { IonIcon } from "@ionic/react";
 import clsx from "clsx";
-import { reloadCircle } from "ionicons/icons";
+import { chatbubbleOutline, heartOutline, reloadCircle } from "ionicons/icons";
 import { useMemo, useState } from "react";
 import { BiCommentAdd, BiLoader, BiRefresh } from "react-icons/bi";
 import { useQuery } from "react-query";
@@ -39,8 +39,8 @@ export const ComentsSection: React.FC<ComentsSectionProps> = ({
     }, [data]);
 
     return (
-        <div className={clsx("w-full px-4 overflow-scroll h-full", minHeight)}>
-            <div className="section full mt-2 mb-3 w-full">
+        <div className={clsx("w-full overflow-scroll h-full", minHeight)}>
+            <div className="section full mb-3 w-full">
                 {(isLoading || isFetching) && <CommentLoadingSkeleton />}
                 {error && <p className="px-3">{error.message}</p>}
                 {(data && data.length === 0 && !(isLoading || isFetching)) && (
@@ -48,14 +48,13 @@ export const ComentsSection: React.FC<ComentsSectionProps> = ({
                 )}
 
                 {data && data.length > 0 && (
-                    <div className="space-y-3 w-full">
+                    <div className="comment-block mt-1">
                         {data.map((comment) => (
                             <Comment key={comment.id} comment={comment} />
                         ))}
                     </div>
                 )}
             </div>
-            <div className="w-full h-10"></div>
             <CommentForm postId={postId} onCommentAdded={onNewComment} />
         </div>
     );
@@ -98,15 +97,15 @@ const CommentForm: React.FC<{ postId: number; onCommentAdded: () => void; }> = (
     };
 
     return (
-        <div className="absolute bottom-0 z-10 w-full inset-x-0 px-4 bg-white">
+        <div className="absolute bottom-0 z-10 w-full inset-x-0 bg-white">
             <form onSubmit={handleSubmit} className="flex items-start space-x-2 py-2">
-                <div className="w-8 h-8 bg-gray-300 rounded-full border-1 border-theme-primary mt-1">
+                {/* <div className="w-8 h-8 bg-gray-300 rounded-full border-1 border-theme-primary mt-1">
                     {user?.profile_image && <img
                         src={user?.profile_image}
                         alt="User Avatar"
                         className="w-full h-full object-cover rounded-full"
                     />}
-                </div>
+                </div> */}
                 <div className="flex-1 space-y-1">
                     <textarea
                         value={comment}
@@ -146,8 +145,8 @@ const Comment: React.FC<{
     };
 }> = ({ comment }) => {
     return (
-        <div className="flex flex-col gap-y-3 items-center">
-            <div className="flex items-start space-x-2 w-full">
+        <div className="item px-3 border-b border-b-gray-300 pb-2 !mb-3">
+            <div className="avatar">
                 <div className="w-8 h-8 bg-gray-300 rounded-full border-1 border-theme-primary mt-1">
                     {comment.profile_image && <img
                         src={comment.profile_image}
@@ -155,13 +154,28 @@ const Comment: React.FC<{
                         className="w-full h-full object-cover rounded-full"
                     />}
                 </div>
-                <div className="flex-1">
-                    <div className="text-xs font-semibold">{comment.user_nicename}</div>
-                    <div className="text-sm">{comment.comment}</div>
-                    <div className="text-xs text-gray-500">{formatPostDate(comment.comment_date)}</div>
+            </div>
+            <div className="in">
+                <div className="comment-header">
+                    <h4 className="title">
+                        {comment.user_nicename}
+                    </h4>
+                    <span className="time">{formatPostDate(comment.comment_date)}</span>
+                </div>
+                <div className="text">
+                    {comment.comment}
+                </div>
+                <div className="comment-footer">
+                    <a href="#" className="comment-button">
+                        <IonIcon icon={heartOutline} role="img" className="md hydrated" aria-label="heart outline" />
+                        Like (523)
+                    </a>
+                    <a href="#" className="comment-button">
+                        <IonIcon icon={chatbubbleOutline} role="img" className="md hydrated" aria-label="heart outline" />
+                        Reply
+                    </a>
                 </div>
             </div>
-            <div className="h-px bg-gray-300 w-[85%] ml-10"></div>
         </div>
     );
 };
