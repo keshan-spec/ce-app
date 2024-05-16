@@ -21,7 +21,7 @@ export const fetchPosts = async (page: number) => {
     try {
         user = await getSessionUser();
     } catch (e) {
-        console.error("Error fetching user", e);
+        console.error("Error fetching user");
     }
 
     const response = await fetch(`https://wordpress-889362-4267074.cloudwaysapps.com/uk/wp-json/app/v1/get-posts?page=${page}&limit=10`, {
@@ -58,7 +58,7 @@ export const fetchPostComments = async (postId: number) => {
     try {
         user = await getSessionUser();
     } catch (e) {
-        console.error("Error fetching user", e);
+        console.error("Error fetching user");
     }
 
     const response = await fetch(`https://wordpress-889362-4267074.cloudwaysapps.com/uk/wp-json/app/v1/get-post-comments`, {
@@ -71,5 +71,39 @@ export const fetchPostComments = async (postId: number) => {
     });
 
     const data = await response.json();
+    return data;
+};
+
+export const addPost = async (mediaList: string[], caption?: string, location?: string) => {
+    let user;
+    try {
+        user = await getSessionUser();
+    } catch (e) {
+        throw new Error("User session expired. Please login again.");
+    }
+
+    const formData = new FormData();
+    formData.append("user_id", user?.id);
+    formData.append("caption", caption || "");
+    formData.append("location", location || "");
+    for (let i = 0; i < mediaList.length; i++) {
+        formData.append("mediaData[]", mediaList[i]);
+    }
+
+    const response = await fetch("https://wordpress-889362-4267074.cloudwaysapps.com/uk/wp-json/app/v1/save-media", {
+        cache: "no-cache",
+        method: "POST",
+        body: formData,
+    });
+
+    const data = await response.json();
+    if (!data || data.error) {
+        throw new Error(data.error);
+    }
+
+    if (response.status !== 200) {
+        throw new Error("Failed to create post");
+    }
+
     return data;
 };

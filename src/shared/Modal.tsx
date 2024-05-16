@@ -1,6 +1,6 @@
-"use client"
-import { Dialog, Transition } from '@headlessui/react'
-import React, { Fragment, useState } from 'react'
+"use client";
+import { Dialog, Transition } from '@headlessui/react';
+import React, { Fragment, useState } from 'react';
 
 interface ModalProps {
     isOpen: boolean;
@@ -25,7 +25,7 @@ const Modal: React.FC<ModalProps> = ({
         <Transition appear show={isOpen} as={Fragment}>
             <Dialog
                 as="div"
-                className="fixed inset-0 flex items-center justify-center z-50"
+                className="fixed inset-0 flex items-center justify-center z-[9999] mx-3"
                 onClose={closeModal}
             >
                 {/* <Dialog.Overlay className="fixed inset-0 bg-black/50" /> */}
@@ -41,7 +41,7 @@ const Modal: React.FC<ModalProps> = ({
                         leaveFrom="opacity-100 scale-100"
                         leaveTo="opacity-0 scale-95"
                     >
-                        <Dialog.Panel className="p-2 text-left">
+                        <Dialog.Panel className="py-2 text-left">
                             {title && (
                                 <Dialog.Title
                                     as="h3"
@@ -50,7 +50,9 @@ const Modal: React.FC<ModalProps> = ({
                                     {title}
                                 </Dialog.Title>
                             )}
-                            {children}
+                            <div className="relative w-full">
+                                {children}
+                            </div>
                             {actions && (
                                 <div className="flex justify-end p-2">
                                     {actions}
@@ -61,8 +63,8 @@ const Modal: React.FC<ModalProps> = ({
                 </div>
             </Dialog>
         </Transition>
-    )
+    );
 
-}
+};
 
 export default Modal;

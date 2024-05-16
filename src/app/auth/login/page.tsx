@@ -7,6 +7,9 @@ import { handleSignIn } from "@/actions/auth-actions";
 import { ErrorMessage } from "@/shared/ErrorMessage";
 import { useSearchParams } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { IonIcon } from "@ionic/react";
+import { closeCircle } from "ionicons/icons";
+import Link from "next/link";
 
 const Login = () => {
     const [error, setError] = useState("");
@@ -31,10 +34,12 @@ const Login = () => {
             // validation
             if (!rawFormData.email) {
                 setError("Email is required");
+                return;
             }
 
             if (!rawFormData.password) {
                 setError("Password is required");
+                return;
             }
 
             if (rawFormData.email && rawFormData.password) {
@@ -48,9 +53,59 @@ const Login = () => {
                 }
             }
         } catch (error: any) {
-            setError("Invalid credentials");
+            setError(error.message);
         }
     };
+
+    return (
+        <div className="login-form mt-1">
+            <div className="section">
+                <img src="assets/img/sample/photo/vector4.png" alt="image" className="form-image" />
+            </div>
+            <div className="section mt-1">
+                <h1>Get started</h1>
+                <h4>Fill the form to log in</h4>
+            </div>
+            <div className="section mt-1 mb-5">
+                <form action={handleSubmit}>
+                    <div className="form-group boxed">
+                        <div className="input-wrapper">
+                            <input type="email" className="form-control" name="email" placeholder="Email address" />
+                            <i className="clear-input">
+                                <IonIcon icon={closeCircle} role="img" className="md hydrated" aria-label="close circle" />
+                            </i>
+                        </div>
+                    </div>
+
+                    <div className="form-group boxed">
+                        <div className="input-wrapper">
+                            <input type="password" className="form-control" name="password" placeholder="Password" autoComplete="off" />
+                            <i className="clear-input">
+                                <IonIcon icon={closeCircle} role="img" className="md hydrated" aria-label="close circle" />
+                            </i>
+                        </div>
+                    </div>
+
+                    <div className="form-links mt-2">
+                        <div>
+                            <Link href="/auth/register">
+                                Register
+                            </Link>
+                        </div>
+                        {/* <div><a href="page-forgot-password.html" className="text-muted">Forgot Password?</a></div> */}
+                    </div>
+
+                    <ErrorMessage message={error} />
+
+                    <div className="form-button-group">
+                        <Button type="submit" icon={<i className="ml-2 fas fa-chevron-right"></i>}>
+                            Log In
+                        </Button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
 
     return (
         <div className="relative max-h-[100vh] overflow-hidden h-screen w-full flex items-center flex-col pt-20 px-4">

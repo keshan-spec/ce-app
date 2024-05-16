@@ -10,6 +10,7 @@ interface SlideInFromBottomToTopProps {
     onClose: () => void;
     title?: string;
     stickyScroll?: boolean;
+    fullScreen?: boolean;
 }
 
 // https://www.skies.dev/headless-ui-transitions
@@ -29,6 +30,7 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
     title,
     onClose,
     stickyScroll = false,
+    fullScreen = false,
 }) => {
     useEffect(() => {
         if (isOpen) {
@@ -53,10 +55,16 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
             leaveFrom={transitionClasses.leaveFrom}
             leaveTo={transitionClasses.leaveTo}
         >
-            <div className="flex justify-between items-center w-full my-2 pb-1 px-3 border-b">
+            <div className={clsx(
+                "w-full my-2 pb-1 px-3",
+                fullScreen ? 'absolute top-0 z-50' : 'flex justify-between items-center border-b'
+            )}>
                 <button
                     onClick={() => onClose()}
-                    className="text-md text-black cursor-pointer font-bold"
+                    className={clsx(
+                        "text-md text-black cursor-pointer font-bold",
+                        fullScreen && "p-2 w-10 h-10 flex items-center justify-center bg-black/40 rounded-full text-white"
+                    )}
                 >
                     &#x2715;
                 </button>

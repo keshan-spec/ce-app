@@ -1,6 +1,6 @@
 import { SidePanel } from '@/components/SidePanel';
 import { IonIcon } from '@ionic/react';
-import { menuOutline, notifications, searchOutline, calculatorOutline, locationOutline, mapOutline, heart } from 'ionicons/icons';
+import { menuOutline, notifications, searchOutline, calculatorOutline, locationOutline, mapOutline, heart, chevronBackOutline } from 'ionicons/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -11,9 +11,17 @@ export const TopNav: React.FC = () => {
         <div className="appHeader bg-primary scrolled header-div-wrapper">
             <div className="header-row-wrapper-top">
                 <div className="left">
-                    <span className="headerButton" data-bs-toggle="offcanvas" data-bs-target="#sidebarPanel" role='button'>
-                        <IonIcon icon={menuOutline} />
-                    </span>
+                    {!pathname.includes('/profile') ? (
+                        <span className="headerButton" data-bs-toggle="offcanvas" data-bs-target="#sidebarPanel" role='button'>
+                            <IonIcon icon={menuOutline} />
+                        </span>
+                    ) : (
+                        <Link href="/">
+                            <span className="headerButton">
+                                <IonIcon icon={chevronBackOutline} />
+                            </span>
+                        </Link>
+                    )}
                 </div>
                 <div className="header-logo">
                     <Link href="/">

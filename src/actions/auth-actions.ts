@@ -18,7 +18,6 @@ export const getSessionUser = async () => {
     return session.user;
 };
 
-
 export const verifyUser = async (credentials: { email: string; password: string; }) => {
     try {
         const response = await fetch(`${API_URL}/wp-json/ticket_scanner/v1/verify_user`, {
@@ -85,5 +84,24 @@ export const handleSignIn = async (credentials: {
         }
 
         throw error;
+    }
+};
+
+export const handleSignUp = async (credentials: {
+    full_name: string | undefined;
+    email: string | undefined;
+    password: string | undefined;
+}) => {
+    throw Error("Not implemented");
+    const response = await fetch(`${API_URL}/wp-json/ticket_scanner/v1/register_user`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+    });
+
+    if (response.ok) {
+        return JSON.parse(await response.json());
     }
 };

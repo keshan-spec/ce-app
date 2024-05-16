@@ -2,15 +2,25 @@ import { handleSignOut } from "@/actions/auth-actions";
 import { useUser } from "@/hooks/useUser";
 import { ThemeBtn } from "@/shared/ThemeBtn";
 import Link from "next/link";
-import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi";
 import { IonIcon } from '@ionic/react';
 import { cubeOutline, homeOutline } from "ionicons/icons";
+import { useState } from "react";
+import { Loader } from "./Loader";
+import { useSession } from "next-auth/react";
 
 export const SidePanel: React.FC = () => {
     const { isLoggedIn, user } = useUser();
 
+    const [loading, setLoading] = useState(false);
+
+    const onSignout = async () => {
+        setLoading(true);
+        await handleSignOut();
+    };
+
     return (
         <div className="offcanvas offcanvas-start" tabIndex={-1} id="sidebarPanel">
+            {loading && <Loader transulcent />}
             <div className="offcanvas-body">
                 <div className="profileBox">
                     <div className="image-wrapper">
@@ -52,9 +62,7 @@ export const SidePanel: React.FC = () => {
                 {isLoggedIn && (
                     <ThemeBtn
                         className="w-full"
-                        onClick={() => {
-                            handleSignOut();
-                        }}
+                        onClick={onSignout}
                         icon="fas fa-sign-out-alt"
                     >
                         Sign Out
@@ -63,8 +71,11 @@ export const SidePanel: React.FC = () => {
 
                 {!isLoggedIn && (
                     <Link className="w-full" href="/auth/login">
-                        <ThemeBtn className="w-full">
-                            Sign In <BiLogInCircle className="ml-2" />
+                        <ThemeBtn
+                            className="w-full"
+                            icon="fas fa-sign-in-alt"
+                        >
+                            Sign In
                         </ThemeBtn>
                     </Link>
                 )}

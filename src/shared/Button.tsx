@@ -21,7 +21,7 @@ export const Button: React.FC<ButtonProps> = ({ fullPageLoading, icon, ...btnpro
     };
     return (
         <>
-            {fullPageLoading && pending && <Loader />}
+            {fullPageLoading && pending && <Loader transulcent />}
             <button
                 {...btnprops}
                 className={clsx(

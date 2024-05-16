@@ -8,15 +8,28 @@ import {
     QueryClientProvider,
 } from 'react-query';
 import { useEffect } from 'react';
+import { Session } from 'next-auth';
+import { useRouter } from 'next/navigation';
 
 
 const queryClient = new QueryClient();
 
 export const ClientLayout = ({
     children,
+    session
 }: {
     children: React.ReactNode;
+    session: Session | null;
 }) => {
+
+    useEffect(() => {
+        // console.log(session);
+
+        // if (session) {
+        //     location.reload();
+        // }
+    }, [session]);
+
     return (
         <QueryClientProvider client={queryClient}>
             <ObservedQueryProvider>

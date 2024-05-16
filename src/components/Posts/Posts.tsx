@@ -24,6 +24,8 @@ import clsx from "clsx";
 import { formatPostDate } from "@/utils/dateUtils";
 import AutoHeight from 'embla-carousel-auto-height';
 import { useDotButton } from "../Carousel/EmbalDotButtons";
+import { IonIcon } from "@ionic/react";
+import { copy, ellipsisVerticalCircle, ellipsisVerticalCircleOutline, ellipsisVerticalOutline, trashBinOutline, warningOutline } from "ionicons/icons";
 
 type DotButtonPropType = PropsWithChildren<
     React.DetailedHTMLProps<
@@ -274,10 +276,20 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
         <div className="relative shadow-md overflow-hidden bg-theme-dark mb-6 text-white" id={`PostMain-${post.id}`}>
             <div className="flex items-center justify-between px-3 py-3">
                 <div className="flex flex-col items-start justify-start">
-                    <div className="font-medium text-white text-sm">{post.username ?? "Attendee"}</div>
+                    <div className="font-medium text-white text-sm">{post.username}</div>
                     <div className="flex items-center gap-2 text-xs text-white/60">
-                        <BiMapPin /> {post.location ?? "England, UK"}
+                        {post.location && (
+                            <div className="flex items-center gap-1">
+                                <BiMapPin />
+                                <span>{post.location}</span>
+                            </div>
+                        )}
                     </div>
+                </div>
+
+                {/* action buttons */}
+                <div className="flex gap-2">
+                    <PostActions />
                 </div>
             </div>
 
@@ -349,6 +361,31 @@ export const Posts: React.FC = () => {
                 ))}
                 {isFetching && memoizedSkeleton}
             </ul>
+        </div>
+    );
+};
+
+const PostActions: React.FC = () => {
+    return (
+        <div className="dropdown">
+            <button type="button" data-bs-toggle="dropdown" aria-expanded="true">
+                <IonIcon icon={ellipsisVerticalOutline} />
+            </button>
+            <div className="dropdown-menu dropdown-menu-end px-3" style={{
+                position: 'absolute',
+                inset: '0px 0px auto auto',
+                margin: '0px',
+                transform: 'translate3d(-230px, 42px, 0px)',
+                minWidth: 'unset'
+            }} data-popper-placement="bottom-end">
+                <a className="text-red-600 text-xs flex items-center justify-center" href="#">
+                    <IonIcon icon={warningOutline} className="!w-4" /> Report
+                </a>
+                <div className="dropdown-divider"></div>
+                <a className="text-red-600 text-xs flex items-center justify-center" href="#">
+                    <IonIcon icon={trashBinOutline} className="!w-4" /> Delete
+                </a>
+            </div>
         </div>
     );
 };
