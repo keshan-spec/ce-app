@@ -1,7 +1,7 @@
 "use server";
 
+import { API_URL } from "./api";
 import { getSessionUser } from "./auth-actions";
-
 
 export const fetchTrendingEvents = async () => {
     let user;
@@ -11,7 +11,7 @@ export const fetchTrendingEvents = async () => {
         console.error("Error fetching user", e);
     }
 
-    const response = await fetch("https://wordpress-889362-4267074.cloudwaysapps.com/uk/wp-json/app/v1/get-events-trending", {
+    const response = await fetch(`${API_URL}/wp-json/app/v1/get-events-trending`, {
         cache: "no-cache",
         method: "POST",
         headers: {
@@ -31,7 +31,7 @@ export const fetchEvent = async (eventId: string) => {
         console.error("Error fetching user", e);
     }
 
-    const response = await fetch(`https://wordpress-889362-4267074.cloudwaysapps.com/uk/wp-json/app/v1/get-event`,
+    const response = await fetch(`${API_URL}/wp-json/app/v1/get-event`,
         {
             cache: "no-cache",
             method: "POST",
@@ -56,7 +56,7 @@ export const maybeFavoriteEvent = async (eventId: string) => {
         throw new Error("User not logged in");
     }
 
-    const response = await fetch(`https://wordpress-889362-4267074.cloudwaysapps.com/uk/wp-json/app/v1/favourite-event`, {
+    const response = await fetch(`${API_URL}/wp-json/app/v1/favourite-event`, {
         cache: "no-cache",
         method: "POST",
         headers: {

@@ -2,6 +2,7 @@ import { BiCaretRight } from "react-icons/bi";
 import { Carousel } from "../Posts/Posts";
 import { NearYouEvents, TrendingEvents } from "./Events";
 import Link from "next/link";
+import { API_URL } from "@/actions/api";
 
 const bannerData = [
     {
@@ -48,6 +49,8 @@ const Banner = () => {
 };
 
 export const HomePage: React.FC = async () => {
+    console.log("API_URL", API_URL);
+
     return (
         <div className="home mt-5">
             <div className="section full">

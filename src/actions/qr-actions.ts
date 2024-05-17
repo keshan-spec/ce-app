@@ -2,6 +2,7 @@
 
 import { LinkProfileResponse, ScanResponse } from "@/types/qr-code";
 import { getSessionUser } from "./auth-actions";
+import { API_URL } from "./api";
 
 export const verifyScan = async (decodedText: string): Promise<ScanResponse | null> => {
     let user;
@@ -11,7 +12,7 @@ export const verifyScan = async (decodedText: string): Promise<ScanResponse | nu
         console.error("Error fetching user", e);
     }
 
-    const response = await fetch("https://wordpress-889362-4267074.cloudwaysapps.com/uk/wp-json/app/v1/verify-qr-code", {
+    const response = await fetch(`${API_URL}/wp-json/app/v1/verify-qr-code`, {
         cache: "no-cache",
         method: "POST",
         headers: {
@@ -33,7 +34,7 @@ export const linkProfile = async (decodedText: string): Promise<any | null> => {
         console.error("Error fetching user", e);
     }
 
-    const response = await fetch("https://wordpress-889362-4267074.cloudwaysapps.com/uk/wp-json/app/v1/link-qr-code-entity", {
+    const response = await fetch(`${API_URL}/wp-json/app/v1/link-qr-code-entity`, {
         cache: "no-cache",
         method: "POST",
         headers: {
@@ -47,7 +48,7 @@ export const linkProfile = async (decodedText: string): Promise<any | null> => {
 };
 
 export const getIDFromQrCode = async (decodedText: string): Promise<LinkProfileResponse | null> => {
-    const response = await fetch("https://wordpress-889362-4267074.cloudwaysapps.com/uk/wp-json/app/v1/get-linked-entity", {
+    const response = await fetch(`${API_URL}/wp-json/app/v1/get-linked-entity`, {
         cache: "no-cache",
         method: "POST",
         headers: {

@@ -1,10 +1,11 @@
 "use server";
+import { API_URL } from "./api";
 import { getSessionUser } from "./auth-actions";
 
 export const maybeLikePost = async (postId: number) => {
     const user = await getSessionUser();
 
-    const response = await fetch("https://wordpress-889362-4267074.cloudwaysapps.com/uk/wp-json/app/v1/toggle-like-post", {
+    const response = await fetch(`${API_URL}/wp-json/app/v1/toggle-like-post`, {
         cache: "no-cache",
         method: "POST",
         headers: {
@@ -24,7 +25,7 @@ export const fetchPosts = async (page: number) => {
         console.error("Error fetching user");
     }
 
-    const response = await fetch(`https://wordpress-889362-4267074.cloudwaysapps.com/uk/wp-json/app/v1/get-posts?page=${page}&limit=10`, {
+    const response = await fetch(`${API_URL}/wp-json/app/v1/get-posts?page=${page}&limit=10`, {
         cache: "no-cache",
         method: "POST",
         headers: {
@@ -40,7 +41,7 @@ export const fetchPosts = async (page: number) => {
 export const addComment = async (postId: number, comment: string) => {
     const user = await getSessionUser();
 
-    const response = await fetch("https://wordpress-889362-4267074.cloudwaysapps.com/uk/wp-json/app/v1/add-post-comment", {
+    const response = await fetch(`${API_URL}/wp-json/app/v1/add-post-comment`, {
         cache: "no-cache",
         method: "POST",
         headers: {
@@ -61,7 +62,7 @@ export const fetchPostComments = async (postId: number) => {
         console.error("Error fetching user");
     }
 
-    const response = await fetch(`https://wordpress-889362-4267074.cloudwaysapps.com/uk/wp-json/app/v1/get-post-comments`, {
+    const response = await fetch(`${API_URL}/wp-json/app/v1/get-post-comments`, {
         cache: "no-cache",
         method: "POST",
         headers: {
@@ -90,7 +91,7 @@ export const addPost = async (mediaList: string[], caption?: string, location?: 
         formData.append("mediaData[]", mediaList[i]);
     }
 
-    const response = await fetch("https://wordpress-889362-4267074.cloudwaysapps.com/uk/wp-json/app/v1/save-media", {
+    const response = await fetch(`${API_URL}/wp-json/app/v1/save-media`, {
         cache: "no-cache",
         method: "POST",
         body: formData,

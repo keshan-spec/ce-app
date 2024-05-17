@@ -1,0 +1,1 @@
+export const API_URL = process.env.HEADLESS_CMS_API_URL ?? "https://www.carevents.com";
