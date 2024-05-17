@@ -69,7 +69,7 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
     setMuted: React.Dispatch<React.SetStateAction<boolean>>;
     openComments: (postId: number) => void;
 }) => {
-    const { isLoggedIn } = useUser();
+    const { isLoggedIn, user } = useUser();
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false }, [AutoHeight({ delay: 5000, stopOnInteraction: false })]);
@@ -276,6 +276,15 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
         <div className="relative shadow-md overflow-hidden bg-theme-dark mb-6 text-white" id={`PostMain-${post.id}`}>
             <div className="flex items-center justify-between px-3 py-3">
                 <div className="flex flex-col items-start justify-start">
+                    <div className="avatar">
+                        <div className="w-8 h-8 bg-gray-300 rounded-full border-1 border-theme-primary mt-1">
+                            <img
+                                src={user?.profile_image}
+                                alt="User Avatar"
+                                className="w-full h-full object-cover rounded-full"
+                            />
+                        </div>
+                    </div>
                     <div className="font-medium text-white text-sm">{post.username}</div>
                     <div className="flex items-center gap-2 text-xs text-white/60">
                         {post.location && (
