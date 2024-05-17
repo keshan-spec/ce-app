@@ -7,7 +7,7 @@ import { useState } from "react";
 export const GeneralErrorPopUp: React.FC = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const [hasError, setError] = useState<boolean>(!!searchParams.get('error'));
+    const [hasError, setError] = useState<boolean>(!!searchParams.get('error') || !!searchParams.get('deeplink'));
 
     const getErrorMessage = () => {
         const error = searchParams.get('error');
