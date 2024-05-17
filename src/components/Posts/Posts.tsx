@@ -70,8 +70,6 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
     openComments: (postId: number) => void;
 }) => {
     const { isLoggedIn, user } = useUser();
-    console.log("PostCard -> user", user);
-    console.log("PostCard -> post", post);
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false }, [AutoHeight({ delay: 5000, stopOnInteraction: false })]);
@@ -282,7 +280,7 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
                         <div className="avatar">
                             <div className="w-8 h-8 bg-gray-300 rounded-full border-1 border-theme-primary">
                                 <img
-                                    src={user?.profile_image}
+                                    src={post.user_profile_image}
                                     alt="User Avatar"
                                     className="w-full h-full object-cover rounded-full"
                                 />
@@ -300,10 +298,11 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
                     </div>
                 </div>
 
-                {/* action buttons */}
-                <div className="flex gap-2">
-                    <PostActions />
-                </div>
+                {post.user_id === user?.id && (
+                    <div className="flex gap-2">
+                        <PostActions />
+                    </div>
+                )}
             </div>
 
             {renderMedia}

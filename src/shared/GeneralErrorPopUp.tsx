@@ -28,6 +28,15 @@ export const GeneralErrorPopUp: React.FC = () => {
             );
         }
 
+        if (searchParams.get('deeplink')) {
+            return (
+                <div className="text-center">
+                    <h4>DeepLink</h4>
+                    <p>{searchParams.get('deeplink')}</p>
+                </div>
+            );
+        }
+
         return (
             <div className="text-center">
                 <h4>Oops!</h4>

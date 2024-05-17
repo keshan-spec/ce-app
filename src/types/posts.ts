@@ -9,6 +9,7 @@ export type Post = {
     comments_count: number;
     media: PostMedia[];
     is_liked: boolean;
+    user_profile_image?: string;
 };
 
 export interface PostMedia {
