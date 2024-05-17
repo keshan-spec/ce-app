@@ -1,7 +1,7 @@
 'use client';
 import { Transition } from '@headlessui/react';
 import clsx from 'clsx';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface SlideInFromBottomToTopProps {
     isOpen: boolean;
@@ -32,6 +32,35 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
     stickyScroll = false,
     fullScreen = false,
 }) => {
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        let element = ref.current;
+        if (!ref.current) {
+            element = document.getElementsByClassName('slide-in')[0] as HTMLDivElement;
+        }
+
+        const handleTouchMove = (e: TouchEvent) => {
+            if (element) {
+                if (e.changedTouches[0].clientY < 0) {
+                    onClose();
+                }
+
+                if (e.changedTouches[0].clientY > (element.clientHeight / 3)) {
+                    onClose();
+                }
+            }
+        };
+
+        element?.addEventListener('touchmove', handleTouchMove);
+
+        return () => {
+            if (element) {
+                element.removeEventListener('touchmove', handleTouchMove);
+            }
+        };
+    }, [ref.current, onClose, isOpen]);
+
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
@@ -42,9 +71,10 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
 
     return (
         <Transition
+            ref={ref}
             show={isOpen}
             className={clsx(
-                "z-10 w-full fixed bottom-0 inset-x-0 bg-white h-full rounded-t-lg",
+                "z-10 w-full fixed bottom-0 inset-x-0 bg-white h-full rounded-t-lg slide-in",
                 !stickyScroll && 'overflow-scroll'
             )}
             style={{ height, position: 'fixed', zIndex: 9999 }}
@@ -55,10 +85,11 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
             leaveFrom={transitionClasses.leaveFrom}
             leaveTo={transitionClasses.leaveTo}
         >
-            <div className={clsx(
-                "w-full my-2 pb-1 px-3",
-                fullScreen ? 'absolute top-0 z-50' : 'flex justify-between items-center border-b'
-            )}>
+            <div
+                className={clsx(
+                    "w-full my-2 pb-1 px-3",
+                    fullScreen ? 'absolute top-0 z-50' : 'flex justify-between items-center border-b'
+                )}>
                 <button
                     onClick={() => onClose()}
                     className={clsx(

@@ -27,6 +27,7 @@
     "onesignal-cordova-plugin": "^5.1.2",
     "react": "^18",
     "react-dom": "^18",
+    "react-draggable": "^4.4.6",
     "react-easy-crop": "^5.0.7",
     "react-icons": "^5.1.0",
     "react-query": "^3.39.3",
