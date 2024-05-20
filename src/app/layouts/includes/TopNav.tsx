@@ -23,9 +23,9 @@ export const TopNav: React.FC = () => {
                         </Link>
                     )}
                 </div>
-                <div className="header-logo">
+                <div className="max-w-36 !mt-5">
                     <Link href="/">
-                        <img src="/assets/img/sample/photo/C-Square.svg" alt="" />
+                        <img src="/assets/img/logo.png" alt="" />
                     </Link>
                 </div>
                 <div className="right">
@@ -43,25 +43,25 @@ export const TopNav: React.FC = () => {
                     <ul className="nav nav-tabs capsuled" role="tablist">
                         <li className="nav-item">
                             <Link className="nav-link active" data-bs-toggle="tab" href="#panels-tab1" role="tab">
-                                <IonIcon icon={calculatorOutline} />
+                                {/* <IonIcon icon={calculatorOutline} /> */}
                                 Events
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" data-bs-toggle="tab" href="#panels-tab2" role="tab">
-                                <IonIcon icon={locationOutline} />
+                                {/* <IonIcon icon={locationOutline} /> */}
                                 Venues
                             </Link>
                         </li>
-                        <li className="nav-item">
+                        {/* <li className="nav-item">
                             <Link className="nav-link" data-bs-toggle="tab" href="#panels-tab3" role="tab">
                                 <IonIcon icon={mapOutline} />
                                 Map
                             </Link>
-                        </li>
+                        </li> */}
                         <li className="nav-item">
                             <Link className="nav-link" data-bs-toggle="tab" href="#panels-tab4" role="tab">
-                                <IonIcon icon={heart} />
+                                {/* <IonIcon icon={heart} /> */}
                                 Saved
                             </Link>
                         </li>

@@ -8,7 +8,7 @@ export const fetchTrendingEvents = async () => {
     try {
         user = await getSessionUser();
     } catch (e) {
-        console.error("Error fetching user", e);
+        console.error("Error fetching user, session not found");
     }
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-events-trending`, {
@@ -28,7 +28,7 @@ export const fetchEvent = async (eventId: string) => {
     try {
         user = await getSessionUser();
     } catch (e) {
-        console.error("Error fetching user", e);
+        console.error("Error fetching user no session");
     }
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-event`,
