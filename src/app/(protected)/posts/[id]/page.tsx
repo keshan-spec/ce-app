@@ -45,10 +45,19 @@ export async function generateMetadata(
     };
 }
 
-const Page = ({ params }: { params: { id: string; }; }) => {
+const Page = async ({ params }: { params: { id: string; }; }) => {
+    const post = await fetchPost(params.id);
+
     return (
         <div key={params.id}>
-            <PostClient postId={params.id} />
+            {post ? (
+                <>
+                    <h2>{post.caption}</h2>
+                    <img src={post.media[0].media_url} alt={post.caption} />
+                </>
+            ) : (
+                <div>Post not found</div>
+            )}
         </div>
     );
 };

@@ -37,19 +37,19 @@ export default auth((req) => {
         return null;
     }
 
-    // if (!isLoggedIn && !isPublicRoute && !publicDynamicRoute) {
-    //     let callbackUrl = nextUrl.pathname;
-    //     if (nextUrl.search) {
-    //         callbackUrl += nextUrl.search;
-    //     }
+    if (!isLoggedIn && !isPublicRoute && !publicDynamicRoute) {
+        let callbackUrl = nextUrl.pathname;
+        if (nextUrl.search) {
+            callbackUrl += nextUrl.search;
+        }
 
-    //     const encodedCallbackUrl = encodeURIComponent(callbackUrl);
+        const encodedCallbackUrl = encodeURIComponent(callbackUrl);
 
-    //     return Response.redirect(new URL(
-    //         `/auth/login?callbackUrl=${encodedCallbackUrl}`,
-    //         nextUrl
-    //     ));
-    // }
+        return Response.redirect(new URL(
+            `/auth/login?callbackUrl=${encodedCallbackUrl}`,
+            nextUrl
+        ));
+    }
 
     if (req.nextUrl.pathname === '/qr' || req.nextUrl.pathname.startsWith('/qr/')) {
         // Get `id` from URL path or query parameter
