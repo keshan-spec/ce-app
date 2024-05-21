@@ -13,8 +13,7 @@ import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
 import { formatEventDate } from "@/utils/dateUtils";
 import SlideInFromBottomToTop from "@/shared/SlideIn";
-import { ViewEvent } from "../Posts/ViewPost";
-import { useObservedQuery } from "@/app/context/ObservedQuery";
+import { ViewEvent } from "./ViewPost";
 import { useUser } from "@/hooks/useUser";
 
 const carouselOptions: Options = {

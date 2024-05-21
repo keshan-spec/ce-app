@@ -1,9 +1,7 @@
 import type { Metadata, ResolvingMetadata } from 'next';
 import { fetchPost } from '@/actions/post-actions';
+import PostClient from '@/components/Posts/PostClient';
 
-import PostClient from './PostClient';
-
-// SEO
 type Props = {
     params: { id: string; };
 };
@@ -48,7 +46,11 @@ export async function generateMetadata(
 }
 
 const Page = ({ params }: { params: { id: string; }; }) => {
-    return <PostClient postId={params.id} />;
+    return (
+        <div key={params.id}>
+            <PostClient postId={params.id} />
+        </div>
+    );
 };
 
 export default Page;

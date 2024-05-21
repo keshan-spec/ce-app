@@ -14,7 +14,6 @@ import { formatPostDate } from "@/utils/dateUtils";
 import { ellipsisVerticalOutline, trashBinOutline, warningOutline } from "ionicons/icons";
 import { IonIcon } from "@ionic/react";
 
-
 export const PostCard = ({ post, muted, setMuted, openComments }: {
     post: Post,
     muted: boolean,
