@@ -51,6 +51,7 @@ export async function generateMetadata(
 const Page = async ({ params }: { params: { id: string; }; }) => {
     const post = await fetchPost(params.id);
 
+
     if (!post) {
         return <PostNotFound />;
     }

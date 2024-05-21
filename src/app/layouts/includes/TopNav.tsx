@@ -2,12 +2,11 @@ import { SidePanel } from '@/components/SidePanel';
 import { IonIcon } from '@ionic/react';
 import { menuOutline, notifications, searchOutline, chevronBackOutline } from 'ionicons/icons';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 
 export const TopNav: React.FC = () => {
     const pathname = usePathname();
-    const router = useRouter();
 
     const showMenuIcon = () => {
         if (pathname.includes('/profile') || pathname.includes('/posts/')) {
@@ -26,7 +25,7 @@ export const TopNav: React.FC = () => {
                             <IonIcon icon={menuOutline} />
                         </span>
                     ) : (
-                        <Link href="#" onClick={() => router.back()}>
+                        <Link href="/">
                             <span className="headerButton">
                                 <IonIcon icon={chevronBackOutline} />
                             </span>
