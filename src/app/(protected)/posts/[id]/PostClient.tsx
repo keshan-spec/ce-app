@@ -30,33 +30,35 @@ const PostClient = ({ postId }: { postId: string; }) => {
         setCommentsOpen(true);
     }, [postId]);
 
-    const getCommentCount = () => {
+    const getCommentCount = useCallback(() => {
         return data?.comments_count || 0;
-    };
+    }, [data]);
 
     return (
         <div className="bg-theme-dark min-h-screen max-h-screen overflow-hidden">
-            <SlideInFromBottomToTop
-                isOpen={commentsOpen}
-                onClose={() => setCommentsOpen(false)}
-                height={"80%"}
-                title={`${getCommentCount()} comments`}
-                stickyScroll={true}
-            >
-                <ComentsSection postId={parseInt(postId)} />
-            </SlideInFromBottomToTop>
-
             {(isFetching || isLoading) && (
                 <PostCardSkeleton />
             )}
 
             {(data && !error) && (
-                <PostCard
-                    post={data}
-                    muted={muted}
-                    openComments={handleOpenComments}
-                    setMuted={setMuted}
-                />
+                <>
+                    <SlideInFromBottomToTop
+                        isOpen={commentsOpen}
+                        onClose={() => setCommentsOpen(false)}
+                        height={"80%"}
+                        title={`${getCommentCount()} comments`}
+                        stickyScroll={true}
+                    >
+                        <ComentsSection postId={parseInt(postId)} />
+                    </SlideInFromBottomToTop>
+
+                    <PostCard
+                        post={data}
+                        muted={muted}
+                        openComments={handleOpenComments}
+                        setMuted={setMuted}
+                    />
+                </>
             )}
 
             {error && <PostNotFound />}

@@ -80,7 +80,6 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
 
     const [isLiked, setIsLiked] = useState<boolean>(post.is_liked);
 
-
     useEffect(() => {
         const video = videoRef.current;
 

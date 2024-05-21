@@ -48,9 +48,6 @@ export async function generateMetadata(
 }
 
 const Page = ({ params }: { params: { id: string; }; }) => {
-    return (
-        <h1>{params.id}</h1>
-    );
     return <PostClient postId={params.id} />;
 };
 
