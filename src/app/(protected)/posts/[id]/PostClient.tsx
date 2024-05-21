@@ -2,21 +2,36 @@
 import { useCallback, useState } from "react";
 
 import { Post } from "@/types/posts";
+import { PostNotFound } from '@/components/Posts/PostNotFound';
 
 import SlideInFromBottomToTop from "@/shared/SlideIn";
 import { ComentsSection } from "@/components/Posts/ComentSection";
 import { PostCard } from "@/components/Posts/Posts";
+import { useQuery } from "react-query";
+import { fetchPost } from "@/actions/post-actions";
+import { PostCardSkeleton } from "@/components/Posts/PostCardSkeleton";
 
-const PostClient = ({ post }: { post: Post; }) => {
+const PostClient = ({ postId }: { postId: string; }) => {
+    const { data, error, isLoading, isFetching } = useQuery<Post | null, Error>({
+        queryKey: ["post", postId],
+        queryFn: () => {
+            return fetchPost(postId);
+        },
+        retry: 0,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        keepPreviousData: true,
+    });
+
     const [muted, setMuted] = useState(true); // State to track muted state
     const [commentsOpen, setCommentsOpen] = useState(false); // State to track comments open state
 
     const handleOpenComments = useCallback(() => {
         setCommentsOpen(true);
-    }, [post.id]);
+    }, [postId]);
 
     const getCommentCount = () => {
-        return post?.comments_count ?? 0;
+        return data?.comments_count || 0;
     };
 
     return (
@@ -28,15 +43,23 @@ const PostClient = ({ post }: { post: Post; }) => {
                 title={`${getCommentCount()} comments`}
                 stickyScroll={true}
             >
-                <ComentsSection postId={post.id} />
+                <ComentsSection postId={parseInt(postId)} />
             </SlideInFromBottomToTop>
 
-            <PostCard
-                post={post}
-                muted={muted}
-                openComments={handleOpenComments}
-                setMuted={setMuted}
-            />
+            {(isFetching || isLoading) && (
+                <PostCardSkeleton />
+            )}
+
+            {(data && !error) && (
+                <PostCard
+                    post={data}
+                    muted={muted}
+                    openComments={handleOpenComments}
+                    setMuted={setMuted}
+                />
+            )}
+
+            {error && <PostNotFound />}
         </div>
     );
 };

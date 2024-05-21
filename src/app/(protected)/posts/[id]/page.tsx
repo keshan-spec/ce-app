@@ -1,6 +1,5 @@
 import type { Metadata, ResolvingMetadata } from 'next';
 import { fetchPost } from '@/actions/post-actions';
-import { PostNotFound } from '@/components/Posts/PostNotFound';
 
 import PostClient from './PostClient';
 
@@ -49,14 +48,8 @@ export async function generateMetadata(
     };
 }
 
-const Page = async ({ params }: { params: { id: string; }; }) => {
-    const post = await fetchPost(params.id);
-
-    if (!post) {
-        return <PostNotFound />;
-    }
-
-    return <PostClient post={post} />;
+const Page = ({ params }: { params: { id: string; }; }) => {
+    return <PostClient postId={params.id} />;
 };
 
 export default Page;
