@@ -5,6 +5,7 @@ import {
     DEFAULT_LOGIN_REDIRECT,
     apiAuthPrefix,
     authRoutes,
+    publcDynamicRoutes,
     publicRoutes,
 } from "@/routes";
 
@@ -15,8 +16,17 @@ export default auth((req) => {
     const isLoggedIn = !!req.auth;
 
     const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
+    console.log(nextUrl.pathname);
+
     const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
     const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+
+    // check for dynamic routes
+    const publicDynamicRoute = publcDynamicRoutes.find((route) => {
+        const re = new RegExp(`^${route.replace(/:[^/]+/g, '([^/]+)')}$`);
+        return re.test(nextUrl.pathname);
+    });
+
 
     if (isApiAuthRoute) {
         return null;
@@ -29,7 +39,7 @@ export default auth((req) => {
         return null;
     }
 
-    if (!isLoggedIn && !isPublicRoute) {
+    if (!isLoggedIn && !isPublicRoute && !publicDynamicRoute) {
         let callbackUrl = nextUrl.pathname;
         if (nextUrl.search) {
             callbackUrl += nextUrl.search;

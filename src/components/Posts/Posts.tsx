@@ -26,6 +26,7 @@ import AutoHeight from 'embla-carousel-auto-height';
 import { useDotButton } from "../Carousel/EmbalDotButtons";
 import { IonIcon } from "@ionic/react";
 import { copy, ellipsisVerticalCircle, ellipsisVerticalCircleOutline, ellipsisVerticalOutline, trashBinOutline, warningOutline } from "ionicons/icons";
+import { NativeShare } from "../ActionSheets/Share";
 
 type DotButtonPropType = PropsWithChildren<
     React.DetailedHTMLProps<
@@ -63,7 +64,7 @@ export const DotButton: React.FC<DotButtonPropType> = (props) => {
     );
 };
 
-const PostCard = ({ post, muted, setMuted, openComments }: {
+export const PostCard = ({ post, muted, setMuted, openComments }: {
     post: Post,
     muted: boolean,
     setMuted: React.Dispatch<React.SetStateAction<boolean>>;
@@ -121,19 +122,6 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
             emblaApi?.off('select', onUserScroll);
         };
     }, [emblaApi]);
-
-    const sharePost = async () => {
-        try {
-            await Share.share({
-                title: "Share Event",
-                text: post.caption,
-                url: window.location.href,
-                dialogTitle: "Share Event",
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
     const onLikePost = async () => {
         if (!isLoggedIn) {
@@ -230,10 +218,15 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
                 </div>
                 <div className="flex flex-col p-2 gap-y-2">
                     <div className="flex gap-1 w-full justify-between text-xl">
-                        <div className="flex gap-1 min-w-24 items-start justify-start">
+                        <div className="flex gap-2 min-w-24 items-start justify-start">
                             {renderLike()}
                             <BiComment onClick={() => openComments(post.id)} />
-                            <BiShareAlt onClick={sharePost} />
+                            <NativeShare
+                                shareUrl={`${window.location.origin}/posts/${post.id}`}
+                                shareText={post.caption}
+                                shareTitle="DriveLife Post"
+                                shareImage={post.media[0].media_url}
+                            />
                         </div>
                         {media.length > 1 && (
                             <div className="flex gap-1 min-w-24 items-start justify-center max-w-20">
@@ -257,7 +250,7 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
 
                     <span className="text-xs">{post.likes_count ?? 0} likes</span>
 
-                    <div className="font-medium flex items-center gap-1 text-sm truncate w-48 md:w-full lg:w-full" title={post.caption}>
+                    <div className="font-medium flex items-center gap-1 text-sm" title={post.caption}>
                         <div className=" text-white text-xs">{post.username ?? "Attendee"}</div>
                         <span className="text-white/80 text-xs"> {post.caption}</span>
                     </div>
@@ -286,15 +279,17 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
                                 />
                             </div>
                         </div>
-                        <div className="font-medium text-white text-sm">{post.username}</div>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-white/60">
-                        {post.location && (
-                            <div className="flex items-center gap-1">
-                                <BiMapPin />
-                                <span>{post.location}</span>
+                        <div className="flex flex-col">
+                            <div className="font-medium text-white text-sm">{post.username}</div>
+                            <div className="flex items-center gap-2 text-xs text-white/60">
+                                {post.location && (
+                                    <div className="flex items-center gap-1">
+                                        <BiMapPin />
+                                        <span>{post.location}</span>
+                                    </div>
+                                )}
                             </div>
-                        )}
+                        </div>
                     </div>
                 </div>
 

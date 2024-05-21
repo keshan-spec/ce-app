@@ -370,8 +370,8 @@ const PostSharePanel: React.FC<PostSharePanelProps> = ({ media, onPostSuccess })
                     })}
                 </Splide>
             </div>
-            <textarea placeholder="Write a caption..." className="border p-2 rounded" />
-            <input type="text" placeholder="Add location" className="border p-2 rounded" />
+            <textarea placeholder="Write a caption..." className="border p-2 rounded" name='caption' />
+            <input type="text" placeholder="Add location" className="border p-2 rounded" name='location' />
 
             {posting.error && (
                 <div className={`fixed z-10 w-full bottom-0 h-14 p-2 mt-2 text-center text-red-500 bg-red-100`} ref={errorDiv}>

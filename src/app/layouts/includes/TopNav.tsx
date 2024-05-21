@@ -1,22 +1,32 @@
 import { SidePanel } from '@/components/SidePanel';
 import { IonIcon } from '@ionic/react';
-import { menuOutline, notifications, searchOutline, calculatorOutline, locationOutline, mapOutline, heart, chevronBackOutline } from 'ionicons/icons';
+import { menuOutline, notifications, searchOutline, chevronBackOutline } from 'ionicons/icons';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+
 
 export const TopNav: React.FC = () => {
     const pathname = usePathname();
+    const router = useRouter();
+
+    const showMenuIcon = () => {
+        if (pathname.includes('/profile') || pathname.includes('/posts/')) {
+            return false;
+        }
+
+        return true;
+    };
 
     return (
         <div className="appHeader bg-primary scrolled header-div-wrapper">
             <div className="header-row-wrapper-top">
                 <div className="left">
-                    {!pathname.includes('/profile') ? (
+                    {showMenuIcon() ? (
                         <span className="headerButton" data-bs-toggle="offcanvas" data-bs-target="#sidebarPanel" role='button'>
                             <IonIcon icon={menuOutline} />
                         </span>
                     ) : (
-                        <Link href="/">
+                        <Link href="#" onClick={() => router.back()}>
                             <span className="headerButton">
                                 <IonIcon icon={chevronBackOutline} />
                             </span>

@@ -5,7 +5,13 @@
  */
 export const publicRoutes = [
     "/",
-    "/posts"
+    "/posts",
+    "/profile",
+];
+
+export const publcDynamicRoutes = [
+    "/profile/:id",
+    "/posts/:id",
 ];
 
 /**

@@ -1,4 +1,5 @@
 "use server";
+import { Post } from "@/types/posts";
 import { API_URL } from "./api";
 import { getSessionUser } from "./auth-actions";
 
@@ -104,6 +105,33 @@ export const addPost = async (mediaList: string[], caption?: string, location?: 
 
     if (response.status !== 200) {
         throw new Error("Failed to create post");
+    }
+
+    return data;
+};
+
+
+export const fetchPost = async (postId: string): Promise<Post | null> => {
+    let user;
+    try {
+        user = await getSessionUser();
+    } catch (e) {
+        console.error("Error fetching user");
+    }
+
+    const response = await fetch(`${API_URL}/wp-json/app/v1/get-post`, {
+        cache: "no-cache",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: user?.id, post_id: postId }),
+    });
+
+    const data = await response.json();
+
+    if (response.status !== 200) {
+        return null;
     }
 
     return data;

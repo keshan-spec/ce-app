@@ -21,15 +21,6 @@ export const ClientLayout = ({
     children: React.ReactNode;
     session: Session | null;
 }) => {
-
-    useEffect(() => {
-        // console.log(session);
-
-        // if (session) {
-        //     location.reload();
-        // }
-    }, [session]);
-
     return (
         <QueryClientProvider client={queryClient}>
             <ObservedQueryProvider>
