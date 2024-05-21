@@ -26,6 +26,8 @@ import AutoHeight from 'embla-carousel-auto-height';
 import { useDotButton } from "../Carousel/EmbalDotButtons";
 import { IonIcon } from "@ionic/react";
 import { copy, ellipsisVerticalCircle, ellipsisVerticalCircleOutline, ellipsisVerticalOutline, trashBinOutline, warningOutline } from "ionicons/icons";
+
+import { usePathname, useRouter } from 'next/navigation';
 import { NativeShare } from "../ActionSheets/Share";
 
 type DotButtonPropType = PropsWithChildren<
@@ -222,7 +224,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                             {renderLike()}
                             <BiComment onClick={() => openComments(post.id)} />
                             <NativeShare
-                                shareUrl={`${window.location.origin}/posts/${post.id}`}
+                                shareUri={`/posts/${post.id}`}
                                 shareText={post.caption}
                                 shareTitle="DriveLife Post"
                                 shareImage={post.media[0].media_url}

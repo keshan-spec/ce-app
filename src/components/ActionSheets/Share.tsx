@@ -2,13 +2,14 @@
 import { BiShareAlt } from 'react-icons/bi';
 import { IonIcon } from '@ionic/react';
 import { logoFacebook, logoTwitter, logoWhatsapp, closeOutline, logoInstagram, copyOutline } from 'ionicons/icons';
+import { useEffect, useState } from 'react';
 
 interface ShareProps {
     shareImage: string;
     shareTags?: string[];
     shareText: string;
     shareTitle: string;
-    shareUrl: string;
+    shareUri: string;
 }
 
 export const NativeShare: React.FC<ShareProps> = ({
@@ -16,8 +17,24 @@ export const NativeShare: React.FC<ShareProps> = ({
     shareTags,
     shareText,
     shareTitle,
-    shareUrl,
+    shareUri,
 }) => {
+    const [shareUrl, setShareUrl] = useState<string>('');
+
+    useEffect(() => {
+        try {
+            const siteUrl = window.location.origin;
+
+            const url = new URL(`${siteUrl}${shareUri}`);
+            if (shareTags) {
+                url.searchParams.append('tags', shareTags.join(','));
+            }
+            setShareUrl(url.toString());
+        } catch (error) {
+            console.error('Error setting share URL', error);
+        }
+    }, [shareUri, shareTags]);
+
     const shareToFacebook = () => {
         const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
         window.open(url, '_blank');
