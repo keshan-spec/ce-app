@@ -1,5 +1,5 @@
 'use client';
-import { useSearchParams } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 import PopUp from "./Dialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -29,12 +29,22 @@ export const GeneralErrorPopUp: React.FC = () => {
         }
 
         if (searchParams.get('deeplink')) {
-            return (
-                <div className="text-center">
-                    <h4>DeepLink</h4>
-                    <p>{searchParams.get('deeplink')}</p>
-                </div>
-            );
+            const deepLink = searchParams.get('deeplink');
+
+            if (!deepLink) {
+                return (
+                    <div className="text-center">
+                        <h4>Invalid Link</h4>
+                        <p>The link you tried to access is invalid.</p>
+                    </div>
+                );
+            }
+
+            // parse url
+            const url = new URL(deepLink);
+            const path = url.pathname;
+
+            return redirect(path);
         }
 
         return (
