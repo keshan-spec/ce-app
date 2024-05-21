@@ -34,7 +34,7 @@ export default async function RootLayout({
         />
 
         <SessionProvider session={session}>
-          <ClientLayout session={session}>
+          <ClientLayout>
             {children}
           </ClientLayout>
         </SessionProvider>

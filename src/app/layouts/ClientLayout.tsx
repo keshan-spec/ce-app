@@ -16,17 +16,15 @@ const queryClient = new QueryClient();
 
 export const ClientLayout = ({
     children,
-    session
 }: {
     children: React.ReactNode;
-    session: Session | null;
 }) => {
     return (
         <QueryClientProvider client={queryClient}>
             <ObservedQueryProvider>
                 {children}
             </ObservedQueryProvider>
-            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+            <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
     );
 };

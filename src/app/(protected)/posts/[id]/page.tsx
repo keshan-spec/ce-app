@@ -1,7 +1,7 @@
 import type { Metadata, ResolvingMetadata } from 'next';
 import { fetchPost } from '@/actions/post-actions';
 import PostClient from '@/components/Posts/PostClient';
-import { Suspense } from 'react';
+import { ClientContainer } from '@/app/layouts/ClientContainer';
 
 type Props = {
     params: { id: string; };
@@ -18,6 +18,7 @@ export async function generateMetadata(
 
     let title: string;
     let image: string;
+    let description = 'A post from Drive Life';
 
     if (!post) {
         title = 'Post not found';
@@ -30,11 +31,12 @@ export async function generateMetadata(
         }
 
         image = post.media[0].media_url;
+        description = `${post?.likes_count} likes, ${post?.comments_count} comments - ${post?.username}`;
     }
 
     return {
         title,
-        description: `${post?.likes_count} likes, ${post?.comments_count} comments - ${post?.username}`,
+        description,
         openGraph: {
             images: [
                 ...previousImages,
@@ -46,23 +48,11 @@ export async function generateMetadata(
     };
 }
 
-const Page = async ({ params }: { params: { id: string; }; }) => {
-    const post = await fetchPost(params.id);
-
+const Page = ({ params }: { params: { id: string; }; }) => {
     return (
-        <div key={params.id}>
-            {post ? (
-                <>
-                    <h2>{post.caption}</h2>
-                    <img src={post.media[0].media_url} alt={post.caption} />
-                    <Suspense fallback={<div>Loading...</div>}>
-                        <PostClient postId={params.id} />
-                    </Suspense>
-                </>
-            ) : (
-                <div>Post not found</div>
-            )}
-        </div>
+        <ClientContainer>
+            <PostClient postId={params.id} key={params.id} />
+        </ClientContainer>
     );
 };
 

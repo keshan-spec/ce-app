@@ -1,3 +1,4 @@
+"use client";
 import { useUser } from "@/hooks/useUser";
 import { Post } from "@/types/posts";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -129,10 +130,15 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                                 )}>
                                     <div className="embla__slide__number w-full h-full">
                                         {item.media_type === 'image' && (
-                                            <NcImage src={item.media_url} alt={item.media_alt} className="object-contain w-full" imageDimension={{
-                                                width: parseInt(item.media_width) || 400,
-                                                height: maxHeight || 400
-                                            }} />
+                                            <NcImage
+                                                key={item.id}
+                                                src={item.media_url} alt={item.media_alt}
+                                                className="object-contain w-full"
+                                                imageDimension={{
+                                                    width: parseInt(item.media_width) || 400,
+                                                    height: maxHeight || 400
+                                                }}
+                                            />
                                         )}
 
                                         {item.media_type === 'video' && (

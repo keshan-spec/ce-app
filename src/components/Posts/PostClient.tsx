@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { Post } from "@/types/posts";
 import { PostNotFound } from '@/components/Posts/PostNotFound';
@@ -13,14 +13,14 @@ import { PostCard } from "@/components/Posts/PostCard";
 
 const PostClient = ({ postId }: { postId: string; }) => {
     const { data, error, isLoading, isFetching } = useQuery<Post | null, Error>({
-        queryKey: ["post", postId],
+        queryKey: ["view-post", postId], // Unique key for the query, in this case "view-post-:id
         queryFn: () => {
             return fetchPost(postId);
         },
-        retry: 0,
+        keepPreviousData: false,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
-        keepPreviousData: true,
+        retry: 1,
     });
 
     const [muted, setMuted] = useState(true); // State to track muted state
@@ -34,20 +34,13 @@ const PostClient = ({ postId }: { postId: string; }) => {
         return data?.comments_count || 0;
     }, [data]);
 
-
-    useEffect(() => {
-        console.log("PostClient -> data", data);
-        console.log("PostClient -> error", error);
-        console.log("PostClient -> isLoading", isLoading);
-    }, [data, error, isLoading]);
-
     return (
         <div className="bg-theme-dark min-h-screen max-h-screen overflow-hidden">
             {(isFetching || isLoading) && (
                 <PostCardSkeleton />
             )}
 
-            {(data && !error) && (
+            {(data && !isLoading) && (
                 <>
                     <SlideInFromBottomToTop
                         isOpen={commentsOpen}
@@ -66,6 +59,10 @@ const PostClient = ({ postId }: { postId: string; }) => {
                         setMuted={setMuted}
                     />
                 </>
+            )}
+
+            {!data && !isLoading && !isFetching && (
+                <PostNotFound />
             )}
 
             {error && <PostNotFound />}
