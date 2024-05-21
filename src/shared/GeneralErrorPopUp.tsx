@@ -28,24 +28,24 @@ export const GeneralErrorPopUp: React.FC = () => {
             );
         }
 
-        if (searchParams.get('deeplink')) {
-            const deepLink = searchParams.get('deeplink');
+        // if (searchParams.get('deeplink')) {
+        //     const deepLink = searchParams.get('deeplink');
 
-            if (!deepLink) {
-                return (
-                    <div className="text-center">
-                        <h4>Invalid Link</h4>
-                        <p>The link you tried to access is invalid.</p>
-                    </div>
-                );
-            }
+        //     if (!deepLink) {
+        //         return (
+        //             <div className="text-center">
+        //                 <h4>Invalid Link</h4>
+        //                 <p>The link you tried to access is invalid.</p>
+        //             </div>
+        //         );
+        //     }
 
-            // parse url
-            const url = new URL(deepLink);
-            const path = url.pathname;
+        //     // parse url
+        //     const url = new URL(deepLink);
+        //     const path = url.pathname;
 
-            return redirect(path);
-        }
+        //     return redirect(path);
+        // }
 
         return (
             <div className="text-center">
