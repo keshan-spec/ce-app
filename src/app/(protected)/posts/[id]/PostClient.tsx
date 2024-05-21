@@ -35,7 +35,7 @@ const PostClient = ({ post }: { post: Post; }) => {
             </SlideInFromBottomToTop>
             <PostCard
                 post={post}
-                muted
+                muted={muted}
                 openComments={() => {
                     handleOpenComments(post.id);
                 }}

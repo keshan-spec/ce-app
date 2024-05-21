@@ -1,4 +1,4 @@
-import React from 'react';
+"use client";
 import { BiShareAlt } from 'react-icons/bi';
 import { IonIcon } from '@ionic/react';
 import { logoFacebook, logoTwitter, logoWhatsapp, closeOutline, logoInstagram, copyOutline } from 'ionicons/icons';
