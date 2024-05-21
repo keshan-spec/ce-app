@@ -1,7 +1,8 @@
-import { fetchPost } from '@/actions/post-actions';
 import type { Metadata, ResolvingMetadata } from 'next';
-import PostClient from './PostClient';
+import { fetchPost } from '@/actions/post-actions';
 import { PostNotFound } from '@/components/Posts/PostNotFound';
+
+import PostClient from './PostClient';
 
 // SEO
 type Props = {
@@ -51,14 +52,11 @@ export async function generateMetadata(
 const Page = async ({ params }: { params: { id: string; }; }) => {
     const post = await fetchPost(params.id);
 
-
     if (!post) {
         return <PostNotFound />;
     }
 
-    return (
-        <PostClient post={post} />
-    );
+    return <PostClient post={post} />;
 };
 
 export default Page;
