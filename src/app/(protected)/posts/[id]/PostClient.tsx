@@ -1,15 +1,15 @@
 "use client";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Post } from "@/types/posts";
 import { PostNotFound } from '@/components/Posts/PostNotFound';
 
 import SlideInFromBottomToTop from "@/shared/SlideIn";
 import { ComentsSection } from "@/components/Posts/ComentSection";
-import { PostCard } from "@/components/Posts/Posts";
 import { useQuery } from "react-query";
 import { fetchPost } from "@/actions/post-actions";
 import { PostCardSkeleton } from "@/components/Posts/PostCardSkeleton";
+import { PostCard } from "@/components/Posts/PostCard";
 
 const PostClient = ({ postId }: { postId: string; }) => {
     const { data, error, isLoading, isFetching } = useQuery<Post | null, Error>({
@@ -33,6 +33,13 @@ const PostClient = ({ postId }: { postId: string; }) => {
     const getCommentCount = useCallback(() => {
         return data?.comments_count || 0;
     }, [data]);
+
+
+    useEffect(() => {
+        console.log("PostClient -> data", data);
+        console.log("PostClient -> error", error);
+        console.log("PostClient -> isLoading", isLoading);
+    }, [data, error, isLoading]);
 
     return (
         <div className="bg-theme-dark min-h-screen max-h-screen overflow-hidden">
