@@ -1,7 +1,6 @@
 import type { Metadata, ResolvingMetadata } from 'next';
 import { fetchPost } from '@/actions/post-actions';
 import PostClient from '@/components/Posts/PostClient';
-import { ClientContainer } from '@/app/layouts/ClientContainer';
 
 type Props = {
     params: { id: string; };
@@ -50,9 +49,7 @@ export async function generateMetadata(
 
 const Page = ({ params }: { params: { id: string; }; }) => {
     return (
-        <ClientContainer>
-            <PostClient postId={params.id} key={params.id} />
-        </ClientContainer>
+        <PostClient postId={params.id} key={params.id} />
     );
 };
 

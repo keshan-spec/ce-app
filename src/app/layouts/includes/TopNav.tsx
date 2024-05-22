@@ -38,7 +38,7 @@ export const TopNav: React.FC = () => {
                     </Link>
                 </div>
                 <div className="right">
-                    <Link href="#" className="headerButton">
+                    <Link href="/" className="headerButton">
                         <IonIcon icon={notifications} />
                     </Link>
                     <Link href="/search" className="headerButton">

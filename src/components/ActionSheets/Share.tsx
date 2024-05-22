@@ -10,6 +10,7 @@ interface ShareProps {
     shareText: string;
     shareTitle: string;
     shareUri: string;
+    id: string | number;
 }
 
 export const NativeShare: React.FC<ShareProps> = ({
@@ -18,6 +19,7 @@ export const NativeShare: React.FC<ShareProps> = ({
     shareText,
     shareTitle,
     shareUri,
+    id,
 }) => {
     const [shareUrl, setShareUrl] = useState<string>('');
 
@@ -33,6 +35,10 @@ export const NativeShare: React.FC<ShareProps> = ({
         } catch (error) {
             console.error('Error setting share URL', error);
         }
+
+        return () => {
+            setShareUrl('');
+        };
     }, [shareUri, shareTags]);
 
     const shareToFacebook = () => {
@@ -57,10 +63,10 @@ export const NativeShare: React.FC<ShareProps> = ({
 
     return (
         <div className="fab-button animate dropdown">
-            <span data-bs-toggle="offcanvas" data-bs-target="#actionSheetCreate">
+            <span data-bs-toggle="offcanvas" data-bs-target={`#actionSheetCreate_${id}`}>
                 <BiShareAlt />
             </span>
-            <div className="offcanvas offcanvas-bottom action-sheet rounded-t-lg" tabIndex={-1} id="actionSheetCreate" style={{
+            <div className="offcanvas offcanvas-bottom action-sheet rounded-t-lg" tabIndex={-1} id={`actionSheetCreate_${id}`} style={{
                 visibility: 'visible',
             }} aria-modal="true" role="dialog">
                 <div className="offcanvas-body">

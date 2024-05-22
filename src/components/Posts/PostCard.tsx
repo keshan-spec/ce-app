@@ -171,12 +171,15 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                         })}
                     </div>
                 </div>
+
                 <div className="flex flex-col p-2 gap-y-2">
                     <div className="flex gap-1 w-full justify-between text-xl">
                         <div className="flex gap-2 min-w-24 items-start justify-start">
                             {renderLike()}
                             <BiComment onClick={() => openComments(post.id)} />
                             <NativeShare
+                                id={post.id.toString()}
+                                key={post.id}
                                 shareUri={`/posts/${post.id}`}
                                 shareText={post.caption}
                                 shareTitle="DriveLife Post"
@@ -218,7 +221,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                 </div>
             </div>
         );
-    }, [post, muted, isLiked, selectedIndex, scrollSnaps]);
+    }, [post.id, muted, isLiked, selectedIndex, scrollSnaps]);
 
     return (
         <div className="relative shadow-md overflow-hidden bg-theme-dark mb-6 text-white" id={`PostMain-${post.id}`}>
