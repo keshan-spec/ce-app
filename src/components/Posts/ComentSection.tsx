@@ -182,7 +182,7 @@ const Comment: React.FC<{
 
 const CommentLoadingSkeleton = () => {
     return (
-        <div className="flex items-center space-x-2 my-4">
+        <div className="flex items-center space-x-2 my-4 px-3">
             <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
             <div className="flex-1 space-y-1">
                 <div className="w-2/3 h-4 bg-gray-300 rounded"></div>
