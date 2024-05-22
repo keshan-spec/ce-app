@@ -1,13 +1,23 @@
+'use client';
 import { Button } from '@/shared/Button';
 import { Tabs } from './Tabs';
 import { SocialButton } from '@/shared/SocialButton';
 import { useUser } from '@/hooks/useUser';
+import { NoAuthWall } from '../Protected/NoAuthWall';
 
-export const ProfileLayout: React.FC = () => {
+interface ProfileLayoutProps {
+    profileId?: string;
+    currentUser: boolean;
+}
+
+export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
+    currentUser,
+    profileId
+}) => {
     const { user, isLoggedIn } = useUser();
 
-    if (!isLoggedIn) {
-        return null;
+    if (!isLoggedIn && currentUser) {
+        return <NoAuthWall redirectTo="/profile" />;
     }
 
     return (
@@ -46,8 +56,7 @@ export const ProfileLayout: React.FC = () => {
             <div className="section mt-1 mb-2">
                 <div className="profile-info">
                     <div className="mt-3 flex flex-col gap-2 items-center w-full">
-                        <Button className="w-full"><i className="fas fa-user-plus mr-2"></i> Follow
-                        </Button>
+                        <Button className="w-full"><i className="fas fa-user-plus mr-2"></i> Follow</Button>
                         <SocialButton icon="fab fa-instagram">Instagram</SocialButton>
                         <SocialButton icon="fab fa-facebook">Facebook</SocialButton>
                         <SocialButton icon="fab fa-tiktok">TikTok</SocialButton>
@@ -60,10 +69,9 @@ export const ProfileLayout: React.FC = () => {
                         ornare. Fusce varius varius massa.
                     </div>
                 </div>
-
             </div>
 
-            <Tabs />
+            <Tabs profileId={profileId || user.id} />
         </>
     );
 };

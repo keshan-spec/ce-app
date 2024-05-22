@@ -18,6 +18,23 @@ export const maybeLikePost = async (postId: number) => {
     return data;
 };
 
+export const maybeBookmarkPost = async (postId: number) => {
+    const user = await getSessionUser();
+
+    const response = await fetch(`${API_URL}/wp-json/app/v1/bookmark-post`, {
+        cache: "no-cache",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: user?.id, post_id: postId }),
+    });
+    const data = await response.json();
+    console.log(data);
+
+    return data;
+};
+
 export const fetchPosts = async (page: number) => {
     let user;
     try {

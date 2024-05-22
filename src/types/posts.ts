@@ -10,6 +10,7 @@ export type Post = {
     media: PostMedia[];
     is_liked: boolean;
     user_profile_image?: string;
+    is_bookmarked: boolean;
 };
 
 export interface PostMedia {

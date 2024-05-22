@@ -5,8 +5,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useDotButton } from "../Carousel/EmbalDotButtons";
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoHeight from 'embla-carousel-auto-height';
-import { maybeLikePost } from "@/actions/post-actions";
-import { BiBookmark, BiComment, BiHeart, BiMapPin, BiSolidHeart, BiVolumeFull, BiVolumeMute } from "react-icons/bi";
+import { maybeBookmarkPost, maybeLikePost } from "@/actions/post-actions";
+import { BiBookmark, BiComment, BiHeart, BiMapPin, BiSolidBookmark, BiSolidHeart, BiVolumeFull, BiVolumeMute } from "react-icons/bi";
 import clsx from "clsx";
 import NcImage from "../Image/Image";
 import { NativeShare } from "../ActionSheets/Share";
@@ -28,6 +28,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
     const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi);
 
     const [isLiked, setIsLiked] = useState<boolean>(post.is_liked);
+    const [bookMarked, setBookMarked] = useState<boolean>(post.is_bookmarked);
 
     useEffect(() => {
         const video = videoRef.current;
@@ -75,7 +76,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
 
     const onLikePost = async () => {
         if (!isLoggedIn) {
-            alert("Please login to like event");
+            alert("Please login to like post");
             return;
         }
 
@@ -104,6 +105,37 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
         return (
             <div className="flex flex-col items-center justify-start">
                 {!isLiked ? <BiHeart className="w-5 h-5 text-gray-300" onClick={onLikePost} /> : <BiSolidHeart className="w-5 h-5 text-red-600" onClick={onLikePost} />}
+            </div>
+        );
+    };
+
+    const handleBookMark = async () => {
+        if (!isLoggedIn) {
+            alert("Please login to bookmark post");
+            return;
+        }
+
+        const prevStatus = bookMarked;
+
+        // Optimistic UI
+        setBookMarked(!bookMarked);
+        post.is_bookmarked = bookMarked;
+
+        try {
+            await maybeBookmarkPost(post.id);
+        } catch (error) {
+            // Rollback
+            setBookMarked(prevStatus);
+            alert("Oops! Unable to bookmark post");
+            post.is_bookmarked = prevStatus;
+            console.log(error);
+        }
+    };
+
+    const renderBookmark = () => {
+        return (
+            <div className="flex flex-col items-center justify-start">
+                {!bookMarked ? <BiBookmark className="w-5 h-5 text-gray-300" onClick={handleBookMark} /> : <BiSolidBookmark className="w-5 h-5 text-white" onClick={handleBookMark} />}
             </div>
         );
     };
@@ -202,7 +234,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                         )}
 
                         <div className="flex min-w-24 items-start justify-end">
-                            <BiBookmark />
+                            {renderBookmark()}
                         </div>
                     </div>
 
@@ -221,7 +253,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                 </div>
             </div>
         );
-    }, [post.id, muted, isLiked, selectedIndex, scrollSnaps]);
+    }, [post.id, muted, isLiked, selectedIndex, scrollSnaps, bookMarked]);
 
     return (
         <div className="relative shadow-md overflow-hidden bg-theme-dark mb-6 text-white" id={`PostMain-${post.id}`}>

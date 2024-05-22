@@ -1,28 +1,157 @@
+import { getUserPosts } from "@/actions/profile-actions";
+import { Post } from "@/types/posts";
+import Image from "next/image";
+import { useEffect, useMemo } from "react";
+import { useInfiniteQuery } from "react-query";
 
-export const Feed: React.FC = () => {
-    return (
-        <div className="tab-pane fade" id="feed" role="tabpanel">
-            <UserPosts />
-            <div className="p-2 pt-0 pb-0">
-                <a href="#" className="btn btn-primary btn-block">More Photo</a>
+interface FeedProps {
+    tagged?: boolean;
+    profileId: string;
+}
+
+export const Feed: React.FC<FeedProps> = ({
+    tagged = false,
+    profileId
+}) => {
+    const key = tagged ? 'tagged-posts' : 'user-posts';
+
+    const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+        queryKey: [key, profileId],
+        queryFn: ({ pageParam = 1 }) => {
+            if (tagged) return getUserPosts(profileId, pageParam, true);
+            return getUserPosts(profileId, pageParam);
+        },
+        getNextPageParam: (lastPage: { total_pages: number, data: Post[], limit: number; }, pages: any[]) => {
+            const maxPages = Math.ceil(lastPage.total_pages / lastPage.limit);
+            const nextPage = pages.length + 1;
+            return nextPage <= maxPages ? nextPage : undefined;
+        },
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        cacheTime: 2 * 60 * 1000, // 2 minutes
+        retry: 1,
+    });
+
+    // Infinite scroll
+    useEffect(() => {
+        let fetching = isFetchingNextPage || isFetching || false;
+        const onScroll = async (event: any) => {
+
+            const { scrollHeight, scrollTop, clientHeight } =
+                event.target.scrollingElement;
+
+            if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.2) {
+                fetching = true;
+                if (hasNextPage) await fetchNextPage();
+                fetching = false;
+            }
+        };
+
+        document.addEventListener("scroll", onScroll);
+        return () => {
+            document.removeEventListener("scroll", onScroll);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [hasNextPage, isFetchingNextPage]);
+
+    const hasPages = useMemo(() => {
+        if (data && data.pages) {
+            // get flat array of posts
+            const validPosts = data.pages.map((page: any) => {
+                return !!page.data;
+            });
+
+            return validPosts.includes(true);
+        }
+
+        return false;
+    }, [data]);
+
+    const renderMedia = (post: Post) => {
+        if (!post.media) return (
+            <div className="bg-gray-300 w-full h-32" />
+        );
+
+        const isVideo = post.media[0].media_type === 'video';
+        const isMultiple = post.media.length > 1;
+
+        return (
+            <div className="relative w-full overflow-hidden max-h-32">
+                {isVideo ? (
+                    <video
+                        className="w-full h-32 object-cover"
+                        autoPlay={false}
+                    >
+                        <source src={post.media[0].media_url} type="video/mp4" />
+                    </video>
+                ) : (
+                    <img
+                        src={post.media[0].media_url}
+                        alt="image"
+                        className="w-full object-cover h-32"
+                        width={parseFloat(post.media[0].media_width) || 320}
+                        height={parseFloat(post.media[0].media_height) || 320}
+                    />
+                )}
+
+                {isMultiple && (
+                    <div className="absolute -top-1 right-0 bg-black/30 text-white !p-1.5 rounded-bl-md text-xs">
+                        <i className="fas fa-images" />
+                    </div>
+                )}
+
+                {isVideo && (
+                    <div className="absolute -top-1 left-0 bg-black/30 text-white !p-1.5 rounded-br-md text-xs">
+                        <i className="fas fa-video" />
+                    </div>
+                )}
             </div>
+        );
+    };
+
+    return (
+        <div className="fade show" id={tagged ? "tagged-posts" : "feed"} role="tabpanel">
+            <div className="mt-2 p-1 pt-0 pb-0">
+                <div className="grid grid-cols-3 gap-1">
+                    {data && data.pages?.map((page: any) => (
+                        page.data?.map((post: Post) => (
+                            <div key={post.id}>
+                                {renderMedia(post)}
+                            </div>
+                        ))
+                    ))}
+                </div>
+            </div>
+
+            {(!isFetching && !hasPages) && (
+                <div className="alert alert-info mx-3 text-center">No posts found</div>
+            )}
+
+            {error instanceof Error && (
+                <div className="alert alert-danger mx-3 text-center">{error.message}</div>
+            )}
+
+            {(isFetching && !isFetchingNextPage) && (
+                <MiniPostSkeleton />
+            )}
+
+            {isFetchingNextPage && (
+                <div className="w-full text-center my-4">
+                    <div className="spinner-border text-primary" role="status"></div>
+                </div>
+            )}
         </div>
     );
 };
 
-
-interface UserPostsProps {
-    tagged?: boolean;
-}
-
-export const UserPosts: React.FC<UserPostsProps> = ({ tagged }) => {
+const MiniPostSkeleton = () => {
     return (
-        <div className="mt-2 p-2 pt-0 pb-0">
-            <div className="row">
-                <div className="col-4 mb-2">
-                    <img src="assets/img/sample/photo/1.jpg" alt="image" className="imaged w-100" />
+        <div className="grid grid-cols-3 gap-1 px-2">
+            {Array.from({ length: 9 }).map((_, i) => (
+                <div key={i}>
+                    <div className="bg-gray-200 animate-pulse w-full h-32" />
                 </div>
-            </div>
+            ))}
         </div>
     );
 };

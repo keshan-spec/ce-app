@@ -47,7 +47,7 @@ export async function generateMetadata(
     };
 }
 
-const Page = ({ params }: { params: { id: string; }; }) => {
+const Page = async ({ params }: { params: { id: string; }; }) => {
     return (
         <PostClient postId={params.id} key={params.id} />
     );
