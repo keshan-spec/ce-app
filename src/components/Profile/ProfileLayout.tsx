@@ -28,6 +28,13 @@ const getUser = (profileId: string | undefined) => {
         };
     }
 
+    if (profileId && user?.id === profileId) {
+        return {
+            isLoggedIn,
+            user,
+        };
+    }
+
     // 59899
     const { data, isFetching, refetch } = useQuery({
         queryKey: ["user", profileId],
@@ -73,7 +80,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
         let icon: string = "fas fa-user-plus";
 
         if (!sessionUser || !isLoggedIn) {
-            text = "Login to follow";
+            return null;
         } else {
             if (user && user.followers.includes(sessionUser.id)) {
                 text = "Unfollow";

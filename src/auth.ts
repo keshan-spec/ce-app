@@ -2,6 +2,7 @@
 import NextAuth, { DefaultSession } from "next-auth";
 import authConfig from "@/auth.config";
 import { getUserDetails } from "@/actions/auth-actions";
+
 export type AuthUser = {
     id: string;
     first_name: string;
@@ -13,6 +14,7 @@ export type AuthUser = {
     following: string[];
     posts_count: number;
 };
+
 declare module "next-auth" {
     interface Session extends DefaultSession {
         user: AuthUser;
