@@ -11,7 +11,7 @@ import { UserProfileSkeleton } from './UserProfileSkeleton';
 import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
 import { maybeFollowUser } from '@/actions/profile-actions';
 import { redirect } from 'next/navigation';
-import { use, useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
 interface ProfileLayoutProps {
     profileId?: string;
@@ -75,7 +75,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
         if (!sessionUser || !isLoggedIn) {
             text = "Login to follow";
         } else {
-            if (user && sessionUser.following.includes(user.id)) {
+            if (user && user.followers.includes(sessionUser.id)) {
                 text = "Unfollow";
                 icon = "fas fa-user-minus";
             };
@@ -86,7 +86,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                 <i className={`${icon} mr-2`}></i> {text}
             </Button>
         );
-    }, [user?.id]);
+    }, [user?.id, user?.followers]);
 
     if (!isLoggedIn && currentUser) {
         return <NoAuthWall redirectTo="/profile" />;
