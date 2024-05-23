@@ -14,6 +14,7 @@ import { DotButton } from "./Posts";
 import { formatPostDate } from "@/utils/dateUtils";
 import { ellipsisVerticalOutline, trashBinOutline, warningOutline } from "ionicons/icons";
 import { IonIcon } from "@ionic/react";
+import Link from "next/link";
 
 export const PostCard = ({ post, muted, setMuted, openComments }: {
     post: Post,
@@ -262,11 +263,13 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                     <div className="flex items-center gap-2 justify-center">
                         <div className="avatar">
                             <div className="w-8 h-8 bg-gray-300 rounded-full border-1 border-theme-primary">
-                                <img
-                                    src={post.user_profile_image}
-                                    alt="User Avatar"
-                                    className="w-full h-full object-cover rounded-full"
-                                />
+                                <Link href={`/profile/${post.user_id}`} passHref>
+                                    <img
+                                        src={post.user_profile_image}
+                                        alt="User Avatar"
+                                        className="w-full h-full object-cover rounded-full"
+                                    />
+                                </Link>
                             </div>
                         </div>
                         <div className="flex flex-col">

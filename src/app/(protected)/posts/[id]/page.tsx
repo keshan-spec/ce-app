@@ -2,6 +2,13 @@ import type { Metadata, ResolvingMetadata } from 'next';
 import { fetchPost } from '@/actions/post-actions';
 import PostClient from '@/components/Posts/PostClient';
 
+
+import {
+    dehydrate,
+    HydrationBoundary,
+    QueryClient,
+} from '@tanstack/react-query';
+
 type Props = {
     params: { id: string; };
 };
@@ -47,9 +54,20 @@ export async function generateMetadata(
     };
 }
 
+
+
 const Page = async ({ params }: { params: { id: string; }; }) => {
+    const queryClient = new QueryClient();
+
+    await queryClient.prefetchQuery({
+        queryKey: ['user', params.id],
+        queryFn: () => fetchPost(params.id),
+    });
+
     return (
-        <PostClient postId={params.id} key={params.id} />
+        <HydrationBoundary state={dehydrate(queryClient)}>
+            <PostClient postId={params.id} key={params.id} />
+        </HydrationBoundary>
     );
 };
 

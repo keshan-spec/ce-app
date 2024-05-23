@@ -7,7 +7,6 @@ import {
     HydrationBoundary,
     QueryClient,
 } from '@tanstack/react-query';
-import { getUserPosts } from "@/actions/profile-actions";
 
 type Props = {
     params: { id: string; };
@@ -61,12 +60,6 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
     await queryClient.prefetchQuery({
         queryKey: ['user', params.id],
         queryFn: () => getUserDetails(params.id),
-    });
-
-
-    await queryClient.prefetchQuery({
-        queryKey: ['user-posts', params.id],
-        queryFn: () => getUserPosts(params.id, 1),
     });
 
     return (
