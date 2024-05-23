@@ -4,20 +4,64 @@ import { Tabs } from './Tabs';
 import { SocialButton } from '@/shared/SocialButton';
 import { useUser } from '@/hooks/useUser';
 import { NoAuthWall } from '../Protected/NoAuthWall';
+import { getUserDetails } from '@/actions/auth-actions';
+import { useQuery } from 'react-query';
+import { UserNotFound } from './UserNotFound';
+import { UserProfileSkeleton } from './UserProfileSkeleton';
+import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
 
 interface ProfileLayoutProps {
     profileId?: string;
     currentUser: boolean;
 }
 
+const getUser = (profileId: string | undefined) => {
+    const { user, isLoggedIn } = useUser();
+
+    if (!profileId) {
+        return {
+            isLoggedIn,
+            user,
+        };
+    }
+
+    // 59899
+    const { data, isFetching } = useQuery({
+        queryKey: ["user", profileId],
+        queryFn: () => getUserDetails(profileId),
+        retry: 0,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        retryOnMount: false,
+    });
+
+    return {
+        isLoggedIn,
+        user: data?.user,
+        isFetching,
+    };
+};
+
 export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
     currentUser,
     profileId
 }) => {
-    const { user, isLoggedIn } = useUser();
+    const { user, isLoggedIn, isFetching } = getUser(profileId);
 
     if (!isLoggedIn && currentUser) {
         return <NoAuthWall redirectTo="/profile" />;
+    }
+
+    if (!currentUser && !profileId) {
+        return <NoAuthWall redirectTo="/profile" />;
+    }
+
+    if (isFetching) {
+        return <UserProfileSkeleton />;
+    }
+
+    if (!user) {
+        return <UserNotFound />;
     }
 
     return (
@@ -29,7 +73,8 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
             }}>
                 <div className="flex flex-col items-center justify-center min-h-56 z-20 relative">
                     <div className="avatar mt-10">
-                        <img src={user.profile_image} alt="avatar" className="max-w-28 rounded-full border-2 border-white" />
+                        <img src={user.profile_image || PLACEHOLDER_PFP}
+                            alt="avatar" className="max-w-28 rounded-full border-2 border-white" />
                     </div>
                     <div className="flex flex-col items-center mt-2 gap-y-1">
                         <h3 className="text-md mb-0">@{user.username}</h3>
@@ -42,13 +87,13 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
             <div className="section full">
                 <div className="profile-stats !justify-center gap-4 ps-2 pe-2">
                     <a href="#" className="item">
-                        <strong>152</strong>posts
+                        <strong>{user.posts_count}</strong>posts
                     </a>
                     <a href="#" className="item">
-                        <strong>27k</strong>followers
+                        <strong>{user.followers?.length}</strong>followers
                     </a>
                     <a href="#" className="item">
-                        <strong>506</strong>following
+                        <strong>{user.following?.length}</strong>following
                     </a>
                 </div>
             </div>

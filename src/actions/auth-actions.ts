@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn, signOut } from "@/auth";
+import { AuthUser, signIn, signOut } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { AuthError } from "next-auth";
 
@@ -38,8 +38,14 @@ export const verifyUser = async (credentials: { email: string; password: string;
     }
 };
 
-export const getUserDetails = async (id: string) => {
-    let url = `${API_URL}/wp-json/ticket_scanner/v1/get_user_data`;
+export type UserResponse = {
+    success: boolean;
+    error?: string;
+    user?: AuthUser;
+};
+
+export const getUserDetails = async (id: string): Promise<UserResponse | null> => {
+    let url = `${API_URL}/wp-json/app/v1/get-user-profile`;
     let response = await fetch(url, {
         method: "POST",
         headers: {
@@ -48,11 +54,9 @@ export const getUserDetails = async (id: string) => {
         body: JSON.stringify({ user_id: id }),
     });
 
-    if (response.ok) {
-        return JSON.parse(await response.json());
-    }
-
-    return null;
+    const data = await response.json();
+    if (response.status !== 200) throw new Error(data.message);
+    return data;
 };
 
 export const handleSignOut = async () => {

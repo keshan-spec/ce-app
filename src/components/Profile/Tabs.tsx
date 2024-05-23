@@ -11,7 +11,6 @@ interface TabsProps {
 export const Tabs: React.FC<TabsProps> = ({
     profileId
 }) => {
-    const { user } = useUser();
     const [activeTab, setActiveTab] = useState<'garage' | 'feed' | 'tagged-posts' | 'bookmarks' | 'settings'>('garage');
 
     const renderTabs = useCallback(() => {

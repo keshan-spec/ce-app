@@ -1,6 +1,8 @@
 import { getUserPosts } from "@/actions/profile-actions";
+import NcImage from "@/components/Image/Image";
 import { Post } from "@/types/posts";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo } from "react";
 import { useInfiniteQuery } from "react-query";
 
@@ -30,6 +32,7 @@ export const Feed: React.FC<FeedProps> = ({
         refetchOnMount: false,
         cacheTime: 2 * 60 * 1000, // 2 minutes
         retry: 1,
+        keepPreviousData: false,
     });
 
     // Infinite scroll
@@ -85,7 +88,7 @@ export const Feed: React.FC<FeedProps> = ({
                         <source src={post.media[0].media_url} type="video/mp4" />
                     </video>
                 ) : (
-                    <img
+                    <NcImage
                         src={post.media[0].media_url}
                         alt="image"
                         className="w-full object-cover h-32"
@@ -115,15 +118,15 @@ export const Feed: React.FC<FeedProps> = ({
                 <div className="grid grid-cols-3 gap-1">
                     {data && data.pages?.map((page: any) => (
                         page.data?.map((post: Post) => (
-                            <div key={post.id}>
+                            <Link key={post.id} href={`/posts/${post.id}`}>
                                 {renderMedia(post)}
-                            </div>
+                            </Link>
                         ))
                     ))}
                 </div>
             </div>
 
-            {(!isFetching && !hasPages) && (
+            {(!isFetching && !hasPages && !error) && (
                 <div className="alert alert-info mx-3 text-center">No posts found</div>
             )}
 

@@ -2,17 +2,20 @@
 import NextAuth, { DefaultSession } from "next-auth";
 import authConfig from "@/auth.config";
 import { getUserDetails } from "@/actions/auth-actions";
-
+export type AuthUser = {
+    id: string;
+    first_name: string;
+    last_name: string;
+    username: string;
+    roles: string[];
+    profile_image: string;
+    followers: string[];
+    following: string[];
+    posts_count: number;
+};
 declare module "next-auth" {
     interface Session extends DefaultSession {
-        user: {
-            id: string;
-            first_name: string;
-            last_name: string;
-            username: string;
-            roles: string[];
-            profile_image: string;
-        } & DefaultSession["user"];
+        user: AuthUser & DefaultSession["user"];
     }
 }
 
@@ -32,12 +35,15 @@ export const {
                 session.user.id = token?.sub;
                 const data = await getUserDetails(token.sub);
 
-                if (data) {
+                if (data && data.user) {
                     session.user.first_name = data.user.first_name;
                     session.user.last_name = data.user.last_name;
                     session.user.username = data.user.username;
                     session.user.roles = data.user.roles;
                     session.user.profile_image = data.user.profile_image;
+                    session.user.followers = data.user.followers;
+                    session.user.following = data.user.following;
+                    session.user.posts_count = data.user.posts_count;
                 }
             }
 
