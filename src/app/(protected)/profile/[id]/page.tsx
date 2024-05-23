@@ -1,5 +1,8 @@
-import { getUserDetails } from "@/actions/auth-actions";
-import { ProfileLayout } from "@/components/Profile/ProfileLayout";
+import { getSessionUser, getUserDetails } from "@/actions/auth-actions";
+import { auth } from "@/auth";
+import { DLayout, ProfileLayout } from "@/components/Profile/ProfileLayout";
+import { UserNotFound } from "@/components/Profile/UserNotFound";
+import { getUser } from "@/hooks/useProfile";
 import { Metadata, ResolvingMetadata } from "next";
 
 type Props = {
@@ -48,7 +51,19 @@ export async function generateMetadata(
     };
 }
 
-const Page = ({ params }: { params: { id: string; }; }) => {
+
+const Page = async ({ params }: { params: { id: string; }; }) => {
+    const session = await auth();
+    const user = await getUserDetails(params.id);
+
+    if (!user || !user.success) {
+        return <UserNotFound />;
+    }
+
+    return (
+        <DLayout sessionUser={session?.user} user={user.user} />
+    );
+
     return (
         <div className="relative min-h-[150dvh]">
             <ProfileLayout currentUser={false} profileId={params.id} />

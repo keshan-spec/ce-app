@@ -54,6 +54,21 @@ const getUser = (profileId: string | undefined) => {
     };
 };
 
+export const DLayout = ({
+    sessionUser,
+    user
+}: {
+    user: any;
+    sessionUser: any | null;
+}) => {
+    return (
+        <>
+            {JSON.stringify(user)}
+            {JSON.stringify(sessionUser)}
+        </>
+    );
+};
+
 export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
     currentUser,
     profileId
