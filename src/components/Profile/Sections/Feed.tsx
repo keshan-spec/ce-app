@@ -2,7 +2,6 @@ import { getUserPosts } from "@/actions/profile-actions";
 import NcImage from "@/components/Image/Image";
 import { Post } from "@/types/posts";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo } from "react";
 // import { useInfiniteQuery } from "react-query";
