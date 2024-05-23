@@ -9,6 +9,9 @@ import { useQuery } from 'react-query';
 import { UserNotFound } from './UserNotFound';
 import { UserProfileSkeleton } from './UserProfileSkeleton';
 import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
+import { maybeFollowUser } from '@/actions/profile-actions';
+import { redirect } from 'next/navigation';
+import { use, useCallback, useMemo } from 'react';
 
 interface ProfileLayoutProps {
     profileId?: string;
@@ -26,7 +29,7 @@ const getUser = (profileId: string | undefined) => {
     }
 
     // 59899
-    const { data, isFetching } = useQuery({
+    const { data, isFetching, refetch } = useQuery({
         queryKey: ["user", profileId],
         queryFn: () => getUserDetails(profileId),
         retry: 0,
@@ -38,7 +41,9 @@ const getUser = (profileId: string | undefined) => {
     return {
         isLoggedIn,
         user: data?.user,
+        sessionUser: user,
         isFetching,
+        refetch
     };
 };
 
@@ -46,7 +51,42 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
     currentUser,
     profileId
 }) => {
-    const { user, isLoggedIn, isFetching } = getUser(profileId);
+    const { user, isLoggedIn, isFetching, sessionUser, refetch } = getUser(profileId);
+
+    const handleFollowClick = async () => {
+        if (!profileId) return;
+
+        if (!isLoggedIn) {
+            redirect(`/login?callbackUrl=${encodeURIComponent(`/profile/${profileId}`)}`);
+        }
+
+        try {
+            const response = await maybeFollowUser(profileId);
+            refetch?.();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const renderFollowBtn = useMemo(() => {
+        let text: string = "Follow";
+        let icon: string = "fas fa-user-plus";
+
+        if (!sessionUser || !isLoggedIn) {
+            text = "Login to follow";
+        } else {
+            if (user && sessionUser.following.includes(user.id)) {
+                text = "Unfollow";
+                icon = "fas fa-user-minus";
+            };
+        }
+
+        return (
+            <Button className="w-full" onClick={handleFollowClick}>
+                <i className={`${icon} mr-2`}></i> {text}
+            </Button>
+        );
+    }, [user?.id]);
 
     if (!isLoggedIn && currentUser) {
         return <NoAuthWall redirectTo="/profile" />;
@@ -101,7 +141,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
             <div className="section mt-1 mb-2">
                 <div className="profile-info">
                     <div className="mt-3 flex flex-col gap-2 items-center w-full">
-                        <Button className="w-full"><i className="fas fa-user-plus mr-2"></i> Follow</Button>
+                        {profileId && renderFollowBtn}
                         <SocialButton icon="fab fa-instagram">Instagram</SocialButton>
                         <SocialButton icon="fab fa-facebook">Facebook</SocialButton>
                         <SocialButton icon="fab fa-tiktok">TikTok</SocialButton>

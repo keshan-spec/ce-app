@@ -20,3 +20,21 @@ export const getUserPosts = async (profileId: string, page: number, tagged = fal
     if (response.status !== 200) throw new Error(data.message);
     return data;
 };
+
+export const maybeFollowUser = async (profileId: string) => {
+    const user = await getSessionUser();
+    if (!user) return;
+
+    const response = await fetch(`${API_URL}/wp-json/app/v1/follow-user`, {
+        cache: "no-cache",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ following_id: profileId, follower_id: user.id }),
+    });
+
+    const data = await response.json();
+    if (response.status !== 200) throw new Error(data.message);
+    return data;
+};
