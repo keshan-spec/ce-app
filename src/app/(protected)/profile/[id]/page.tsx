@@ -61,7 +61,7 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
     }
 
     return (
-        <DLayout sessionUser={session?.user} user={user.user} />
+        <DLayout sessionUser={session?.user!} user={user.user!} profileId={params.id} />
     );
 
     return (
