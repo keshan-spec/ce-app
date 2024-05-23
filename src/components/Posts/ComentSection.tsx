@@ -24,7 +24,7 @@ export const ComentsSection: React.FC<ComentsSectionProps> = ({
         retry: 0,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
-        keepPreviousData: true,
+        // keepPreviousData: true,
     });
 
     const onNewComment = () => {
