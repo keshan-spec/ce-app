@@ -2,6 +2,13 @@ import { getUserDetails } from "@/actions/auth-actions";
 import { ProfileLayout } from "@/components/Profile/ProfileLayout";
 import { Metadata, ResolvingMetadata } from "next";
 
+import {
+    dehydrate,
+    HydrationBoundary,
+    QueryClient,
+    useQuery,
+} from '@tanstack/react-query';
+
 type Props = {
     params: { id: string; };
 };
@@ -49,9 +56,17 @@ export async function generateMetadata(
 }
 
 const Page = async ({ params }: { params: { id: string; }; }) => {
+    const queryClient = new QueryClient();
+    await queryClient.prefetchQuery({
+        queryKey: ['user', params.id],
+        queryFn: () => getUserDetails(params.id),
+    });
+
     return (
         <div className="relative min-h-[150dvh]">
-            <ProfileLayout currentUser={false} profileId={params.id} />
+            <HydrationBoundary state={dehydrate(queryClient)}>
+                <ProfileLayout currentUser={false} profileId={params.id} />
+            </HydrationBoundary>
         </div>
     );
 };

@@ -9,6 +9,7 @@ import "../../public/assets/css/style.css";
 import "../../public/assets/css/custom.css";
 
 import Script from "next/script";
+import Providers from "./context/QueryClientProvider";
 
 const inter = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
@@ -34,9 +35,11 @@ export default async function RootLayout({
         />
 
         <SessionProvider session={session}>
-          <ClientLayout>
+          {/* <ClientLayout> */}
+          <Providers>
             {children}
-          </ClientLayout>
+          </Providers>
+          {/* </ClientLayout> */}
         </SessionProvider>
 
         <Script src="/assets/js/lib/bootstrap.min.js" strategy="beforeInteractive" />

@@ -2,11 +2,12 @@ import { addComment, fetchPostComments } from "@/actions/post-actions";
 import { useUser } from "@/hooks/useUser";
 import { formatPostDate } from "@/utils/dateUtils";
 import { IonIcon } from "@ionic/react";
+import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { chatbubbleOutline, heartOutline, reloadCircle } from "ionicons/icons";
 import { useMemo, useState } from "react";
 import { BiCommentAdd, BiLoader, BiRefresh } from "react-icons/bi";
-import { useQuery } from "react-query";
+// import { useQuery } from "react-query";
 
 interface ComentsSectionProps {
     postId: number;

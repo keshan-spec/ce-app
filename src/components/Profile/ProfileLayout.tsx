@@ -5,7 +5,7 @@ import { SocialButton } from '@/shared/SocialButton';
 import { useUser } from '@/hooks/useUser';
 import { NoAuthWall } from '../Protected/NoAuthWall';
 import { getUserDetails } from '@/actions/auth-actions';
-import { useQuery } from 'react-query';
+// import { useQuery } from 'react-query';
 import { UserNotFound } from './UserNotFound';
 import { UserProfileSkeleton } from './UserProfileSkeleton';
 import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
@@ -13,6 +13,7 @@ import { maybeFollowUser } from '@/actions/profile-actions';
 import { redirect } from 'next/navigation';
 import { useMemo } from 'react';
 import { AuthUser } from '@/auth';
+import { useQuery } from '@tanstack/react-query';
 
 interface ProfileLayoutProps {
     profileId?: string;

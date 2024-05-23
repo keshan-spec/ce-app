@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { BiHeart, BiSolidHeart } from "react-icons/bi";
-import { useQuery } from "react-query";
+// import { useQuery } from "react-query";
 import likeAnimation2 from "../lottie/lottie-2.json";
 
 import Lottie from "lottie-react";
@@ -15,6 +15,7 @@ import { formatEventDate } from "@/utils/dateUtils";
 import SlideInFromBottomToTop from "@/shared/SlideIn";
 import { ViewEvent } from "./ViewPost";
 import { useUser } from "@/hooks/useUser";
+import { useQuery } from "@tanstack/react-query";
 
 const carouselOptions: Options = {
     perPage: 4,
@@ -174,7 +175,7 @@ export const TrendingEvents: React.FC<EventProps> = ({ }) => {
         retry: 1,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
-        cacheTime: 1000,
+        // cacheTime: 1000,
         staleTime: 1000,
     });
 

@@ -1,10 +1,11 @@
 import { getUserPosts } from "@/actions/profile-actions";
 import NcImage from "@/components/Image/Image";
 import { Post } from "@/types/posts";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo } from "react";
-import { useInfiniteQuery } from "react-query";
+// import { useInfiniteQuery } from "react-query";
 
 interface FeedProps {
     tagged?: boolean;
@@ -19,9 +20,9 @@ export const Feed: React.FC<FeedProps> = ({
 
     const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
         queryKey: [key, profileId],
-        queryFn: ({ pageParam = 1 }) => {
-            if (tagged) return getUserPosts(profileId, pageParam, true);
-            return getUserPosts(profileId, pageParam);
+        queryFn: ({ pageParam }) => {
+            if (tagged) return getUserPosts(profileId, pageParam || 1, true);
+            return getUserPosts(profileId, pageParam || 1);
         },
         getNextPageParam: (lastPage: { total_pages: number, data: Post[], limit: number; }, pages: any[]) => {
             const maxPages = Math.ceil(lastPage.total_pages / lastPage.limit);
@@ -30,9 +31,10 @@ export const Feed: React.FC<FeedProps> = ({
         },
         refetchOnWindowFocus: false,
         refetchOnMount: false,
-        cacheTime: 2 * 60 * 1000, // 2 minutes
+        // cacheTime: 2 * 60 * 1000, // 2 minutes
+        // keepPreviousData: false,
         retry: 1,
-        keepPreviousData: false,
+        initialPageParam: null,
     });
 
     // Infinite scroll

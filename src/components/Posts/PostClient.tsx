@@ -6,10 +6,11 @@ import { PostNotFound } from '@/components/Posts/PostNotFound';
 
 import SlideInFromBottomToTop from "@/shared/SlideIn";
 import { ComentsSection } from "@/components/Posts/ComentSection";
-import { useQuery } from "react-query";
+// import { useQuery } from "react-query";
 import { fetchPost } from "@/actions/post-actions";
 import { PostCardSkeleton } from "@/components/Posts/PostCardSkeleton";
 import { PostCard } from "@/components/Posts/PostCard";
+import { useQuery } from "@tanstack/react-query";
 
 const PostClient = ({ postId }: { postId: string; }) => {
     const { data, error, isLoading, isFetching } = useQuery<Post | null, Error>({
@@ -17,7 +18,7 @@ const PostClient = ({ postId }: { postId: string; }) => {
         queryFn: () => {
             return fetchPost(postId);
         },
-        keepPreviousData: false,
+        // keepPreviousData: false,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         retry: 1,

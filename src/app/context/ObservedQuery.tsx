@@ -1,9 +1,10 @@
 'use client';
 
 import { createContext, useContext, useEffect } from 'react';
-import { useInfiniteQuery } from 'react-query';
+// import { useInfiniteQuery } from 'react-query';
 import { Post } from '../../types/posts';
 import { fetchPosts } from '@/actions/post-actions';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 interface ObservedQueryContextProps {
     data: any; // Replace 'any' with the type of your data
@@ -27,8 +28,8 @@ export const useObservedQuery = (): ObservedQueryContextProps => {
 export const ObservedQueryProvider = ({ children }: any) => {
     const { isLoading, error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
         queryKey: ['posts'],
-        queryFn: ({ pageParam = 1 }) => {
-            return fetchPosts(pageParam);
+        queryFn: ({ pageParam }) => {
+            return fetchPosts(pageParam || 1);
         },
         getNextPageParam: (lastPage: { total_pages: number, data: Post[], limit: number; }, pages: any[]) => {
             const maxPages = Math.ceil(lastPage.total_pages / lastPage.limit);
@@ -37,7 +38,7 @@ export const ObservedQueryProvider = ({ children }: any) => {
         },
         refetchOnWindowFocus: false,
         refetchOnMount: false,
-        cacheTime: 2 * 60 * 1000, // 2 minutes
+        initialPageParam: null,
     });
 
     // Infinite scroll
