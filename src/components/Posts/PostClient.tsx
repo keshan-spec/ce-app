@@ -32,6 +32,8 @@ const PostClient = ({ postId }: { postId: string; }) => {
     }, [data]);
 
     const renderContent = useCallback(() => {
+        console.log('PostClient.tsx -> Rendering content');
+
         if (data && !isLoading) {
             return (
                 <>

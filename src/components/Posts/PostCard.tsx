@@ -32,6 +32,8 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
     const [bookMarked, setBookMarked] = useState<boolean>(post.is_bookmarked);
 
     useEffect(() => {
+        console.log('PostCard.tsx -> useEffect -> post.id', post.id);
+
         const video = videoRef.current;
 
         if (!video) return;
@@ -58,6 +60,8 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
 
     // when swipe to next slide, pause the video
     useEffect(() => {
+        console.log('PostCard.tsx -> useEffect -> emblaApi', emblaApi);
+
         const video = videoRef.current;
 
         if (!video) return;
