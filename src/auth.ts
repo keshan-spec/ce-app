@@ -13,6 +13,12 @@ export type AuthUser = {
     followers: string[];
     following: string[];
     posts_count: number;
+    profile_links: {
+        instagram: string;
+        tiktok: string;
+        facebook: string;
+        email: string;
+    };
 };
 
 declare module "next-auth" {
@@ -46,6 +52,7 @@ export const {
                     session.user.followers = data.user.followers;
                     session.user.following = data.user.following;
                     session.user.posts_count = data.user.posts_count;
+                    session.user.profile_links = data.user.profile_links;
                 }
             }
 

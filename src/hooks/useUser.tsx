@@ -1,3 +1,4 @@
+import { AuthUser } from "@/auth";
 import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 import { useSession } from "next-auth/react";
 
@@ -11,13 +12,24 @@ const guestUser = {
     followers: [],
     following: [],
     posts_count: 0,
+    profile_links: {
+        instagram: "",
+        tiktok: "",
+        facebook: "",
+        email: "",
+    },
 };
 
-export const useUser = () => {
+type UseUser = {
+    isLoggedIn: boolean | undefined;
+    user: AuthUser;
+};
+
+export const useUser = (): UseUser => {
     const session = useSession();
 
     return {
-        isLoggedIn: session && session.data?.user,
         user: session?.data?.user ?? guestUser,
+        isLoggedIn: session && session.data?.user ? true : false,
     };
 };

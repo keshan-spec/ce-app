@@ -1,3 +1,4 @@
+'use client';
 import { IonIcon } from '@ionic/react';
 import { camera, images, recording, swapVertical, videocam } from 'ionicons/icons';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -7,13 +8,11 @@ import { Options } from '@splidejs/splide';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
 import { addPost } from '@/actions/post-actions';
-import { useObservedQuery } from '@/app/context/ObservedQuery';
 import { vibrateDevice } from '@/utils/nativeFeel';
 
 import Cropper, { Area, Point } from "react-easy-crop";
 import Modal from '@/shared/Modal';
 import NcImage from '../Image/Image';
-import { redirect } from 'next/navigation';
 
 const carouselOptions: Options = {
     perPage: 1,
@@ -289,14 +288,11 @@ const PostSharePanel: React.FC<PostSharePanelProps> = ({ media, onPostSuccess })
     const [mediaData, setMediaData] = useState<string[]>(media.filter(media => media !== null) as string[]);
     const [editImage, setEditImage] = useState<number | null>(null);
 
-    const { refetch } = useObservedQuery();
-
     const handleShare = async (formData: FormData) => {
         setPosting({ loading: true, error: null });
 
         try {
             await addPost(mediaData, formData.get('caption')?.toString(), formData.get('location')?.toString());
-            await refetch();
             setPosting({ loading: false, error: null });
             onPostSuccess();
         } catch (e: any) {
@@ -309,8 +305,6 @@ const PostSharePanel: React.FC<PostSharePanelProps> = ({ media, onPostSuccess })
     };
 
     const updateImage = (index: number, croppedArea: Area) => {
-        console.log('Cropped Area', croppedArea);
-
         const img = new Image();
         img.src = media[index];
         const canvas = document.createElement('canvas');

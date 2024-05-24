@@ -117,8 +117,6 @@ export const addPost = async (mediaList: string[], caption?: string, location?: 
 
     const data = await response.json();
 
-    console.log(data, response.status, API_URL);
-
     if (!data || data.error) {
         throw new Error(data.error);
     }
