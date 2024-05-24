@@ -31,49 +31,49 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
     const [isLiked, setIsLiked] = useState<boolean>(post.is_liked);
     const [bookMarked, setBookMarked] = useState<boolean>(post.is_bookmarked);
 
-    useEffect(() => {
-        const video = videoRef.current;
+    // useEffect(() => {
+    //     const video = videoRef.current;
 
-        if (!video) return;
+    //     if (!video) return;
 
-        const postMainElement = document.getElementById(`PostMain-${post.id}`);
+    //     const postMainElement = document.getElementById(`PostMain-${post.id}`);
 
-        let observer = new IntersectionObserver((entries) => {
-            if (video === null) return;
-            if (entries[0].isIntersecting) {
-                video.play();
-            } else {
-                video.pause();
-            }
-        }, { threshold: [0.6] });
+    //     let observer = new IntersectionObserver((entries) => {
+    //         if (video === null) return;
+    //         if (entries[0].isIntersecting) {
+    //             video.play();
+    //         } else {
+    //             video.pause();
+    //         }
+    //     }, { threshold: [0.6] });
 
-        if (postMainElement) {
-            observer.observe(postMainElement);
-        }
+    //     if (postMainElement) {
+    //         observer.observe(postMainElement);
+    //     }
 
-        return () => {
-            observer.disconnect();
-        };
-    }, []);
+    //     return () => {
+    //         observer.disconnect();
+    //     };
+    // }, []);
 
-    // when swipe to next slide, pause the video
-    useEffect(() => {
-        const video = videoRef.current;
+    // // when swipe to next slide, pause the video
+    // useEffect(() => {
+    //     const video = videoRef.current;
 
-        if (!video) return;
+    //     if (!video) return;
 
-        const onUserScroll = (e: any) => {
-            // const slidesInView = emblaApi?.slidesInView(); // <-- Pass true to the slidesInView method
-            // console.log(slidesInView);
-            video.pause();
-        };
+    //     const onUserScroll = (e: any) => {
+    //         // const slidesInView = emblaApi?.slidesInView(); // <-- Pass true to the slidesInView method
+    //         // console.log(slidesInView);
+    //         video.pause();
+    //     };
 
-        emblaApi?.on('select', onUserScroll);
+    //     emblaApi?.on('select', onUserScroll);
 
-        return () => {
-            emblaApi?.off('select', onUserScroll);
-        };
-    }, [emblaApi]);
+    //     return () => {
+    //         emblaApi?.off('select', onUserScroll);
+    //     };
+    // }, [emblaApi]);
 
     const onLikePost = async () => {
         if (!isLoggedIn) {
