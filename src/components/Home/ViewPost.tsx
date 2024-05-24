@@ -1,12 +1,13 @@
 "use client";
 import { IonIcon } from "@ionic/react";
 import { calendarClearOutline, heart, location, shareSocial, ticketOutline } from "ionicons/icons";
-import { useQuery } from "react-query";
+// import { useQuery } from "react-query";
 import { fetchEvent, maybeFavoriteEvent } from "@/actions/home-actions";
 import EmblaCarousel, { IGallery } from "../Carousel/Embla";
 import { useUser } from "@/hooks/useUser";
 import { useEffect, useState } from "react";
 import { BiHeart, BiSolidHeart } from "react-icons/bi";
+import { useQuery } from "@tanstack/react-query";
 
 const bannerData = [
     {

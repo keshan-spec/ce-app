@@ -44,12 +44,12 @@ export default function Error({
     };
 
     return (
-        <div className="flex flex-col items-center justify-center h-[100vh] w-full px-8 max-w-[90vw]">
+        <div className="flex flex-col items-center justify-center h-[100vh] w-full px-8">
             <h1 className="text-3xl font-bold text-center">Oops!</h1>
             <div className="text-center">
                 {renderErrorMessage()}
 
-                <pre className="text-sm text-left text-gray-500 mt-4 p-4 bg-gray-100 rounded-md max-w-md">
+                <pre className="text-sm text-left text-gray-500 mt-4 p-4 bg-gray-100 rounded-md max-w-80">
                     {error.message}
                 </pre>
             </div>
