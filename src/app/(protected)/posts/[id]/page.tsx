@@ -41,7 +41,7 @@ export async function generateMetadata(
     }
 
     return {
-        title,
+        title: `${title} - Drive Life`,
         description,
         openGraph: {
             images: [
@@ -54,13 +54,11 @@ export async function generateMetadata(
     };
 }
 
-
-
 const Page = async ({ params }: { params: { id: string; }; }) => {
     const queryClient = new QueryClient();
 
     await queryClient.prefetchQuery({
-        queryKey: ['user', params.id],
+        queryKey: ['view-post', params.id],
         queryFn: () => fetchPost(params.id),
     });
 
