@@ -48,11 +48,10 @@ export default function Error({
             <h1 className="text-3xl font-bold text-center">Oops!</h1>
             <div className="text-center">
                 {renderErrorMessage()}
-
-                <pre className="text-sm text-left text-gray-500 mt-4 p-4 bg-gray-100 rounded-md max-w-80">
-                    {error.message}
-                </pre>
             </div>
+            <pre className="text-sm text-left text-gray-500 mt-4 p-4 bg-gray-100 rounded-md max-w-[22rem]">
+                {error.message}
+            </pre>
             <Button
                 className="mt-4 bg-theme-primary text-white px-4 py-2 rounded-md"
                 onClick={reset}
