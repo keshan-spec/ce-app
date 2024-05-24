@@ -44,7 +44,7 @@ export default function Error({
     };
 
     return (
-        <div className="flex flex-col items-center justify-center h-[100vh] w-full px-8">
+        <div className="flex flex-col items-center justify-center h-[100vh] w-full px-8 max-w-[90vw]">
             <h1 className="text-3xl font-bold text-center">Oops!</h1>
             <div className="text-center">
                 {renderErrorMessage()}
