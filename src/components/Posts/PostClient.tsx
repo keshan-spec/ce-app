@@ -31,15 +31,9 @@ const PostClient = ({ postId }: { postId: string; }) => {
         return data?.comments_count || 0;
     }, [data]);
 
-    return (
-        <div className="bg-theme-dark min-h-screen max-h-screen overflow-hidden">
-            {(isFetching || isLoading) && (
-                <PostCardSkeleton />
-            )}
-
-            {JSON.stringify(data)}
-
-            {/* {(data && !isLoading) && (
+    const renderContent = useCallback(() => {
+        if (data && !isLoading) {
+            return (
                 <>
                     <SlideInFromBottomToTop
                         isOpen={commentsOpen}
@@ -58,13 +52,25 @@ const PostClient = ({ postId }: { postId: string; }) => {
                         setMuted={setMuted}
                     />
                 </>
+            );
+        }
+
+        if (!data && !isLoading && !isFetching) {
+            return <PostNotFound />;
+        }
+
+        return null;
+    }, [commentsOpen, data, isLoading, muted, postId, isFetching]);
+
+    return (
+        <div className="bg-theme-dark min-h-screen max-h-screen overflow-hidden">
+            {(isFetching || isLoading) && (
+                <PostCardSkeleton />
             )}
 
-            {!data && !isLoading && !isFetching && (
-                <PostNotFound />
-            )}
+            {renderContent()}
 
-            {error && <PostNotFound />} */}
+            {error && <PostNotFound />}
         </div>
     );
 };
