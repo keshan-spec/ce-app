@@ -1,4 +1,5 @@
 'use client';
+
 import { PostCardSkeleton } from "./PostCardSkeleton";
 import { useMemo, useState } from 'react';
 

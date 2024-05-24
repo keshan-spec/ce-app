@@ -1,7 +1,6 @@
 'use client';
 
 import { createContext, useContext, useEffect } from 'react';
-// import { useInfiniteQuery } from 'react-query';
 import { Post } from '../../types/posts';
 import { fetchPosts } from '@/actions/post-actions';
 import { useInfiniteQuery } from '@tanstack/react-query';

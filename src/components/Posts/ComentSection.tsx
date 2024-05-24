@@ -1,8 +1,9 @@
+'use client';
 import { addComment, fetchPostComments } from "@/actions/post-actions";
 import { useUser } from "@/hooks/useUser";
 import { formatPostDate } from "@/utils/dateUtils";
-import { IonIcon } from "@ionic/react";
 import { useQuery } from "@tanstack/react-query";
+import { IonIcon } from "@ionic/react";
 import clsx from "clsx";
 import { chatbubbleOutline, heartOutline, reloadCircle } from "ionicons/icons";
 import { useMemo, useState } from "react";

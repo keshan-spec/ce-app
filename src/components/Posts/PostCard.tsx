@@ -1,4 +1,5 @@
-// "use client";
+"use client";
+
 import { useUser } from "@/hooks/useUser";
 import { Post } from "@/types/posts";
 import { useEffect, useMemo, useRef, useState } from "react";
