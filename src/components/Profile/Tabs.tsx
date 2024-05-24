@@ -1,7 +1,7 @@
+'use client';
 import { Feed } from './Sections/Feed';
 import { Garage } from './Sections/Garage';
 import { Bookmarks } from './Sections/Bookmarks';
-import { useUser } from '@/hooks/useUser';
 import { useCallback, useState } from 'react';
 
 interface TabsProps {

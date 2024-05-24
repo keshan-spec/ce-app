@@ -37,7 +37,9 @@ const PostClient = ({ postId }: { postId: string; }) => {
                 <PostCardSkeleton />
             )}
 
-            {(data && !isLoading) && (
+            {JSON.stringify(data)}
+
+            {/* {(data && !isLoading) && (
                 <>
                     <SlideInFromBottomToTop
                         isOpen={commentsOpen}
@@ -62,7 +64,7 @@ const PostClient = ({ postId }: { postId: string; }) => {
                 <PostNotFound />
             )}
 
-            {error && <PostNotFound />}
+            {error && <PostNotFound />} */}
         </div>
     );
 };

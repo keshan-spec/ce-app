@@ -3,7 +3,7 @@ import { useUser } from "@/hooks/useUser";
 import { ThemeBtn } from "@/shared/ThemeBtn";
 import Link from "next/link";
 import { IonIcon } from '@ionic/react';
-import { cubeOutline, homeOutline } from "ionicons/icons";
+import { close, cubeOutline, homeOutline } from "ionicons/icons";
 import { useState } from "react";
 import { Loader } from "./Loader";
 import { useSession } from "next-auth/react";
@@ -34,7 +34,7 @@ export const SidePanel: React.FC = () => {
                         </div>
                     </div>
                     <a href="#" className="close-sidebar-button" data-bs-dismiss="offcanvas">
-                        <IonIcon name="close" />
+                        <IonIcon icon={close} />
                     </a>
                 </div>
 
