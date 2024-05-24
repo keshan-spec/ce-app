@@ -11,7 +11,6 @@ export const SocialButton: React.FC<SocialButtonProps> = ({ children, icon, link
     const { className, onClick } = props;
 
     const handleLinkClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        console.log('handleLinkClick', link);
         if (link) {
             window.open(link, "_blank");
         } else {

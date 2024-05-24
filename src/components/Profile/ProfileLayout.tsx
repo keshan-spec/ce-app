@@ -5,7 +5,6 @@ import { SocialButton } from '@/shared/SocialButton';
 import { useUser } from '@/hooks/useUser';
 import { NoAuthWall } from '../Protected/NoAuthWall';
 import { getUserDetails } from '@/actions/auth-actions';
-// import { useQuery } from 'react-query';
 import { UserNotFound } from './UserNotFound';
 import { UserProfileSkeleton } from './UserProfileSkeleton';
 import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
@@ -62,6 +61,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
     profileId
 }) => {
     const { user, isLoggedIn, isFetching, sessionUser, refetch } = getUser(profileId);
+
     const [isLinkOpen, setIsLinkOpen] = useState<'instagram' | 'tiktok' | 'facebook' | 'email' | null>(null);
 
     const handleFollowClick = async () => {
@@ -79,7 +79,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
         }
     };
 
-    const handleLinkClick = async (data: FormData) => {
+    const onLinkAdd = async (data: FormData) => {
         if (!isLinkOpen) return;
         try {
             const response = await addUserProfileLinks({
@@ -93,6 +93,14 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
             }
         } catch (error) {
             console.error(error);
+        }
+    };
+
+    const handleLinkClick = (type: 'instagram' | 'tiktok' | 'facebook' | 'email') => {
+        if (!sessionUser?.id) return;
+
+        if (sessionUser.id === user?.id) {
+            setIsLinkOpen(type);
         }
     };
 
@@ -150,7 +158,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
     return (
         <>
             <PopUp isOpen={isLinkOpen ? true : false} onClose={() => setIsLinkOpen(null)} title='Add Link'>
-                <form className="flex flex-col gap-2 p-4" action={handleLinkClick}>
+                <form className="flex flex-col gap-2 p-4" action={onLinkAdd}>
                     <input type={isLinkOpen === 'email' ? 'email' : 'text'} placeholder={linkInputplaceHolder} name='link' className='p-1 border border-gray-300 rounded' />
                     <Button type='submit' className="w-full">Add Link</Button>
                 </form>
@@ -194,27 +202,27 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                         {profileId && renderFollowBtn}
                         <SocialButton
                             icon="fab fa-instagram"
-                            link={user.profile_links.instagram ? `https://instagram.com/${user.profile_links.instagram}` : undefined}
+                            link={user.profile_links?.instagram ? `https://instagram.com/${user.profile_links.instagram}` : undefined}
                             onClick={() => {
-                                setIsLinkOpen('instagram');
+                                handleLinkClick('instagram');
                             }}
                         >
                             Instagram
                         </SocialButton>
                         <SocialButton
                             icon="fab fa-facebook"
-                            link={user.profile_links.facebook ? `https://facebook.com/${user.profile_links.facebook}` : undefined}
+                            link={user.profile_links?.facebook ? `https://facebook.com/${user.profile_links.facebook}` : undefined}
                             onClick={() => {
-                                setIsLinkOpen('facebook');
+                                handleLinkClick('facebook');
                             }}
                         >
                             Facebook
                         </SocialButton>
                         <SocialButton
                             icon="fab fa-tiktok"
-                            link={user.profile_links.tiktok ? `https://tiktok.com/@${user.profile_links.tiktok}` : undefined}
+                            link={user.profile_links?.tiktok ? `https://tiktok.com/@${user.profile_links.tiktok}` : undefined}
                             onClick={() => {
-                                setIsLinkOpen('tiktok');
+                                handleLinkClick('tiktok');
                             }}
                         >
                             TikTok
@@ -222,9 +230,9 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                         {/* email */}
                         <SocialButton
                             icon="fas fa-envelope"
-                            link={user.profile_links.email ? `mailto:${user.profile_links.email}` : undefined}
+                            link={user.profile_links?.email ? `mailto:${user.profile_links.email}` : undefined}
                             onClick={() => {
-                                setIsLinkOpen('email');
+                                handleLinkClick('email');
                             }}
                         >
                             Email

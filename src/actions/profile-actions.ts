@@ -63,8 +63,6 @@ export const addUserProfileLinks = async ({
     });
 
     const data = await response.json();
-    console.log({ user_id: user.id, link, type }, data);
-
     if (response.status !== 200 || data.error) {
         throw new Error(data.message);
     }

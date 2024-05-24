@@ -3,7 +3,7 @@ import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 import { useSession } from "next-auth/react";
 
 const guestUser = {
-    id: "",
+    id: '',
     first_name: "Guest",
     last_name: "",
     username: "guest",
