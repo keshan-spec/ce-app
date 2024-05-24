@@ -49,7 +49,7 @@ export default function Error({
             <div className="text-center">
                 {renderErrorMessage()}
 
-                <pre>
+                <pre className="text-sm text-left text-gray-500 mt-4 p-4 bg-gray-100 rounded-md max-w-md">
                     {error.message}
                 </pre>
             </div>

@@ -65,7 +65,6 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <Posts />
             <PostClient postId={params.id} key={params.id} />
         </HydrationBoundary>
     );
