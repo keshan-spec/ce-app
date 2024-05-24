@@ -22,7 +22,7 @@ const PostClient = ({ postId }: { postId: string; }) => {
 
     useEffect(() => {
         console.log('PostClient.tsx -> useEffect -> postId:', postId);
-    }, [postId]);
+    }, []);
 
     const [muted, setMuted] = useState(true); // State to track muted state
     const [commentsOpen, setCommentsOpen] = useState(false); // State to track comments open state

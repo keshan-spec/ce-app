@@ -8,7 +8,6 @@ import {
     HydrationBoundary,
     QueryClient,
 } from '@tanstack/react-query';
-import { ClientContainer } from '@/app/ClientContainer';
 
 type Props = {
     params: { id: string; };
@@ -65,9 +64,7 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <ClientContainer>
-                <PostClient postId={params.id} key={params.id} />
-            </ClientContainer>
+            <PostClient postId={params.id} key={params.id} />
         </HydrationBoundary>
     );
 };

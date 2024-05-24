@@ -49,8 +49,6 @@ const Banner = () => {
 };
 
 export const HomePage: React.FC = async () => {
-    console.log("API_URL", API_URL);
-
     return (
         <div className="home mt-5">
             <div className="section full">

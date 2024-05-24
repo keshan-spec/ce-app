@@ -34,13 +34,11 @@ export default async function RootLayout({
           showAtBottom
         />
 
-        <SessionProvider session={session}>
-          {/* <ClientLayout> */}
-          <Providers>
+        <Providers>
+          <SessionProvider session={session}>
             {children}
-          </Providers>
-          {/* </ClientLayout> */}
-        </SessionProvider>
+          </SessionProvider>
+        </Providers>
 
         <Script src="/assets/js/lib/bootstrap.min.js" strategy="beforeInteractive" />
         <Script src="/assets/js/plugins/progressbar-js/progressbar.min.js" strategy="beforeInteractive" />
