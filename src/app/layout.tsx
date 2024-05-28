@@ -31,7 +31,6 @@ export default async function RootLayout({
         <NextTopLoader
           color="#b89855"
           showSpinner={false}
-          showAtBottom
         />
 
         <Providers>
