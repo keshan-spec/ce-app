@@ -2,6 +2,7 @@
 import { Post } from "@/types/posts";
 import { API_URL } from "./api";
 import { getSessionUser } from "./auth-actions";
+import { ImageMeta } from "@/components/PostActions/CreatePost";
 
 export const maybeLikePost = async (postId: number) => {
     const user = await getSessionUser();
@@ -93,7 +94,7 @@ export const fetchPostComments = async (postId: number) => {
     return data;
 };
 
-export const addPost = async (mediaList: string[], caption?: string, location?: string) => {
+export const addPost = async (mediaList: ImageMeta, caption?: string, location?: string) => {
     let user;
     try {
         user = await getSessionUser();
@@ -105,27 +106,29 @@ export const addPost = async (mediaList: string[], caption?: string, location?: 
     formData.append("user_id", user?.id);
     formData.append("caption", caption || "");
     formData.append("location", location || "");
-    for (let i = 0; i < mediaList.length; i++) {
-        formData.append("mediaData[]", mediaList[i]);
-    }
+    formData.append("mediaData", JSON.stringify(mediaList));
 
-    const response = await fetch(`${API_URL}/wp-json/app/v1/save-media`, {
-        cache: "no-cache",
-        method: "POST",
-        body: formData,
-    });
+    try {
+        const response = await fetch(`${API_URL}/wp-json/app/v1/save-media`, {
+            cache: "no-cache",
+            method: "POST",
+            body: formData,
+        });
 
-    const data = await response.json();
+        const data = await response.json();
+        if (!data || data.error) {
+            throw new Error(data.error);
+        }
 
-    if (!data || data.error) {
-        throw new Error(data.error);
-    }
+        if (response.status !== 200) {
+            throw new Error("Failed to create post");
+        }
 
-    if (response.status !== 200) {
+        return data;
+    } catch (e: any) {
+        console.log(e.message);
         throw new Error("Failed to create post");
     }
-
-    return data;
 };
 
 

@@ -33,8 +33,6 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
     const [bookMarked, setBookMarked] = useState<boolean>(post.is_bookmarked);
 
     useEffect(() => {
-        console.log('PostCard.tsx -> useEffect -> post.id', post.id);
-
         const video = videoRef.current;
 
         if (!video) return;
@@ -156,7 +154,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                 <div className="embla__viewport" ref={emblaRef}>
                     <div className="embla__container">
                         {media.map((item, index) => {
-                            const calculatedHeight = parseInt(item.media_height) ? parseInt(item.media_height) - 50 : 400;
+                            const calculatedHeight = parseInt(item.media_height) ? parseInt(item.media_height) : 400;
                             const maxHeight = calculatedHeight > 600 ? 600 : calculatedHeight;
 
                             return (
