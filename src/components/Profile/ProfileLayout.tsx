@@ -11,7 +11,6 @@ import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
 import { addUserProfileLinks, maybeFollowUser } from '@/actions/profile-actions';
 import { redirect } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import { AuthUser } from '@/auth';
 import { useQuery } from '@tanstack/react-query';
 import PopUp from '@/shared/Dialog';
 

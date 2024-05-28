@@ -51,7 +51,7 @@ export const Footer: React.FC = () => {
 
                 <Link href="/profile" className={`item ${pathname.includes('/profile') ? 'active' : ''}`}>
                     <div className="col flex items-center flex-col ">
-                        <img src="/assets/img/icon/f-profile5.svg" alt="profile" className="w-6 h-6" />
+                        <img src="/assets/img/icon/f-profile7.svg" alt="profile" className="w-6 h-6" />
                         <strong>Profile</strong>
                     </div>
                 </Link>
