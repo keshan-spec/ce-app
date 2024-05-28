@@ -250,7 +250,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                         </SocialButton>
                     </div>
 
-                    <div className="mt-4 bio">
+                    <div className="mt-4 bio hidden">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur at magna porttitor lorem mollis
                         ornare. Fusce varius varius massa.
                     </div>
