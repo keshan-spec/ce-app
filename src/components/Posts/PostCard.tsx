@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useDotButton } from "../Carousel/EmbalDotButtons";
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoHeight from 'embla-carousel-auto-height';
-import { maybeBookmarkPost, maybeLikePost } from "@/actions/post-actions";
+import { deletePost, maybeBookmarkPost, maybeLikePost } from "@/actions/post-actions";
 import { BiBookmark, BiComment, BiHeart, BiMapPin, BiSolidBookmark, BiSolidHeart, BiVolumeFull, BiVolumeMute } from "react-icons/bi";
 import clsx from "clsx";
 import NcImage from "../Image/Image";
@@ -16,6 +16,7 @@ import { formatPostDate } from "@/utils/dateUtils";
 import { ellipsisVerticalOutline, trashBinOutline, warningOutline } from "ionicons/icons";
 import { IonIcon } from "@ionic/react";
 import Link from "next/link";
+import { useObservedQuery } from "@/app/context/ObservedQuery";
 
 export const PostCard = ({ post, muted, setMuted, openComments }: {
     post: Post,
@@ -24,6 +25,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
     openComments: (postId: number) => void;
 }) => {
     const { isLoggedIn, user } = useUser();
+    const { refetch } = useObservedQuery();
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false }, [AutoHeight({ delay: 5000, stopOnInteraction: false })]);
@@ -289,7 +291,13 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
 
                 {post.user_id === user?.id && (
                     <div className="flex gap-2">
-                        <PostActions />
+                        <PostActions
+                            postId={post.id}
+                            isOwner={post.user_id === user?.id}
+                            onDeleted={() => {
+                                refetch();
+                            }}
+                        />
                     </div>
                 )}
             </div>
@@ -299,7 +307,38 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
     );
 };
 
-const PostActions: React.FC = () => {
+
+interface PostActionsProps {
+    postId: number;
+    isOwner: boolean;
+    onDeleted?: () => void;
+}
+
+const PostActions: React.FC<PostActionsProps> = ({
+    isOwner,
+    postId,
+    onDeleted
+}) => {
+    const handleReport = () => { };
+
+    const handleDelete = async () => {
+        if (!isOwner) return;
+        try {
+            if (confirm("Are you sure you want to delete this post?")) {
+                const response = await deletePost(postId);
+
+                if (response) {
+                    onDeleted && onDeleted();
+                } else {
+                    throw new Error("Failed to delete post");
+                }
+            }
+        } catch (error) {
+            alert("Failed to delete post");
+            console.log(error);
+        }
+    };
+
     return (
         <div className="dropdown">
             <button type="button" data-bs-toggle="dropdown" aria-expanded="true">
@@ -312,13 +351,13 @@ const PostActions: React.FC = () => {
                 transform: 'translate3d(-230px, 42px, 0px)',
                 minWidth: 'unset'
             }} data-popper-placement="bottom-end">
-                <a className="text-red-600 text-xs flex items-center justify-center" href="#">
+                <button className="text-red-600 text-xs flex items-center justify-center" onClick={handleReport}>
                     <IonIcon icon={warningOutline} className="!w-4" /> Report
-                </a>
+                </button>
                 <div className="dropdown-divider"></div>
-                <a className="text-red-600 text-xs flex items-center justify-center" href="#">
+                <button className="text-red-600 text-xs flex items-center justify-center" onClick={handleDelete}>
                     <IonIcon icon={trashBinOutline} className="!w-4" /> Delete
-                </a>
+                </button>
             </div>
         </div>
     );

@@ -131,7 +131,6 @@ export const addPost = async (mediaList: ImageMeta, caption?: string, location?:
     }
 };
 
-
 export const fetchPost = async (postId: string): Promise<Post | null> => {
     let user;
     try {
@@ -156,4 +155,30 @@ export const fetchPost = async (postId: string): Promise<Post | null> => {
     }
 
     return data;
+};
+
+export const deletePost = async (postId: number) => {
+    try {
+        const user = await getSessionUser();
+        const response = await fetch(`${API_URL}/wp-json/app/v1/delete-post`, {
+            cache: "no-cache",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user_id: user?.id, post_id: postId }),
+        });
+
+
+
+        const data = await response.json();
+        if (!response.ok || response.status !== 200) {
+            throw new Error(data.message);
+        }
+
+        return data;
+    } catch (e: any) {
+        console.error("Error deleting post");
+        throw new Error(e.message);
+    }
 };
