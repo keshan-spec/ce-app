@@ -27,6 +27,7 @@ const getUser = (profileId: string | undefined) => {
         return {
             isLoggedIn,
             user,
+            canEditProfile: true,
         };
     }
 
@@ -34,6 +35,7 @@ const getUser = (profileId: string | undefined) => {
         return {
             isLoggedIn,
             user,
+            canEditProfile: true,
         };
     }
 
@@ -52,7 +54,8 @@ const getUser = (profileId: string | undefined) => {
         user: data?.user,
         sessionUser: user,
         isFetching,
-        refetch
+        refetch,
+        canEditProfile: false,
     };
 };
 
@@ -60,7 +63,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
     currentUser,
     profileId
 }) => {
-    const { user, isLoggedIn, isFetching, sessionUser, refetch } = getUser(profileId);
+    const { user, isLoggedIn, isFetching, sessionUser, refetch, canEditProfile } = getUser(profileId);
 
     const [isLinkOpen, setIsLinkOpen] = useState<'instagram' | 'tiktok' | 'facebook' | 'email' | null>(null);
 
@@ -97,23 +100,23 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
     };
 
     const handleLinkClick = (type: 'instagram' | 'tiktok' | 'facebook' | 'email') => {
-        if (!sessionUser?.id) return;
+        if (!canEditProfile) return;
 
-        if (sessionUser.id === user?.id) {
+        if (isLoggedIn && user?.id) {
             setIsLinkOpen(type);
         }
     };
 
     const renderFollowBtn = useMemo(() => {
         let text: string = "Follow";
-        let icon: string = "fas fa-user-plus";
+        let icon: string = "fas fa-plus";
 
         if (!sessionUser || !isLoggedIn) {
             return null;
         } else {
             if (user && user.followers.includes(sessionUser.id)) {
                 text = "Unfollow";
-                icon = "fas fa-user-minus";
+                icon = "fas fa-minus";
             };
         }
 
@@ -176,13 +179,13 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                     </div>
                     <div className="flex flex-col items-center mt-2 gap-y-1">
                         <h3 className="text-md mb-0">@{user.username}</h3>
-                        <h5 className="subtext">{user.first_name} {user.last_name}</h5>
+                        <h5 className="subtext opacity-65">{user.first_name} {user.last_name}</h5>
                     </div>
                 </div>
-                <div className="bg-gradient-to-b from-transparent to-white h-60 w-full absolute -bottom-1" />
+                <div className="bg-gradient-to-b from-transparent to-white h-72 w-full absolute bottom-0" />
             </div>
 
-            <div className="section full">
+            <div className="section full hidden">
                 <div className="profile-stats !justify-center gap-4 ps-2 pe-2">
                     <a href="#" className="item">
                         <strong>{user.posts_count}</strong>posts
@@ -196,10 +199,19 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                 </div>
             </div>
 
-            <div className="section mt-1 mb-2">
+            <div className="section mb-2">
                 <div className="profile-info">
                     <div className="mt-3 flex flex-col gap-2 items-center w-full">
                         {profileId && renderFollowBtn}
+
+                        {(isLoggedIn && canEditProfile) && (
+                            <Button className="w-full" onClick={() => {
+                                alert('Edit Profile');
+                            }}>
+                                Edit Profile
+                            </Button>
+                        )}
+
                         <SocialButton
                             icon="fab fa-instagram"
                             link={user.profile_links?.instagram ? `https://instagram.com/${user.profile_links.instagram}` : undefined}
