@@ -13,6 +13,7 @@ const config: Config = {
       },
       colors: {
         "theme-primary": "#b89855",
+        "theme-primary-100": "#ae9159",
         "theme-primary-light": "#af9867e6",
         "theme-dark": "#0f0f0f",
         "theme-dark-100": "#474747",

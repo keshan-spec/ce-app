@@ -586,3 +586,31 @@ a.badge-danger {
 
 
 }
+
+
+.profile-links .profile-link {
+	display: block;
+	width: 100%;
+	padding: 8px 5px;
+	background-color: #ae9159;
+	border-radius: 8px;
+	color: #fff;
+	margin: 0 auto 12px auto;
+	text-align: center;
+	font-weight: 500;
+}
+
+.profile-links .profile-link.social-link {
+	background-color: #1d1d1b;
+	position: relative;
+	overflow: hidden;
+}
+
+.profile-links .profile-link.social-link .profile-icon {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	background-color: #2f2e2c;
+	width: 50px;
+	padding: 13px 0px;
+}

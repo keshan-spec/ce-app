@@ -121,7 +121,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
         }
 
         return (
-            <Button className="w-full" onClick={handleFollowClick}>
+            <Button className="w-full profile-link capitalize" onClick={handleFollowClick}>
                 <i className={`${icon} mr-2`}></i> {text}
             </Button>
         );
@@ -200,12 +200,12 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
             </div>
 
             <div className="section mb-2">
-                <div className="profile-info">
-                    <div className="mt-3 flex flex-col gap-2 items-center w-full">
+                <div className="profile-links">
+                    <div className="flex flex-col items-center w-full">
                         {profileId && renderFollowBtn}
 
                         {(isLoggedIn && canEditProfile) && (
-                            <Button className="w-full" onClick={() => {
+                            <Button className="w-full profile-link capitalize" onClick={() => {
                                 alert('Edit Profile');
                             }}>
                                 Edit Profile
@@ -213,8 +213,8 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                         )}
 
                         <SocialButton
-                            icon="fab fa-instagram"
-                            link={user.profile_links?.instagram ? `https://instagram.com/${user.profile_links.instagram}` : undefined}
+                            socialType='instagram'
+                            link={user.profile_links?.instagram}
                             onClick={() => {
                                 handleLinkClick('instagram');
                             }}
@@ -222,8 +222,8 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                             Instagram
                         </SocialButton>
                         <SocialButton
-                            icon="fab fa-facebook"
-                            link={user.profile_links?.facebook ? `https://facebook.com/${user.profile_links.facebook}` : undefined}
+                            socialType='facebook'
+                            link={user.profile_links?.facebook}
                             onClick={() => {
                                 handleLinkClick('facebook');
                             }}
@@ -231,8 +231,8 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                             Facebook
                         </SocialButton>
                         <SocialButton
-                            icon="fab fa-tiktok"
-                            link={user.profile_links?.tiktok ? `https://tiktok.com/@${user.profile_links.tiktok}` : undefined}
+                            socialType='tiktok'
+                            link={user.profile_links?.tiktok}
                             onClick={() => {
                                 handleLinkClick('tiktok');
                             }}
@@ -241,8 +241,8 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                         </SocialButton>
                         {/* email */}
                         <SocialButton
-                            icon="fas fa-envelope"
-                            link={user.profile_links?.email ? `mailto:${user.profile_links.email}` : undefined}
+                            socialType='email'
+                            link={user.profile_links?.email}
                             onClick={() => {
                                 handleLinkClick('email');
                             }}
