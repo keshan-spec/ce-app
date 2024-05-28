@@ -47,7 +47,7 @@ export const Tabs: React.FC<TabsProps> = ({
                         </li>
                         <li className="nav-item">
                             <a className="nav-link" data-bs-toggle="tab" href="#tagged-posts" role="tab" onClick={() => setActiveTab('tagged-posts')}>
-                                Tagged
+                                Tags
                             </a>
                         </li>
                         {/* <li className="nav-item">

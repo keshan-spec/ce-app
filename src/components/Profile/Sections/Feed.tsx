@@ -4,7 +4,6 @@ import { Post } from "@/types/posts";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useEffect, useMemo } from "react";
-// import { useInfiniteQuery } from "react-query";
 
 interface FeedProps {
     tagged?: boolean;
@@ -30,8 +29,6 @@ export const Feed: React.FC<FeedProps> = ({
         },
         refetchOnWindowFocus: false,
         refetchOnMount: false,
-        // cacheTime: 2 * 60 * 1000, // 2 minutes
-        // keepPreviousData: false,
         retry: 1,
         initialPageParam: null,
     });
@@ -55,7 +52,6 @@ export const Feed: React.FC<FeedProps> = ({
         return () => {
             document.removeEventListener("scroll", onScroll);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hasNextPage, isFetchingNextPage]);
 
     const hasPages = useMemo(() => {
