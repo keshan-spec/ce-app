@@ -8,7 +8,6 @@ import {
     HydrationBoundary,
     QueryClient,
 } from '@tanstack/react-query';
-import { Posts } from '@/components/Posts/Posts';
 
 type Props = {
     params: { id: string; };

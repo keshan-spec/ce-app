@@ -19,6 +19,7 @@ import { ComentsSection } from "./ComentSection";
 import clsx from "clsx";
 
 import { PostCard } from "./PostCard";
+import { CommentsSlider } from "./CommentsSlider";
 
 type DotButtonPropType = PropsWithChildren<
     React.DetailedHTMLProps<
@@ -75,7 +76,7 @@ export const Posts: React.FC = () => {
         setActiveSection(postId);
     }, [activeSection]);
 
-    const getCommentCount = () => {
+    const getCommentCount = (): number => {
         const postId = activeSection;
         const post = data?.pages.find((page: any) => page.data.find((post: Post) => post.id === postId));
 
@@ -92,16 +93,19 @@ export const Posts: React.FC = () => {
     }, []);
 
     return (
-        <div className="w-full h-full bg-theme-dark">
-            <SlideInFromBottomToTop
+        <div className="w-full h-full bg-white">
+            {/* <SlideInFromBottomToTop
+                titleClassName="comments-container-header"
                 isOpen={activeSection ? true : false}
                 onClose={() => setActiveSection(undefined)}
                 height={"80%"}
                 title={`${getCommentCount()} comments`}
                 stickyScroll={true}
+                className="offcanvas-large"
             >
                 {activeSection && <ComentsSection postId={activeSection} />}
-            </SlideInFromBottomToTop>
+            </SlideInFromBottomToTop> */}
+            <CommentsSlider postId={activeSection!} commentCount={getCommentCount()} />
 
             <ul className={clsx(
                 "listview flush transparent no-line image-listview max-w-md mx-auto",

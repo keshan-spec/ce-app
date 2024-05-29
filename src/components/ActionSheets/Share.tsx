@@ -1,7 +1,7 @@
 "use client";
 import { BiShareAlt } from 'react-icons/bi';
 import { IonIcon } from '@ionic/react';
-import { logoFacebook, logoTwitter, logoWhatsapp, closeOutline, logoInstagram, copyOutline } from 'ionicons/icons';
+import { logoFacebook, logoTwitter, logoWhatsapp, closeOutline, logoInstagram, copyOutline, shareSocialOutline } from 'ionicons/icons';
 import { useEffect, useState } from 'react';
 
 interface ShareProps {
@@ -64,7 +64,7 @@ export const NativeShare: React.FC<ShareProps> = ({
     return (
         <div className="fab-button animate dropdown">
             <span data-bs-toggle="offcanvas" data-bs-target={`#actionSheetCreate_${id}`}>
-                <BiShareAlt />
+                <IonIcon icon={shareSocialOutline} role="img" className="md hydrated" aria-label="chatbox ellipses sharp" />
             </span>
             <div className="offcanvas offcanvas-bottom action-sheet rounded-t-lg" tabIndex={-1} id={`actionSheetCreate_${id}`} style={{
                 visibility: 'visible',

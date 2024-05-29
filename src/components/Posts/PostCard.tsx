@@ -6,17 +6,18 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useDotButton } from "../Carousel/EmbalDotButtons";
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoHeight from 'embla-carousel-auto-height';
-import { deletePost, maybeBookmarkPost, maybeLikePost } from "@/actions/post-actions";
+import { maybeBookmarkPost, maybeLikePost } from "@/actions/post-actions";
 import { BiBookmark, BiComment, BiHeart, BiMapPin, BiSolidBookmark, BiSolidHeart, BiVolumeFull, BiVolumeMute } from "react-icons/bi";
 import clsx from "clsx";
 import NcImage from "../Image/Image";
 import { NativeShare } from "../ActionSheets/Share";
 import { DotButton } from "./Posts";
 import { formatPostDate } from "@/utils/dateUtils";
-import { ellipsisVerticalOutline, trashBinOutline, warningOutline } from "ionicons/icons";
-import { IonIcon } from "@ionic/react";
 import Link from "next/link";
 import { useObservedQuery } from "@/app/context/ObservedQuery";
+import { PostActions, PostActionsSheet } from "./PostActionSheets";
+import { IonIcon } from "@ionic/react";
+import { chatboxEllipsesSharp, chatboxOutline, heart, heartOutline, settingsOutline, shareSocialOutline } from "ionicons/icons";
 
 export const PostCard = ({ post, muted, setMuted, openComments }: {
     post: Post,
@@ -28,7 +29,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
     const { refetch } = useObservedQuery();
 
     const videoRef = useRef<HTMLVideoElement>(null);
-    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false }, [AutoHeight({ delay: 5000, stopOnInteraction: false })]);
+    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false },/*[AutoHeight({ delay: 5000, stopOnInteraction: false })]*/);
     const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi);
 
     const [isLiked, setIsLiked] = useState<boolean>(post.is_liked);
@@ -108,7 +109,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
     const renderLike = () => {
         return (
             <div className="flex flex-col items-center justify-start">
-                {!isLiked ? <BiHeart className="w-5 h-5 text-gray-300" onClick={onLikePost} /> : <BiSolidHeart className="w-5 h-5 text-red-600" onClick={onLikePost} />}
+                {!isLiked ? <IonIcon icon={heartOutline} role="img" className="md hydrated" aria-label="heart outline" onClick={onLikePost} /> : <IonIcon icon={heart} role="img" className="md hydrated text-red-600" aria-label="heart outline" onClick={onLikePost} />}
             </div>
         );
     };
@@ -139,7 +140,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
     const renderBookmark = () => {
         return (
             <div className="flex flex-col items-center justify-start">
-                {!bookMarked ? <BiBookmark className="w-5 h-5 text-gray-300" onClick={handleBookMark} /> : <BiSolidBookmark className="w-5 h-5 text-white" onClick={handleBookMark} />}
+                {!bookMarked ? <BiBookmark className="w-5 h-5 text-black" onClick={handleBookMark} /> : <BiSolidBookmark className="w-5 h-5 text-black" onClick={handleBookMark} />}
             </div>
         );
     };
@@ -154,14 +155,14 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
         return (
             <div className="embla" onDoubleClick={onLikePost}>
                 <div className="embla__viewport" ref={emblaRef}>
-                    <div className="embla__container">
+                    <div className="embla__container !items-center bg-black">
                         {media.map((item, index) => {
                             const calculatedHeight = parseInt(item.media_height) ? parseInt(item.media_height) : 400;
                             const maxHeight = calculatedHeight > 600 ? 600 : calculatedHeight;
 
                             return (
                                 <div key={item.id} className={clsx(
-                                    "embla__slide h-full group",
+                                    "embla__slide h-full group bg-black",
                                     item.media_type === 'video' && "embla__slide--video"
                                 )}>
                                     <div className="embla__slide__number w-full h-full">
@@ -208,20 +209,12 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                     </div>
                 </div>
 
-                <div className="flex flex-col p-2 gap-y-2">
-                    <div className="flex gap-1 w-full justify-between text-xl">
-                        <div className="flex gap-2 min-w-24 items-start justify-start">
-                            {renderLike()}
-                            <BiComment onClick={() => openComments(post.id)} />
-                            <NativeShare
-                                id={post.id.toString()}
-                                key={post.id}
-                                shareUri={`/posts/${post.id}`}
-                                shareText={post.caption}
-                                shareTitle="DriveLife Post"
-                                shareImage={post.media[0].media_url}
-                            />
-                        </div>
+                <div className={
+                    clsx("flex flex-col",
+                        media.length > 1 && "my-2.5",
+                    )
+                }>
+                    <div className="flex gap-1 w-full justify-center text-xl">
                         {media.length > 1 && (
                             <div className="flex gap-1 min-w-24 items-start justify-center max-w-20">
                                 {scrollSnaps.map((_, index) => {
@@ -230,68 +223,59 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                                             key={index}
                                             onClick={() => onDotButtonClick(index)}
                                         >
-                                            <div className={`w-1.5 h-1.5 rounded-full ${selectedIndex === index ? 'bg-blue-500' : 'bg-gray-300'}`} />
+                                            <div className={`w-1.5 h-1.5 rounded-full ${selectedIndex === index ? 'bg-theme-primary' : 'bg-gray-300'}`} />
                                         </DotButton>
                                     );
                                 })}
                             </div>
                         )}
-
-                        <div className="flex min-w-24 items-start justify-end">
-                            {renderBookmark()}
-                        </div>
                     </div>
-
-                    <span className="text-xs">{post.likes_count ?? 0} likes</span>
-
-                    <div className="font-medium flex items-center gap-1 text-sm" title={post.caption}>
-                        <div className=" text-white text-xs">{post.username ?? "Attendee"}</div>
-                        <span className="text-white/80 text-xs"> {post.caption}</span>
-                    </div>
-                    {post.comments_count ? (
-                        <span className="text-white/60 text-xs cursor-pointer" onClick={() => openComments(post.id)}>
-                            View  {post.comments_count > 1 ? `all ${post.comments_count} comments` : `comment`}
-                        </span>
-                    ) : null}
-                    <div className="text-white/60 text-xs">{formatPostDate(post.post_date)}</div>
                 </div>
             </div>
         );
     }, [post.id, muted, isLiked, selectedIndex, scrollSnaps, bookMarked]);
 
     return (
-        <div className="relative shadow-md overflow-hidden bg-theme-dark mb-6 text-white" id={`PostMain-${post.id}`}>
-            <div className="flex items-center justify-between px-3 py-3">
-                <div className="flex flex-col items-start justify-start">
-                    <div className="flex items-center gap-2 justify-center">
-                        <div className="avatar">
-                            <div className="w-8 h-8 bg-gray-300 rounded-full border-1 border-theme-primary">
-                                <Link href={`/profile/${post.user_id}`} passHref>
-                                    <img
-                                        src={post.user_profile_image}
-                                        alt="User Avatar"
-                                        className="w-full h-full object-cover rounded-full"
-                                    />
-                                </Link>
-                            </div>
-                        </div>
-                        <div className="flex flex-col">
-                            <div className="font-medium text-white text-sm">{post.username}</div>
-                            <div className="flex items-center gap-2 text-xs text-white/60">
-                                {post.location && (
-                                    <div className="flex items-center gap-1">
-                                        <BiMapPin />
-                                        <span>{post.location}</span>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
+        <div className="media-post-content relative mb-6 text-black" id={`PostMain-${post.id}`}>
+            <div className="media-post-header">
+                <div className="media-post-avatar border-black border-2" style={{
+                    backgroundImage: `url(${post.user_profile_image})`
+                }} />
+                <Link href={`/profile/${post.user_id}`} passHref>
+                    <div className="media-post-user text-black">{post.username}</div>
+                </Link>
+                <div className="media-post-date">{formatPostDate(post.post_date)}</div>
+            </div>
+
+            {renderMedia}
+
+            <div className="media-post-actions d-flex">
+                <div className="media-post-like">
+                    {renderLike()}
                 </div>
 
-                {post.user_id === user?.id && (
-                    <div className="flex gap-2">
-                        <PostActions
+                <div
+                    className="media-post-comment"
+                    onClick={() => openComments(post.id)}
+                    data-bs-toggle="offcanvas" data-bs-target="#postComments"
+                >
+                    <IonIcon icon={chatboxOutline} role="img" className="md hydrated" aria-label="chatbox outline" />
+                </div>
+
+                <div className="media-post-share">
+                    <NativeShare
+                        id={post.id.toString()}
+                        key={post.id}
+                        shareUri={`/posts/${post.id}`}
+                        shareText={post.caption}
+                        shareTitle="DriveLife Post"
+                        shareImage={post.media[0].media_url}
+                    />
+                </div>
+
+                {(post.user_id === user.id) && (
+                    <div className="media-post-edit">
+                        <PostActionsSheet
                             postId={post.id}
                             isOwner={post.user_id === user?.id}
                             onDeleted={() => {
@@ -302,63 +286,45 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                 )}
             </div>
 
-            {renderMedia}
+            <span className="media-post-likecount">{post.likes_count ?? 0} likes</span>
+            <MediaPostDescription {...post} />
+
+            {post.comments_count ? (
+                <div className="media-post-commentcount" data-bs-toggle="offcanvas" data-bs-target="#postComments"
+                    onClick={() => openComments(post.id)}> View  {post.comments_count > 1 ? `all ${post.comments_count} comments` : `comment`}
+                </div>
+            ) : null}
         </div>
     );
 };
 
 
-interface PostActionsProps {
-    postId: number;
-    isOwner: boolean;
-    onDeleted?: () => void;
-}
+const MediaPostDescription = (post: Post) => {
+    const [isExpanded, setIsExpanded] = useState(false);
 
-const PostActions: React.FC<PostActionsProps> = ({
-    isOwner,
-    postId,
-    onDeleted
-}) => {
-    const handleReport = () => { };
-
-    const handleDelete = async () => {
-        if (!isOwner) return;
-        try {
-            if (confirm("Are you sure you want to delete this post?")) {
-                const response = await deletePost(postId);
-
-                if (response) {
-                    onDeleted && onDeleted();
-                } else {
-                    throw new Error("Failed to delete post");
-                }
-            }
-        } catch (error) {
-            alert("Failed to delete post");
-            console.log(error);
-        }
+    const toggleReadMore = () => {
+        setIsExpanded(!isExpanded);
     };
 
     return (
-        <div className="dropdown">
-            <button type="button" data-bs-toggle="dropdown" aria-expanded="true">
-                <IonIcon icon={ellipsisVerticalOutline} />
-            </button>
-            <div className="dropdown-menu dropdown-menu-end px-3" style={{
-                position: 'absolute',
-                inset: '0px 0px auto auto',
-                margin: '0px',
-                transform: 'translate3d(-230px, 42px, 0px)',
-                minWidth: 'unset'
-            }} data-popper-placement="bottom-end">
-                <button className="text-red-600 text-xs flex items-center justify-center" onClick={handleReport}>
-                    <IonIcon icon={warningOutline} className="!w-4" /> Report
-                </button>
-                <div className="dropdown-divider"></div>
-                <button className="text-red-600 text-xs flex items-center justify-center" onClick={handleDelete}>
-                    <IonIcon icon={trashBinOutline} className="!w-4" /> Delete
-                </button>
-            </div>
+        <div className="media-post-description">
+            <strong>{post.username}</strong> {post.caption && (
+                <>
+                    {isExpanded ? (
+                        <>
+                            • {post.caption}
+                            <span className="media-post-readmore cursor-pointer" onClick={toggleReadMore}> less</span>
+                        </>
+                    ) : (
+                        <>
+                            • {post.caption.slice(0, 100)}{post.caption.length > 100 && '...'}
+                            {post.caption.length > 100 && (
+                                <span className="media-post-readmore cursor-pointer" onClick={toggleReadMore}> more</span>
+                            )}
+                        </>
+                    )}
+                </>
+            )}
         </div>
     );
 };

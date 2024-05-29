@@ -40,7 +40,9 @@ export default async function RootLayout({
         </Providers>
 
         <Script src="/assets/js/lib/bootstrap.min.js" strategy="beforeInteractive" />
+        <Script src="/assets/js/lib/jquery-3.7.1.min.js" strategy="beforeInteractive" />
         <Script src="/assets/js/plugins/progressbar-js/progressbar.min.js" strategy="beforeInteractive" />
+        <Script src="/assets/js/plugins/touch/jquery.touchSwipe.min.js" strategy="beforeInteractive" />
         <Script src="/assets/js/base.js" strategy="beforeInteractive" />
         <Script src="/assets/js/custom.js" strategy="beforeInteractive" />
       </body>

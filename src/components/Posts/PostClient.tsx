@@ -10,6 +10,7 @@ import { fetchPost } from "@/actions/post-actions";
 import { PostCardSkeleton } from "@/components/Posts/PostCardSkeleton";
 import { PostCard } from "@/components/Posts/PostCard";
 import { useQuery } from "@tanstack/react-query";
+import { CommentsSlider } from "./CommentsSlider";
 
 const PostClient = ({ postId }: { postId: string; }) => {
     const { data, error, isLoading, isFetching } = useQuery<Post | null, Error>({
@@ -19,10 +20,6 @@ const PostClient = ({ postId }: { postId: string; }) => {
         refetchOnMount: false,
         retry: 1,
     });
-
-    useEffect(() => {
-        console.log('PostClient.tsx -> useEffect -> postId:', postId);
-    }, []);
 
     const [muted, setMuted] = useState(true); // State to track muted state
     const [commentsOpen, setCommentsOpen] = useState(false); // State to track comments open state
@@ -41,7 +38,7 @@ const PostClient = ({ postId }: { postId: string; }) => {
         if (data && !isLoading) {
             return (
                 <>
-                    <SlideInFromBottomToTop
+                    {/* <SlideInFromBottomToTop
                         isOpen={commentsOpen}
                         onClose={() => setCommentsOpen(false)}
                         height={"80%"}
@@ -49,7 +46,8 @@ const PostClient = ({ postId }: { postId: string; }) => {
                         stickyScroll={true}
                     >
                         <ComentsSection postId={parseInt(postId)} />
-                    </SlideInFromBottomToTop>
+                    </SlideInFromBottomToTop> */}
+                    <CommentsSlider postId={parseInt(postId)} commentCount={getCommentCount()} />
 
                     <PostCard
                         post={data}
@@ -69,7 +67,7 @@ const PostClient = ({ postId }: { postId: string; }) => {
     }, [commentsOpen, data, isLoading, muted, postId, isFetching]);
 
     return (
-        <div className="bg-theme-dark min-h-screen max-h-screen overflow-hidden">
+        <div className="bg-white min-h-screen max-h-screen overflow-hidden">
             {(isFetching || isLoading) && (
                 <PostCardSkeleton />
             )}

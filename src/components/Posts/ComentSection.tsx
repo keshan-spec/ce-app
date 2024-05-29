@@ -5,7 +5,7 @@ import { formatPostDate } from "@/utils/dateUtils";
 import { useQuery } from "@tanstack/react-query";
 import { IonIcon } from "@ionic/react";
 import clsx from "clsx";
-import { chatbubbleOutline, heartOutline, reloadCircle } from "ionicons/icons";
+import { chatbubbleOutline, chevronUpCircleOutline, heartOutline, reloadCircle } from "ionicons/icons";
 import { useMemo, useState } from "react";
 import { BiCommentAdd, BiLoader, BiRefresh } from "react-icons/bi";
 // import { useQuery } from "react-query";
@@ -44,7 +44,9 @@ export const ComentsSection: React.FC<ComentsSectionProps> = ({
         <div className={clsx("w-full overflow-scroll h-full", minHeight)}>
             <div className="section full mb-3 w-full">
                 {(isLoading || isFetching) && <CommentLoadingSkeleton />}
+
                 {error && <p className="px-3">{error.message}</p>}
+
                 {(data && data.length === 0 && !(isLoading || isFetching)) && (
                     <p className="px-3">No comments found</p>
                 )}
@@ -63,7 +65,7 @@ export const ComentsSection: React.FC<ComentsSectionProps> = ({
 };
 
 const CommentForm: React.FC<{ postId: number; onCommentAdded: () => void; }> = ({ postId, onCommentAdded }) => {
-    const { isLoggedIn, user } = useUser();
+    const { isLoggedIn } = useUser();
 
     if (!isLoggedIn) {
         return (
@@ -99,40 +101,31 @@ const CommentForm: React.FC<{ postId: number; onCommentAdded: () => void; }> = (
     };
 
     return (
-        <div className="absolute bottom-0 z-10 w-full inset-x-0 bg-white">
-            <form onSubmit={handleSubmit} className="flex items-start space-x-2 py-2">
-                {/* <div className="w-8 h-8 bg-gray-300 rounded-full border-1 border-theme-primary mt-1">
-                    {user?.profile_image && <img
-                        src={user?.profile_image}
-                        alt="User Avatar"
-                        className="w-full h-full object-cover rounded-full"
-                    />}
-                </div> */}
-                <div className="flex-1 space-y-1">
-                    <textarea
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                        placeholder="Write a comment"
-                        className="w-full p-2 border rounded"
-                    ></textarea>
-                    {error && <p className="text-red-500 text-sm">{error}</p>}
-                    <div className="flex items-center gap-2">
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="px-2 py-1 bg-theme-primary text-white rounded text-lg"
-                        >
-                            {loading ? <BiLoader className="animate-spin" /> : <BiCommentAdd />}
-                        </button>
-                        <IonIcon
-                            icon={reloadCircle}
-                            onClick={() => onCommentAdded()}
-                            className={`text-3xl text-theme-primary cursor-pointer`}
-                        />
-                    </div>
+        <form onSubmit={handleSubmit} className="flex items-start space-x-2 py-2 min-h-6 bg-white">
+            <div className="comments-container-footer">
+                <div className="comment-submit-button">
+                    <button
+                        type="submit"
+                        disabled={loading}>
+                        {loading ? <BiLoader className="animate-spin" /> : <IonIcon
+                            icon={chevronUpCircleOutline}
+                            role="img"
+                            className="md hydrated"
+                            aria-label="chevron up circle outline"
+                        />}
+                    </button>
                 </div>
-            </form>
-        </div>
+                <textarea
+                    className="form-control focus:ring-0 focus:outline-none"
+                    rows={2}
+                    placeholder="Comment..."
+                    spellCheck="false"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                />
+                {error && <p className="text-red-500 text-sm">{error}</p>}
+            </div>
+        </form>
     );
 };
 
@@ -147,7 +140,7 @@ const Comment: React.FC<{
     };
 }> = ({ comment }) => {
     return (
-        <div className="item px-3 border-b border-b-gray-300 pb-2 !mb-3">
+        <div className="item border-b border-b-gray-300 pb-2 !mb-3 overflow-hidden">
             <div className="avatar">
                 <div className="w-8 h-8 bg-gray-300 rounded-full border-1 border-theme-primary mt-1">
                     {comment.profile_image && <img
@@ -168,14 +161,14 @@ const Comment: React.FC<{
                     {comment.comment}
                 </div>
                 <div className="comment-footer">
-                    <a href="#" className="comment-button">
+                    <button className="comment-button flex items-center">
                         <IonIcon icon={heartOutline} role="img" className="md hydrated" aria-label="heart outline" />
-                        Like (523)
-                    </a>
-                    <a href="#" className="comment-button">
+                        <span>Like (c)</span>
+                    </button>
+                    {/* <a href="#" className="comment-button">
                         <IonIcon icon={chatbubbleOutline} role="img" className="md hydrated" aria-label="heart outline" />
                         Reply
-                    </a>
+                    </a> */}
                 </div>
             </div>
         </div>
