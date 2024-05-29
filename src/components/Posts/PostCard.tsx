@@ -154,8 +154,8 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
 
         return (
             <div className="embla" onDoubleClick={onLikePost}>
-                <div className="embla__viewport" ref={emblaRef}>
-                    <div className="embla__container !items-center bg-black">
+                <div className="embla__viewport bg-black" ref={emblaRef}>
+                    <div className="embla__container !items-center">
                         {media.map((item, index) => {
                             const calculatedHeight = parseInt(item.media_height) ? parseInt(item.media_height) : 400;
                             const maxHeight = calculatedHeight > 600 ? 600 : calculatedHeight;
@@ -290,7 +290,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
             <MediaPostDescription {...post} />
 
             {post.comments_count ? (
-                <div className="media-post-commentcount" data-bs-toggle="offcanvas" data-bs-target="#postComments"
+                <div className="media-post-commentcount opacity-60 !text-xm" data-bs-toggle="offcanvas" data-bs-target="#postComments"
                     onClick={() => openComments(post.id)}> View  {post.comments_count > 1 ? `all ${post.comments_count} comments` : `comment`}
                 </div>
             ) : null}
