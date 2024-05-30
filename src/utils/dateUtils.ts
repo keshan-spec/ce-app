@@ -29,6 +29,10 @@ export const formatPostDate = (date: string) => {
     } else if (hours < 24) {
         return `${Math.floor(hours)} hours ago`;
     } else if (days < 30) {
+        if (Math.floor(days) === 1) {
+            return 'Yesterday';
+        }
+
         return `${Math.floor(days)} days ago`;
     } else if (months < 12) {
         return `${Math.floor(months)} months ago`;
