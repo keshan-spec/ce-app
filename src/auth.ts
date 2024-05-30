@@ -3,6 +3,17 @@ import NextAuth, { DefaultSession } from "next-auth";
 import authConfig from "@/auth.config";
 import { getUserDetails } from "@/actions/auth-actions";
 
+export type ProfileLinks = {
+    instagram: string;
+    tiktok: string;
+    facebook: string;
+    email: string;
+    links: {
+        label: string;
+        url: string;
+    }[];
+};
+
 export type AuthUser = {
     id: string;
     first_name: string;
@@ -13,12 +24,7 @@ export type AuthUser = {
     followers: string[];
     following: string[];
     posts_count: number;
-    profile_links: {
-        instagram: string;
-        tiktok: string;
-        facebook: string;
-        email: string;
-    };
+    profile_links: ProfileLinks;
 };
 
 declare module "next-auth" {

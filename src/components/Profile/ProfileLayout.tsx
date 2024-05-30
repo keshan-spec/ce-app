@@ -1,7 +1,6 @@
 'use client';
 import { Button } from '@/shared/Button';
 import { Tabs } from './Tabs';
-import { SocialButton } from '@/shared/SocialButton';
 import { useUser } from '@/hooks/useUser';
 import { NoAuthWall } from '../Protected/NoAuthWall';
 import { getUserDetails } from '@/actions/auth-actions';
@@ -13,6 +12,7 @@ import { redirect } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import PopUp from '@/shared/Dialog';
+import { ProfileLinksExternal } from './ProfileLinks';
 
 interface ProfileLayoutProps {
     profileId?: string;
@@ -200,55 +200,17 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
 
             <div className="section mb-2">
                 <div className="profile-links">
-                    <div className="flex flex-col items-center w-full">
-                        {profileId && renderFollowBtn}
+                    {profileId && renderFollowBtn}
 
-                        {(isLoggedIn && canEditProfile) && (
-                            <Button className="w-full profile-link capitalize" onClick={() => {
-                                alert('Edit Profile');
-                            }}>
-                                Edit Profile
-                            </Button>
-                        )}
+                    {(isLoggedIn && canEditProfile) && (
+                        <Button className="w-full profile-link capitalize" onClick={() => {
+                            alert('Edit Profile');
+                        }}>
+                            Edit Profile
+                        </Button>
+                    )}
 
-                        <SocialButton
-                            socialType='instagram'
-                            link={user.profile_links?.instagram}
-                            onClick={() => {
-                                handleLinkClick('instagram');
-                            }}
-                        >
-                            Instagram
-                        </SocialButton>
-                        <SocialButton
-                            socialType='facebook'
-                            link={user.profile_links?.facebook}
-                            onClick={() => {
-                                handleLinkClick('facebook');
-                            }}
-                        >
-                            Facebook
-                        </SocialButton>
-                        <SocialButton
-                            socialType='tiktok'
-                            link={user.profile_links?.tiktok}
-                            onClick={() => {
-                                handleLinkClick('tiktok');
-                            }}
-                        >
-                            TikTok
-                        </SocialButton>
-                        {/* email */}
-                        <SocialButton
-                            socialType='email'
-                            link={user.profile_links?.email}
-                            onClick={() => {
-                                handleLinkClick('email');
-                            }}
-                        >
-                            Email
-                        </SocialButton>
-                    </div>
+                    <ProfileLinksExternal profileLinks={user.profile_links} isOwner={canEditProfile} />
 
                     <div className="mt-4 bio hidden">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur at magna porttitor lorem mollis
