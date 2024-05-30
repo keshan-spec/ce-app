@@ -11,6 +11,7 @@ export type Post = {
     is_liked: boolean;
     user_profile_image?: string;
     is_bookmarked: boolean;
+    garage_id: number | null;
 };
 
 export interface PostMedia {

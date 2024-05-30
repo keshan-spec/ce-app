@@ -19,6 +19,8 @@ export const Button: React.FC<ButtonProps> = ({ fullPageLoading, icon, ...btnpro
             return <i className="ml-2 fas fa-chevron-right"></i>;
         }
     };
+
+
     return (
         <>
             {fullPageLoading && pending && <Loader transulcent />}

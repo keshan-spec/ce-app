@@ -1,26 +1,22 @@
-import { getUserPosts } from "@/actions/profile-actions";
-import NcImage from "@/components/Image/Image";
-import { Post } from "@/types/posts";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import Link from "next/link";
-import { useEffect, useMemo } from "react";
+import { getGaragePosts } from '@/actions/garage-actions';
+import { Post } from '@/types/posts';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import Link from 'next/link';
+import React, { useEffect, useMemo } from 'react';
+import { MiniPostSkeleton } from '../Sections/Feed';
+import NcImage from '@/components/Image/Image';
 
-interface FeedProps {
-    tagged?: boolean;
-    profileId: string;
+interface GaragePostsProps {
+    garageId: string;
 }
 
-export const Feed: React.FC<FeedProps> = ({
-    tagged = false,
-    profileId
+export const GaragePosts: React.FC<GaragePostsProps> = ({
+    garageId
 }) => {
-    const key = tagged ? 'tagged-posts' : 'user-posts';
-
     const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
-        queryKey: [key, profileId],
+        queryKey: ["garage-posts", garageId],
         queryFn: ({ pageParam }) => {
-            if (tagged) return getUserPosts(profileId, pageParam || 1, true);
-            return getUserPosts(profileId, pageParam || 1);
+            return getGaragePosts(garageId, pageParam || 1);
         },
         getNextPageParam: (lastPage: { total_pages: number, data: Post[], limit: number; }, pages: any[]) => {
             const maxPages = Math.ceil(lastPage.total_pages / lastPage.limit);
@@ -36,8 +32,8 @@ export const Feed: React.FC<FeedProps> = ({
     // Infinite scroll
     useEffect(() => {
         let fetching = isFetchingNextPage || isFetching || false;
-        const onScroll = async (event: any) => {
 
+        const onScroll = async (event: any) => {
             const { scrollHeight, scrollTop, clientHeight } =
                 event.target.scrollingElement;
 
@@ -110,16 +106,22 @@ export const Feed: React.FC<FeedProps> = ({
     };
 
     return (
-        <div className="fade show" id={tagged ? "tagged-posts" : "feed"} role="tabpanel">
-            <div className="mt-2 p-1 pt-0 pb-0">
-                <div className="grid grid-cols-3 gap-1">
-                    {data && data.pages?.map((page: any) => (
-                        page.data?.map((post: Post) => (
-                            <Link key={post.id} href={`/posts/${post.id}`}>
-                                {renderMedia(post)}
+        <>
+            <div className="section full">
+                <div className="wide-block transparent p-0">
+                    <ul className="nav nav-tabs lined iconed" role="tablist">
+                        <li className="nav-item">
+                            <Link className="nav-link active" data-bs-toggle="tab" href="#posts" role="tab">
+                                Posts
                             </Link>
-                        ))
-                    ))}
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" data-bs-toggle="tab" href="#tags" role="tab">
+                                Tags
+                            </Link>
+                        </li>
+
+                    </ul>
                 </div>
             </div>
 
@@ -140,18 +142,37 @@ export const Feed: React.FC<FeedProps> = ({
                     <div className="spinner-border text-primary" role="status"></div>
                 </div>
             )}
-        </div>
-    );
-};
 
-export const MiniPostSkeleton = () => {
-    return (
-        <div className="grid grid-cols-3 gap-1 px-2">
-            {Array.from({ length: 9 }).map((_, i) => (
-                <div key={i}>
-                    <div className="bg-gray-200 animate-pulse w-full h-32" />
+            <div className="section full">
+                <div className="tab-content">
+                    <div className="tab-pane fade show active" id="posts" role="tabpanel">
+                        <div className="mt-2 p-1 pt-0 pb-0">
+                            <div className="grid grid-cols-3 gap-1">
+                                {data && data.pages?.map((page: any) => (
+                                    page.data?.map((post: Post) => (
+                                        <Link key={post.id} href={`/posts/${post.id}`}>
+                                            {renderMedia(post)}
+                                        </Link>
+                                    ))
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="tab-pane fade" id="tags" role="tabpanel">
+                        <div className="mt-2 p-1 pt-0 pb-0">
+                            <div className="grid grid-cols-3 gap-1">
+                                {data && data.pages?.map((page: any) => (
+                                    page.data?.map((post: Post) => (
+                                        <Link key={post.id} href={`/posts/${post.id}`}>
+                                            {renderMedia(post)}
+                                        </Link>
+                                    ))
+                                ))}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            ))}
-        </div>
+            </div>
+        </>
     );
 };

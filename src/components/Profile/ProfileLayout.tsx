@@ -7,11 +7,10 @@ import { getUserDetails } from '@/actions/auth-actions';
 import { UserNotFound } from './UserNotFound';
 import { UserProfileSkeleton } from './UserProfileSkeleton';
 import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
-import { addUserProfileLinks, maybeFollowUser } from '@/actions/profile-actions';
+import { maybeFollowUser } from '@/actions/profile-actions';
 import { redirect } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import PopUp from '@/shared/Dialog';
 import { ProfileLinksExternal } from './ProfileLinks';
 
 interface ProfileLayoutProps {
@@ -64,8 +63,6 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
 }) => {
     const { user, isLoggedIn, isFetching, sessionUser, refetch, canEditProfile } = getUser(profileId);
 
-    const [isLinkOpen, setIsLinkOpen] = useState<'instagram' | 'tiktok' | 'facebook' | 'email' | null>(null);
-
     const handleFollowClick = async () => {
         if (!profileId) return;
 
@@ -78,31 +75,6 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
             refetch?.();
         } catch (error) {
             console.error(error);
-        }
-    };
-
-    const onLinkAdd = async (data: FormData) => {
-        if (!isLinkOpen) return;
-        try {
-            const response = await addUserProfileLinks({
-                type: isLinkOpen,
-                link: data.get('link') as string
-            });
-
-            if (response) {
-                refetch?.();
-                setIsLinkOpen(null);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const handleLinkClick = (type: 'instagram' | 'tiktok' | 'facebook' | 'email') => {
-        if (!canEditProfile) return;
-
-        if (isLoggedIn && user?.id) {
-            setIsLinkOpen(type);
         }
     };
 
@@ -126,21 +98,6 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
         );
     }, [user?.id, user?.followers]);
 
-    const linkInputplaceHolder = useMemo(() => {
-        switch (isLinkOpen) {
-            case 'instagram':
-                return 'Your Instagram username';
-            case 'tiktok':
-                return 'Your TikTok username';
-            case 'facebook':
-                return 'Your Facebook username';
-            case 'email':
-                return 'Your Email address';
-            default:
-                return '';
-        }
-    }, [isLinkOpen]);
-
     if (!isLoggedIn && currentUser) {
         return <NoAuthWall redirectTo="/profile" />;
     }
@@ -159,29 +116,22 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
 
     return (
         <>
-            <PopUp isOpen={isLinkOpen ? true : false} onClose={() => setIsLinkOpen(null)} title='Add Link'>
-                <form className="flex flex-col gap-2 p-4" action={onLinkAdd}>
-                    <input type={isLinkOpen === 'email' ? 'email' : 'text'} placeholder={linkInputplaceHolder} name='link' className='p-1 border border-gray-300 rounded' />
-                    <Button type='submit' className="w-full">Add Link</Button>
-                </form>
-            </PopUp>
-
-            <div className="section !p-0 relative" style={{
-                backgroundImage: "url(https://www.motortrend.com/uploads/2023/08/008-2024-Ford-Mustang-GT-Premium-Performance-pack-front-three-quarters.jpg)",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-            }}>
-                <div className="flex flex-col items-center justify-center min-h-56 z-20 relative">
-                    <div className="avatar mt-10">
+            <div className="profile-background"
+                style={{
+                    backgroundImage: "url(https://www.motortrend.com/uploads/2023/08/008-2024-Ford-Mustang-GT-Premium-Performance-pack-front-three-quarters.jpg)",
+                }}
+            />
+            <div className="section mt-3">
+                <div className="profile-head">
+                    <div>
                         <img src={user.profile_image || PLACEHOLDER_PFP}
-                            alt="avatar" className="max-w-28 rounded-full border-2 border-white" />
+                            alt="avatar" className="profile-image" />
                     </div>
-                    <div className="flex flex-col items-center mt-2 gap-y-1">
-                        <h3 className="text-md mb-0">@{user.username}</h3>
-                        <h5 className="subtext opacity-65">{user.first_name} {user.last_name}</h5>
+                    <div className="in">
+                        <h3 className="name profile-username">@{user.username}</h3>
+                        <h5 className="subtext profile-name">{user.first_name} {user.last_name}</h5>
                     </div>
                 </div>
-                <div className="bg-gradient-to-b from-transparent to-white h-72 w-full absolute bottom-0" />
             </div>
 
             <div className="section full hidden">
@@ -203,11 +153,12 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                     {profileId && renderFollowBtn}
 
                     {(isLoggedIn && canEditProfile) && (
-                        <Button className="w-full profile-link capitalize" onClick={() => {
-                            alert('Edit Profile');
-                        }}>
+                        <button className="profile-link"
+                            onClick={() => {
+                                alert('Edit Profile');
+                            }}>
                             Edit Profile
-                        </Button>
+                        </button>
                     )}
 
                     <ProfileLinksExternal profileLinks={user.profile_links} isOwner={canEditProfile} />

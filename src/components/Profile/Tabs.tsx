@@ -1,8 +1,8 @@
 'use client';
 import { Feed } from './Sections/Feed';
-import { Garage } from './Sections/Garage';
 import { Bookmarks } from './Sections/Bookmarks';
 import { useCallback, useState } from 'react';
+import { Garage } from './Garage/Garage';
 
 interface TabsProps {
     profileId: string;
@@ -16,7 +16,7 @@ export const Tabs: React.FC<TabsProps> = ({
     const renderTabs = useCallback(() => {
         switch (activeTab) {
             case 'garage':
-                return <Garage />;
+                return <Garage profileId={profileId} />;
             case 'feed':
                 return <Feed profileId={profileId} />;
             case 'tagged-posts':
@@ -26,7 +26,7 @@ export const Tabs: React.FC<TabsProps> = ({
             case 'settings':
                 return <div>Settings</div>;
             default:
-                return <Garage />;
+                return <Garage profileId={profileId} />;
         }
     }, [activeTab, profileId]);
 
