@@ -15,7 +15,7 @@ export const Garage: React.FC<GarageProps> = ({
 
     const { data, error, isLoading, isFetching } = useQuery<GarageType[] | null, Error>({
         queryKey: ["user-garage", profileId],
-        queryFn: () => getUserGarage(),
+        queryFn: () => getUserGarage(profileId),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         retry: 1,

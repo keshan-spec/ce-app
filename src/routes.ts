@@ -12,6 +12,7 @@ export const publicRoutes = [
 export const publcDynamicRoutes = [
     "/profile/:id",
     "/posts/:id",
+    "/profile/garage/:id",
 ];
 
 /**

@@ -22,21 +22,14 @@ export const getGarageById = async (garageId: string): Promise<Garage | null> =>
     return data;
 };
 
-export const getUserGarage = async () => {
-    let user;
-    try {
-        user = await getSessionUser();
-    } catch (error) {
-        return null;
-    }
-
+export const getUserGarage = async (profileId: string) => {
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-user-garage`, {
         cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user_id: user.id }),
+        body: JSON.stringify({ user_id: profileId }),
     });
 
     const data = await response.json();
