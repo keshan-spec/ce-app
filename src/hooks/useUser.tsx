@@ -13,11 +13,12 @@ const guestUser = {
     following: [],
     posts_count: 0,
     profile_links: {
-        instagram: "",
-        tiktok: "",
-        facebook: "",
-        email: "",
-    },
+        instagram: '',
+        tiktok: '',
+        facebook: '',
+        email: '',
+        links: []
+    }
 };
 
 type UseUser = {
