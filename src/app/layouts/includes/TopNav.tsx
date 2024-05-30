@@ -47,6 +47,21 @@ export const TopNav: React.FC = () => {
                 </div>
             </div>
 
+            {pathname === '/posts' && (
+                <div className="social-tabs">
+                    <ul className="nav nav-tabs capsuled" role="tablist">
+                        <li className="nav-item">
+                            <a className="nav-link active" data-bs-toggle="tab" href="#latest-posts" role="tab" aria-selected="false">
+                                Latest</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" data-bs-toggle="tab" href="#following-posts" role="tab" aria-selected="true">
+                                Following</a>
+                        </li>
+                    </ul>
+                </div>
+            )}
+
             {pathname == '/' && (
                 <div className="header-row-wrapper2">
                     <ul className="nav nav-tabs capsuled" role="tablist">

@@ -1,11 +1,9 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { Post } from "@/types/posts";
 import { PostNotFound } from '@/components/Posts/PostNotFound';
 
-import SlideInFromBottomToTop from "@/shared/SlideIn";
-import { ComentsSection } from "@/components/Posts/ComentSection";
 import { fetchPost } from "@/actions/post-actions";
 import { PostCardSkeleton } from "@/components/Posts/PostCardSkeleton";
 import { PostCard } from "@/components/Posts/PostCard";
@@ -33,22 +31,10 @@ const PostClient = ({ postId }: { postId: string; }) => {
     }, [data]);
 
     const renderContent = useCallback(() => {
-        console.log('PostClient.tsx -> Rendering content');
-
         if (data && !isLoading) {
             return (
                 <>
-                    {/* <SlideInFromBottomToTop
-                        isOpen={commentsOpen}
-                        onClose={() => setCommentsOpen(false)}
-                        height={"80%"}
-                        title={`${getCommentCount()} comments`}
-                        stickyScroll={true}
-                    >
-                        <ComentsSection postId={parseInt(postId)} />
-                    </SlideInFromBottomToTop> */}
                     <CommentsSlider postId={parseInt(postId)} commentCount={getCommentCount()} />
-
                     <PostCard
                         post={data}
                         muted={muted}

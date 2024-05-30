@@ -182,3 +182,29 @@ export const deletePost = async (postId: number) => {
         throw new Error(e.message);
     }
 };
+
+export const maybeLikeComment = async (commentId: number) => {
+    try {
+        const user = await getSessionUser();
+        if (!user || !user.id) throw new Error("User session expired. Please login again.");
+
+        const response = await fetch(`${API_URL}/wp-json/app/v1/toggle-like-comment`, {
+            cache: "no-cache",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user_id: user?.id, comment_id: commentId }),
+        });
+        const data = await response.json();
+
+        if (!response.ok || response.status !== 200) {
+            throw new Error(data.message);
+        }
+
+        return data;
+    } catch (e: any) {
+        console.error("Error liking comment");
+        throw new Error(e.message);
+    }
+};

@@ -1,11 +1,11 @@
 'use client';
-import { addComment, fetchPostComments } from "@/actions/post-actions";
+import { addComment, fetchPostComments, maybeLikeComment } from "@/actions/post-actions";
 import { useUser } from "@/hooks/useUser";
 import { formatPostDate } from "@/utils/dateUtils";
 import { useQuery } from "@tanstack/react-query";
 import { IonIcon } from "@ionic/react";
 import clsx from "clsx";
-import { chatbubbleOutline, chevronUpCircleOutline, heartOutline, reloadCircle } from "ionicons/icons";
+import { chatbubbleOutline, chevronUpCircleOutline, heart, heartOutline, reloadCircle } from "ionicons/icons";
 import { useMemo, useState } from "react";
 import { BiCommentAdd, BiLoader, BiRefresh } from "react-icons/bi";
 // import { useQuery } from "react-query";
@@ -80,9 +80,13 @@ const CommentForm: React.FC<{ postId: number; onCommentAdded: () => void; }> = (
     const [comment, setComment] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [rows, setRows] = useState(2);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        if (loading || comment.length === 0) return;
+
         setLoading(true);
         setError(null);
 
@@ -116,14 +120,37 @@ const CommentForm: React.FC<{ postId: number; onCommentAdded: () => void; }> = (
                     </button>
                 </div>
                 <textarea
-                    className="form-control focus:ring-0 focus:outline-none"
-                    rows={2}
+                    className="form-control focus:ring-0 focus:outline-none !text-sm active:ring-0 active:outline-none"
+                    rows={rows}
                     placeholder="Comment..."
                     spellCheck="false"
                     value={comment}
+                    // onFocus={() => {
+                    //     setRows(4);
+                    // }}
+                    // onBlur={() => {
+                    //     setRows(2);
+                    // }}
                     onChange={(e) => setComment(e.target.value)}
                 />
-                {error && <p className="text-red-500 text-sm">{error}</p>}
+                <div id="toast-16" className={clsx(
+                    "toast-box toast-bottom bg-danger",
+                    error ? "show !bottom-0" : "bottom-full"
+                )}>
+                    <div className="in">
+                        <div className="text">
+                            {error}
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        disabled={loading || comment.length === 0}
+                        className="btn btn-sm btn-text-light close-button"
+                        onClick={() => setError(null)}
+                    >
+                        OK
+                    </button>
+                </div>
             </div>
         </form>
     );
@@ -137,10 +164,53 @@ const Comment: React.FC<{
         comment: string;
         comment_date: string;
         profile_image: string;
+        likes_count: number | null;
+        liked: boolean;
     };
 }> = ({ comment }) => {
+    const [likesCount, setLikesCount] = useState<number>(comment.likes_count ?? 0);
+    const [liked, setLiked] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleLike = async () => {
+        const newLikedState = !liked;
+        const newLikesCount = newLikedState ? likesCount + 1 : likesCount - 1;
+
+        // Optimistically update the UI
+        setLiked(newLikedState);
+        setLikesCount(newLikesCount);
+
+        try {
+            await maybeLikeComment(comment.id);
+        } catch (error: any) {
+            // Revert the UI update if the API call fails
+            setLiked(liked);
+            setLikesCount(likesCount);
+            setError(error.message);
+            console.error("Failed to like comment:", error);
+        }
+    };
+
     return (
         <div className="item border-b border-b-gray-300 pb-2 !mb-3 overflow-hidden">
+            <div id="toast-16" className={clsx(
+                "toast-box toast-bottom bg-danger",
+                error ? "show !bottom-0" : "bottom-full"
+            )}>
+                <div className="in">
+                    <div className="text text-white">
+                        {error}
+                    </div>
+                </div>
+                <button
+                    type="button"
+                    className="btn btn-sm btn-text-light close-button"
+                    onClick={() => setError(null)}
+                >
+                    OK
+                </button>
+            </div>
+
             <div className="avatar">
                 <div className="w-8 h-8 bg-gray-300 rounded-full border-1 border-theme-primary mt-1">
                     {comment.profile_image && <img
@@ -161,9 +231,13 @@ const Comment: React.FC<{
                     {comment.comment}
                 </div>
                 <div className="comment-footer">
-                    <button className="comment-button flex items-center">
-                        <IonIcon icon={heartOutline} role="img" className="md hydrated" aria-label="heart outline" />
-                        <span>Like (c)</span>
+                    <button className="comment-button flex items-center" onClick={handleLike}>
+                        <IonIcon icon={liked ? heart : heartOutline}
+                            role="img" className={clsx(
+                                "md hydrated",
+                                liked ? "text-red-600" : "text-black"
+                            )} aria-label="heart outline" />
+                        <span>Like ({likesCount})</span>
                     </button>
                     {/* <a href="#" className="comment-button">
                         <IonIcon icon={chatbubbleOutline} role="img" className="md hydrated" aria-label="heart outline" />
@@ -177,7 +251,7 @@ const Comment: React.FC<{
 
 const CommentLoadingSkeleton = () => {
     return (
-        <div className="flex items-center space-x-2 my-4 px-3">
+        <div className="flex items-center space-x-2 my-4">
             <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
             <div className="flex-1 space-y-1">
                 <div className="w-2/3 h-4 bg-gray-300 rounded"></div>

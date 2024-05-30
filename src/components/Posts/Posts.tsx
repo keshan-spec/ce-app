@@ -110,18 +110,25 @@ export const Posts: React.FC = () => {
             <ul className={clsx(
                 "listview flush transparent no-line image-listview max-w-md mx-auto",
             )}>
-                {data && data.pages.map((page: any) => (
-                    page.data.map((post: Post) => (
-                        <PostCard
-                            key={post.id}
-                            post={post}
-                            muted={muted}
-                            setMuted={setMuted}
-                            openComments={handleOpenComments}
-                        />
-                    ))
-                ))}
-                {isFetching && memoizedSkeleton}
+                <div className="tab-content">
+                    <div className="tab-pane fade active show" id="latest-posts" role="tabpanel">
+                        {data && data.pages.map((page: any) => (
+                            page.data.map((post: Post) => (
+                                <PostCard
+                                    key={post.id}
+                                    post={post}
+                                    muted={muted}
+                                    setMuted={setMuted}
+                                    openComments={handleOpenComments}
+                                />
+                            ))
+                        ))}
+                        {isFetching && memoizedSkeleton}
+                    </div>
+
+                    <div className="tab-pane fade" id="following-posts" role="tabpanel">
+                    </div>
+                </div>
             </ul>
         </div>
     );
