@@ -8,6 +8,7 @@ import clsx from "clsx";
 import { chatbubbleOutline, chevronUpCircleOutline, heart, heartOutline, reloadCircle } from "ionicons/icons";
 import { useMemo, useState } from "react";
 import { BiCommentAdd, BiLoader, BiRefresh } from "react-icons/bi";
+import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 // import { useQuery } from "react-query";
 
 interface ComentsSectionProps {
@@ -164,11 +165,11 @@ const Comment: React.FC<{
         comment: string;
         comment_date: string;
         profile_image: string;
-        likes_count: number | null;
+        likes_count: string | null;
         liked: boolean;
     };
 }> = ({ comment }) => {
-    const [likesCount, setLikesCount] = useState<number>(comment.likes_count ?? 0);
+    const [likesCount, setLikesCount] = useState<number>(parseInt(comment.likes_count ?? '0'));
     const [liked, setLiked] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -214,7 +215,7 @@ const Comment: React.FC<{
             <div className="avatar">
                 <div className="w-8 h-8 bg-gray-300 rounded-full border-1 border-theme-primary mt-1">
                     {comment.profile_image && <img
-                        src={comment.profile_image}
+                        src={comment.profile_image || PLACEHOLDER_PFP}
                         alt="User Avatar"
                         className="w-full h-full object-cover rounded-full"
                     />}
