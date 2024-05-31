@@ -11,7 +11,7 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
     }
 
     return (
-        <div className="flex flex-col bg-red-200 p-1 rounded-lg bg-red-600/35 my-2 w-full">
+        <div className="flex flex-col my-2 w-full">
             <span className="text-red-500 text-center">
                 {message}
             </span>

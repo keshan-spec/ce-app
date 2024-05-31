@@ -906,3 +906,88 @@ a.badge-danger {
 	background: #191919 !important;
 	border-color: #191919 !important;
 }
+
+/* App Landing Page */
+
+.app-landing-page {
+	height: 100%;
+	width: 100%;
+	background-color: #000;
+}
+
+.app-landing-page .video-background {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: auto;
+	height: 100%;
+	min-height: 100%;
+	min-width: 100%;
+	opacity: .3;
+	object-fit: cover;
+}
+
+.app-landing-page .app-landing-page-container {
+	position: absolute;
+	top: 8%;
+	left: 10%;
+	width: 80%;
+	z-index: 100;
+}
+
+.app-landing-page .app-landing-page-container .app-landing-page-logo {
+	margin: 0 auto;
+	display: block;
+	width: 90%;
+	height: auto;
+	max-width: 300px;
+}
+
+.app-landing-page .app-landing-page-buttons {
+	position: absolute;
+	bottom: 30px;
+	left: 5%;
+	width: 90%;
+	z-index: 100;
+}
+
+.app-landing-page .app-landing-page-buttons div {
+	margin: 0 0 15px 0;
+}
+
+.app-landing-page .app-landing-page-buttons .register {
+	background-color: #fff !important;
+	border-color: #fff !important;
+	color: #191919 !important;
+}
+
+.btn-primary:hover,
+.btn-primary:active {
+	background-color: #ae9159 !important;
+	border-color: #ae9159 !important;
+}
+
+h1 img {
+	display: inline-block;
+	width: 34px;
+	height: auto;
+	margin-right: 4px;
+}
+
+h1 span,
+h2 span {
+	color: #ae9159;
+	display: block;
+	width: 100%;
+	text-align: center;
+	text-transform: uppercase;
+	font-size: 14px;
+	letter-spacing: 2px;
+}
+
+.signup-welcome-panel {
+	width: 85%;
+	margin: 20px auto 0 auto;
+	text-align: center;
+}

@@ -7,6 +7,7 @@ import { AuthError } from "next-auth";
 const API_URL = process.env.HEADLESS_CMS_API_URL ?? "https://www.carevents.com";
 
 import { auth } from "@/auth";
+import { NewUser } from "@/app/context/SignUpProvider";
 
 export const getSessionUser = async () => {
     const session = await auth();
@@ -91,21 +92,60 @@ export const handleSignIn = async (credentials: {
     }
 };
 
-export const handleSignUp = async (credentials: {
-    full_name: string | undefined;
-    email: string | undefined;
-    password: string | undefined;
-}) => {
-    throw Error("Not implemented");
-    const response = await fetch(`${API_URL}/wp-json/ticket_scanner/v1/register_user`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-    });
+interface SignUpResponse {
+    success: boolean;
+    message: string;
+    code?: 'email_exists' | 'password_invalid' | 'username_exists' | 'uncaught_exception' | 'registration_failed';
+    username?: string;
+    user_id?: number;
+}
 
-    if (response.ok) {
-        return JSON.parse(await response.json());
+export const handleSignUp = async (user: NewUser): Promise<SignUpResponse | null> => {
+    try {
+        const response = await fetch(`${API_URL}/wp-json/app/v1/register-user`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(user),
+        });
+
+        const data = await response.json();
+
+        console.log(data);
+
+        if (response.status !== 201) {
+            return {
+                success: false,
+                message: data.message,
+                code: data.code,
+            };
+        }
+
+        return data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateUsername = async (user: { user_id: number; username: string; }) => {
+    try {
+        const response = await fetch(`${API_URL}/wp-json/app/v1/update-username`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(user),
+        });
+
+        const data = await response.json();
+
+        if (response.status !== 200) {
+            throw new Error(data.message);
+        }
+
+        return data;
+    } catch (error) {
+        throw error;
     }
 };

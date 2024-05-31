@@ -27,7 +27,8 @@ export const Button: React.FC<ButtonProps> = ({ fullPageLoading, icon, ...btnpro
             <button
                 {...btnprops}
                 className={clsx(
-                    "uppercase bg-theme-primary w-full hover:bg-theme-secondary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline",
+                    "btn btn-primary btn-block btn-lg",
+                    // "uppercase bg-theme-primary w-full hover:bg-theme-secondary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline",
                     pending && "cursor-not-allowed bg-theme-primary-light",
                     btnprops.className
                 )}

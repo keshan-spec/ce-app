@@ -7,6 +7,7 @@ import { close, cubeOutline, homeOutline } from "ionicons/icons";
 import { useState } from "react";
 import { Loader } from "./Loader";
 import { useSession } from "next-auth/react";
+import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 
 export const SidePanel: React.FC = () => {
     const { isLoggedIn, user } = useUser();
@@ -24,7 +25,7 @@ export const SidePanel: React.FC = () => {
             <div className="offcanvas-body">
                 <div className="profileBox">
                     <div className="image-wrapper">
-                        <img src={user?.profile_image} alt="image" className="imaged rounded" />
+                        <img src={user?.profile_image || PLACEHOLDER_PFP} alt="image" className="imaged rounded" />
                     </div>
                     <div className="in"> <strong>
                         {user?.first_name} {user?.last_name}

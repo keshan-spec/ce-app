@@ -25,6 +25,7 @@ export const authRoutes = [
     "/auth/register",
     "/auth/error",
     "/auth/reset",
+    "/auth"
 ];
 
 /**
@@ -40,3 +41,4 @@ export const apiAuthPrefix = "/api/auth";
  */
 export const DEFAULT_LOGIN_REDIRECT = "/profile";
 export const LOGIN_PAGE = "/auth/login";
+export const AUTH_LANDING_PAGE = "/auth";
