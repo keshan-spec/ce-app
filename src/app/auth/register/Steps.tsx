@@ -141,18 +141,26 @@ export const RegisterCompleteSection = () => {
         user
     } = useSignUp();
 
+    useEffect(() => {
+        if (step === 3) {
+            if (user?.user_id) {
+                handleSignIn({
+                    email: user.email,
+                    password: user.password,
+                });
+            }
+        }
+    }, [step, user]);
+
     const handleComplete = async () => {
         if (user?.user_id) {
-            await handleSignIn({
-                email: user.email,
-                password: user.password,
-            });
             setStep(2);
         }
     };
 
     const renderStep = useCallback(() => {
         switch (step) {
+            case 3:
             case 2:
                 return (
                     <>
@@ -169,7 +177,12 @@ export const RegisterCompleteSection = () => {
                         <div className="carousel-button-footer">
                             <div className="row">
                                 <div className="col-12">
-                                    <Link href="/" className="btn btn-primary btn-lg btn-block">Get Started</Link>
+                                    <button onClick={() => {
+                                        setStep(3);
+                                    }} className="btn btn-primary btn-lg btn-block">
+                                        Get Started
+                                    </button>
+                                    {/* <Link href="/" className="btn btn-primary btn-lg btn-block">Get Started</Link> */}
                                 </div>
                             </div>
                         </div>
@@ -188,7 +201,9 @@ export const RegisterCompleteSection = () => {
                         <div className="carousel-button-footer">
                             <div className="row">
                                 <div className="col-12">
-                                    <button onClick={handleComplete} className="btn btn-primary btn-lg btn-block">Continue</button>
+                                    <button onClick={() => {
+                                        setStep(2);
+                                    }} className="btn btn-primary btn-lg btn-block">Continue</button>
                                 </div>
                             </div>
                         </div>

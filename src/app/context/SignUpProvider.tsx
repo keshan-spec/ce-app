@@ -1,5 +1,6 @@
 import React, { createContext, useState, ReactNode, useContext, useCallback, useEffect } from 'react';
 import { RegisterCompleteSection, RegisterSection, UserNameSection } from '../auth/register/Steps';
+import { handleSignIn } from '@/actions/auth-actions';
 
 export interface NewUser {
     user_id?: number;
