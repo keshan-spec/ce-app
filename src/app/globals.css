@@ -172,3 +172,34 @@ body {
     flex: 0 0 100%;
     min-width: 0;
 }
+
+.tag-input-container {
+    position: relative;
+    display: inline-block;
+}
+
+.arrow {
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    margin-left: -5px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid #fff;
+}
+
+
+.tag-label::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    margin-left: -5px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid rgba(0, 0, 0, 0.842);
+}

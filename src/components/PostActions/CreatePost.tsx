@@ -1,296 +1,45 @@
 'use client';
 import { IonIcon } from '@ionic/react';
-import { camera, images, recording, swapVertical, videocam } from 'ionicons/icons';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { camera, closeOutline, images, recording, swapVertical, videocam } from 'ionicons/icons';
+import React, { useCallback, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { Button } from '@/shared/Button';
 import { Options } from '@splidejs/splide';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
-import { addPost } from '@/actions/post-actions';
-import { vibrateDevice } from '@/utils/nativeFeel';
+import { addPost, addTagsForPost } from '@/actions/post-actions';
 
-import { Area } from "react-easy-crop";
 import Modal from '@/shared/Modal';
-import NcImage from '../Image/Image';
 import ImageCropModal from './ImageCrop';
+import { ImageMeta, Tag, useCreatePost } from '@/app/context/CreatePostContext';
+import { forwardRef } from 'react';
+import { AssociateCar } from '../TagEntity/AssociateCar';
+import { BiTag } from 'react-icons/bi';
+import Draggable from 'react-draggable';
+import clsx from 'clsx';
 
 const carouselOptions: Options = {
     perPage: 1,
-    rewind: true,
-    gap: 0,
-    padding: 10,
+    rewind: false,
+    gap: 16,
+    padding: 16,
     arrows: false,
-    pagination: true,
+    pagination: false,
 };
 
-interface CreatePostProps {
-    closePanel: () => void;
-}
+interface PostInitialPanelProps { }
 
-export type ImageMeta = {
-    width: number;
-    height: number;
-    mime?: string;
-    alt?: string;
-    data: string;
-    type: 'image' | 'video';
-}[];
-
-export const CreatePost: React.FC<CreatePostProps> = ({
-    closePanel
-}) => {
-    const webcamRef = useRef<Webcam>(null);
-    const [isVideoMode, setIsVideoMode] = useState<boolean>(true); // Initially, video mode is enabled
-    const [selectedMedia, setSelectedMedia] = useState<(string | null)[]>([]);
-
-    const mediaRecorderRef = useRef<MediaRecorder>();
-    const [capturing, setCapturing] = React.useState(false);
-    const [recordedChunks, setRecordedChunks] = React.useState([]);
-
-    const [step, setStep] = useState<number>(0);
-
-    useEffect(() => {
-        return () => {
-            if (mediaRecorderRef.current) {
-                mediaRecorderRef.current.removeEventListener(
-                    "dataavailable",
-                    handleDataAvailable
-                );
-            }
-
-            setCapturing(false);
-            setRecordedChunks([]);
-        };
-    }, []);
-
-    const handleStartCaptureClick = useCallback(() => {
-        if (!webcamRef.current) return;
-
-        setCapturing(true);
-        mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream!, {
-            mimeType: "video/webm"
-        });
-
-        mediaRecorderRef.current.addEventListener(
-            "dataavailable",
-            handleDataAvailable
-        );
-        mediaRecorderRef.current.start();
-    }, [webcamRef, setCapturing, mediaRecorderRef]);
-
-    const handleDataAvailable = useCallback(({ data }: { data: any; }) => {
-        if (data.size > 0) {
-            setRecordedChunks((prev) => prev.concat(data));
-        }
-    }, [setRecordedChunks]);
-
-    const handleStopCaptureClick = useCallback(() => {
-        if (!mediaRecorderRef.current || !webcamRef.current) return;
-
-        mediaRecorderRef.current.stop();
-        setCapturing(false);
-    }, [mediaRecorderRef, webcamRef, setCapturing]);
-
-
-    const handleMediaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const files = event.target.files;
-        if (files) {
-            const newMedia: (string | null)[] = [];
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    newMedia.push(reader.result as string);
-                    if (newMedia.length === files.length) {
-                        setSelectedMedia(prevMedia => [...prevMedia, ...newMedia]);
-                    }
-                };
-                reader.readAsDataURL(file);
-
-                setStep(1);
-            }
-        }
-    };
-
-    const captureImage = useCallback(() => {
-        if (isVideoMode) {
-            if (capturing) {
-                handleStopCaptureClick();
-                setStep(1);
-            } else {
-                handleStartCaptureClick();
-            }
-        } else {
-            const imageSrc = webcamRef.current?.getScreenshot();
-            if (imageSrc) {
-                setSelectedMedia(prevMedia => [...prevMedia, imageSrc]);
-                setStep(1);
-            }
-        }
-    }, [webcamRef, capturing, isVideoMode]);
-
-    const switchMode = useCallback(() => {
-        vibrateDevice(100);
-        setIsVideoMode(prevMode => !prevMode);
-    }, []);
-
-    const renderCapturedMedia = () => {
-
-        let component: JSX.Element | null = null;
-
-        if (recordedChunks.length > 0) {
-            // create video from recorded chunks
-
-            const blob = new Blob(recordedChunks, { type: "video/webm" });
-
-            // const video = document.createElement('video');
-            // video.src = URL.createObjectURL(blob);
-            // video.onloadedmetadata = () => {
-            //     imageMeta.push({
-            //         data: URL.createObjectURL(blob),
-            //         width: video.videoWidth,
-            //         height: video.videoHeight,
-            //         type: 'video',
-            //     });
-            // };
-
-            component = (
-                <video
-                    src={URL.createObjectURL(blob)}
-                />
-            );
-        }
-
-        if (selectedMedia.length > 0) {
-            component = (
-                <div className="flex flex-wrap gap-4 mt-20">
-                    <Splide options={carouselOptions}>
-                        {selectedMedia.map((media, index) => {
-                            // create image from base64 and get dimensions and other meta data
-                            // if (media?.startsWith('data:video')) {
-                            //     const video = document.createElement('video');
-                            //     video.src = media;
-                            //     video.onloadedmetadata = () => {
-                            //         imageMeta.push({
-                            //             data: media!,
-                            //             width: video.videoWidth,
-                            //             height: video.videoHeight,
-                            //             type: 'video',
-                            //         });
-                            //     };
-                            // } else {
-                            //     const img = new Image();
-
-                            //     img.src = media!;
-                            //     img.onload = () => {
-                            //         imageMeta.push({
-                            //             data: media!,
-                            //             width: img.width,
-                            //             height: img.height,
-                            //             type: 'image',
-                            //         });
-                            //     };
-                            // }
-
-                            return (
-                                <SplideSlide key={index}>
-                                    <div className="max-h-96 overflow-hidden">
-                                        {media && media.startsWith('data:image') && (
-                                            <img src={media} alt={`Selected ${index + 1}`} className="max-w-full" />
-                                        )}
-                                        {media && media.startsWith('data:video') && (
-                                            <video
-                                                src={media}
-                                                className="max-w-full"
-                                            />
-                                        )}
-                                    </div>
-                                </SplideSlide>
-                            );
-                        })}
-                    </Splide>
-                </div>
-            );
-        }
-
-
-        return (
-            <div className="relative w-full h-[100dvh] flex flex-col items-start justify-start">
-                {component}
-                <div className="flex mx-auto mt-2 gap-3">
-                    <Button onClick={() => {
-                        setRecordedChunks([]);
-                        setSelectedMedia([]);
-                        setStep(0);
-                    }}>
-                        Retry
-                    </Button>
-
-                    <Button onClick={() => {
-                        setStep(2);
-                    }}>
-                        Next
-                    </Button>
-                </div>
-            </div>
-        );
-    };
-
-    const renderStep = useCallback(() => {
-        if (step === 0) {
-            return (
-                <>
-                    <Webcam
-                        audio={false}
-                        ref={webcamRef}
-                        className="absolute inset-0 w-full h-full object-cover"
-                        videoConstraints={{
-                            facingMode: 'environment',
-                            frameRate: { ideal: 60, max: 60 },
-                        }} // Rear camera
-                    />
-
-                    <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 h-24 w-3/4 rounded-lg backdrop-blur-xl flex justify-between items-center">
-                        <button
-                            onClick={() => document.getElementById('galleryInput')?.click()}
-                            className="flex flex-col items-center gap-1 text-white px-4 py-2">
-                            <IonIcon icon={images} />
-                            Gallery
-                        </button>
-                        <button onClick={captureImage} >
-                            {/* circle */}
-                            <div className="w-16 h-16 rounded-full bg-white flex justify-center items-center text-3xl">
-                                <IonIcon icon={isVideoMode ? capturing ? recording : videocam : camera} />
-                            </div>
-                        </button>
-                        <button onClick={switchMode} className="flex flex-col items-center gap-1 text-white px-4 py-2">
-                            <IonIcon icon={swapVertical} />
-                            Switch
-                        </button>
-                    </div>
-                </>
-            );
-        }
-
-        if (step === 1) {
-            return renderCapturedMedia();
-        }
-
-        if (step === 2) {
-            const media = selectedMedia.filter(media => media !== null) as string[];
-            media.push(...recordedChunks.map(chunk => URL.createObjectURL(chunk)));
-
-            return (
-                <PostSharePanel media={media} onPostSuccess={closePanel} />
-            );
-        }
-
-        return null;
-    }, [step, isVideoMode, capturing, captureImage, switchMode, selectedMedia, renderCapturedMedia]);
+export const PostInitialPanel = forwardRef((props: PostInitialPanelProps, ref: React.ForwardedRef<Webcam>) => {
+    const {
+        captureImage,
+        capturing,
+        isVideoMode,
+        switchMode,
+        handleMediaChange,
+    } = useCreatePost();
 
     return (
-        <div className="relative w-full h-[100dvh]">
+        <>
             <input
                 type="file"
                 id="galleryInput"
@@ -299,132 +48,47 @@ export const CreatePost: React.FC<CreatePostProps> = ({
                 multiple // Allow selecting multiple images or videos
                 className="hidden"
             />
-            {renderStep()}
-        </div>
+
+            <Webcam
+                audio={false}
+                ref={ref}
+                className="absolute inset-0 w-full h-full object-cover"
+                videoConstraints={{
+                    facingMode: 'environment',
+                    frameRate: { ideal: 60, max: 60 },
+                }}
+            />
+
+            <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 h-24 w-3/4 rounded-lg backdrop-blur-xl flex justify-between items-center">
+                <button
+                    onClick={() => document.getElementById('galleryInput')?.click()}
+                    className="flex flex-col items-center gap-1 text-white px-4 py-2">
+                    <IonIcon icon={images}
+                    />
+                    Gallery
+                </button>
+                <button onClick={captureImage} >
+                    {/* circle */}
+                    <div className="w-16 h-16 rounded-full bg-white flex justify-center items-center text-3xl">
+                        <IonIcon icon={isVideoMode ? capturing ? recording : videocam : camera} />
+                    </div>
+                </button>
+                <button onClick={switchMode} className="flex flex-col items-center gap-1 text-white px-4 py-2">
+                    <IonIcon icon={swapVertical} />
+                    Switch
+                </button>
+            </div>
+        </>
     );
-};
+});
 
 
-interface PostSharePanelProps {
-    media: string[];
-    onPostSuccess: () => void;
-}
+interface EditMediaPanelProps { }
+export const EditMediaPanel: React.FC<EditMediaPanelProps> = () => {
+    const { updateImage, setEditImage, setStep, editImage, media, mediaData, } = useCreatePost();
 
-const PostSharePanel: React.FC<PostSharePanelProps> = ({ media, onPostSuccess }) => {
-    const [posting, setPosting] = useState<{
-        loading: boolean;
-        error: string | null;
-    }>({ loading: false, error: null });
-    const errorDiv = useRef<HTMLDivElement>(null);
-
-    const [mediaData, setMediaData] = useState<string[]>(media.filter(media => media !== null) as string[]);
-    const [editImage, setEditImage] = useState<number | null>(null);
-
-    const imageMeta = useCallback((): ImageMeta => {
-        const data = mediaData.map((item, idx) => {
-            const elem = document.getElementById(`post-media-${idx}`);
-            return {
-                data: item,
-                width: elem?.clientWidth,
-                height: elem?.clientHeight,
-                type: item.startsWith('data:image') ? 'image' : 'video',
-            };
-        });
-
-        return data as ImageMeta;
-
-        // const promises = mediaData.map((item, idx) => {
-        //     return new Promise((resolve) => {
-        //         if (item.startsWith('data:image')) {
-        //             const img = document.createElement('img');
-        //             img.id = `image-${idx}`;
-        //             img.src = item;
-
-        //             img.onload = () => {
-        //                 const elem = document.getElementById(`post-media-${idx}`);
-
-        //                 resolve({
-        //                     data: item,
-        //                     width: elem?.clientWidth || img.width,
-        //                     height: elem?.clientHeight || img.height,
-        //                     type: 'image',
-        //                 });
-        //             };
-        //         } else if (item.startsWith('data:video')) {
-        //             const video = document.createElement('video');
-        //             video.src = item;
-        //             video.onloadedmetadata = () => {
-        //                 const elem = document.getElementById(`post-media-${idx}`);
-
-        //                 resolve({
-        //                     data: item,
-        //                     width: elem?.clientWidth || video.videoWidth,
-        //                     height: elem?.clientHeight || video.videoHeight,
-        //                     type: 'video',
-        //                 });
-        //             };
-        //         } else {
-        //             resolve({
-        //                 data: item,
-        //                 width: 0,
-        //                 height: 0,
-        //                 type: 'unknown',
-        //             });
-        //         }
-        //     });
-        // });
-
-        // return Promise.all(promises) as Promise<ImageMeta>;
-    }, [mediaData]);
-
-    const handleShare = async (formData: FormData) => {
-        setPosting({ loading: true, error: null });
-        const mediaList = await imageMeta();
-
-        try {
-            await addPost(mediaList, formData.get('caption')?.toString(), formData.get('location')?.toString());
-            setPosting({ loading: false, error: null });
-            onPostSuccess();
-        } catch (e: any) {
-            setPosting({ loading: false, error: e.message });
-            // // hide error after 5 seconds
-            setTimeout(() => {
-                setPosting({ loading: false, error: null });
-            }, 5000);
-        }
-    };
-
-    const updateImage = (index: number, croppedArea: Area) => {
-        const img = new Image();
-        img.src = media[index];
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d')!;
-
-        img.onload = () => {
-            canvas.width = croppedArea.width;
-            canvas.height = croppedArea.height;
-
-            ctx.drawImage(img,
-                croppedArea.x,
-                croppedArea.y,
-                croppedArea.width,
-                croppedArea.height,
-                0,
-                0,
-                croppedArea.width,
-                croppedArea.height
-            );
-
-            const newMedia = [...mediaData];
-            newMedia[index] = canvas.toDataURL();
-            setEditImage(null);
-            setMediaData(newMedia);
-        };
-    };
-
-    // a share panel like instagram
     return (
-        <form className="relative h-full flex flex-col gap-4" action={handleShare}>
+        <div className="relative h-full flex flex-col gap-4">
             <Modal isOpen={editImage !== null} onClose={() => setEditImage(null)} title='Edit Image'>
                 <ImageCropModal
                     image={media[editImage!]}
@@ -435,13 +99,14 @@ const PostSharePanel: React.FC<PostSharePanelProps> = ({ media, onPostSuccess })
             </Modal>
 
             <div className="flex flex-wrap gap-4 mt-20">
-                <Splide options={carouselOptions}>
+                <PostMediaSlider mediaData={mediaData} onImageClick={(e, index) => setEditImage(index)} />
+                {/* <Splide options={carouselOptions} className="text-center carousel-slider flex items-center">
                     {mediaData.map((item, index) => {
                         return (
                             <SplideSlide key={index}>
-                                <div className="max-h-96 overflow-hidden">
+                                <div className="max-h-96 overflow-hidden bg-black">
                                     {item && item.startsWith('data:image') && (
-                                        <NcImage
+                                        <img
                                             src={item}
                                             id={`post-media-${index}`}
                                             alt={`Selected ${index + 1}`}
@@ -458,10 +123,151 @@ const PostSharePanel: React.FC<PostSharePanelProps> = ({ media, onPostSuccess })
                             </SplideSlide>
                         );
                     })}
-                </Splide>
+                </Splide> */}
+            </div>
+
+            <div className="flex fixed bottom-0 left-0 w-full gap-2">
+                <Button
+                    className='w-full'
+                    theme='secondary'
+                    onClick={() => {
+                        setStep('initial');
+                    }}
+                >
+                    Back
+                </Button>
+                <Button
+                    className='text-white w-full'
+                    onClick={() => {
+                        setStep('share');
+                    }}
+                >
+                    Next
+                </Button>
+            </div>
+        </div>
+    );
+};
+
+const PostMediaSlider = ({
+    onImageClick,
+    mediaData,
+    carouselSettings = carouselOptions,
+    childRenderer,
+    childOutSlide,
+}: {
+    onImageClick: (event: React.MouseEvent<HTMLImageElement, MouseEvent>, index: number) => void;
+    mediaData: string[];
+    carouselSettings?: Options;
+    childRenderer?: (index: number) => JSX.Element;
+    childOutSlide?: (index: number) => JSX.Element;
+}) => {
+    return (
+        <Splide options={carouselSettings} className="text-center carousel-slider flex items-center justify-center">
+            {mediaData.map((item, index) => {
+                return (
+                    <SplideSlide key={index}>
+                        <div className="relative max-h-96 h-full bg-black">
+                            {item && item.startsWith('data:image') && (
+                                <img
+                                    src={item}
+                                    id={`post-media-${index}`}
+                                    alt={`Selected ${index + 1}`}
+                                    className="max-w-full object-cover h-full m-auto"
+                                    onClick={(e) => onImageClick(e, index)}
+                                />
+                            )}
+
+                            {item && item.startsWith('data:video') && (
+                                <video src={item} controls className="max-w-full" id={`post-media-${index}`} />
+                            )}
+
+                            {childRenderer?.(index)}
+                        </div>
+                        {childOutSlide?.(index)}
+                    </SplideSlide>
+                );
+            })}
+        </Splide>
+    );
+};
+
+interface PostSharePanelProps {
+    onPostSuccess: () => void;
+    goBack: () => void;
+}
+
+export const PostSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess, goBack }) => {
+    const [posting, setPosting] = useState<{
+        loading: boolean;
+        error: string | null;
+    }>({ loading: false, error: null });
+    const errorDiv = useRef<HTMLDivElement>(null);
+
+    const { mediaData, setStep, setActiveTagIndex } = useCreatePost();
+
+    const imageMeta = useCallback((): ImageMeta => {
+        let tallestImg = 0;
+        const data = mediaData.map((item, idx) => {
+            const elem = document.getElementById(`post-media-${idx}`);
+
+            if (elem?.clientHeight! > tallestImg) {
+                tallestImg = elem?.clientHeight!;
+            }
+
+            return {
+                data: item,
+                width: elem?.clientWidth,
+                height: elem?.clientHeight,
+                type: item.startsWith('data:image') ? 'image' : 'video',
+            };
+        });
+
+
+        // loop through the data and set the height of all images to the tallest image
+        return data.map(item => {
+            item.height = tallestImg;
+            return item;
+        }) as ImageMeta;
+    }, [mediaData]);
+
+    const handleShare = async (formData: FormData) => {
+        setPosting({ loading: true, error: null });
+        const mediaList = imageMeta();
+        const associateCars = formData.get('associatedCars')?.toString();
+
+        const data = {
+            caption: formData.get('caption')?.toString(),
+            location: formData.get('location')?.toString(),
+            associatedCars: associateCars?.split(',').map(car => car.trim()),
+        };
+
+        try {
+            await addPost(mediaList, data.caption, data.location, associateCars);
+            setPosting({ loading: false, error: null });
+            onPostSuccess();
+        } catch (e: any) {
+            setPosting({ loading: false, error: e.message });
+            // // hide error after 5 seconds
+            setTimeout(() => {
+                setPosting({ loading: false, error: null });
+            }, 5000);
+        }
+    };
+
+    return (
+        <form className="relative h-full flex flex-col gap-4" action={handleShare}>
+            <div className="flex flex-wrap gap-4 mt-20">
+                <PostMediaSlider
+                    mediaData={mediaData}
+                    onImageClick={(e, index) => {
+                        setActiveTagIndex(index);
+                        setStep('tag');
+                    }}
+                />
             </div>
             <textarea placeholder="Write a caption..." className="border p-2 rounded" name='caption' />
-            <input type="text" placeholder="Add location" className="border p-2 rounded" name='location' />
+            <AssociateCar inputName='associatedCars' />
 
             {posting.error && (
                 <div className={`fixed z-10 w-full bottom-0 h-14 p-2 mt-2 text-center text-red-500 bg-red-100`} ref={errorDiv}>
@@ -469,12 +275,199 @@ const PostSharePanel: React.FC<PostSharePanelProps> = ({ media, onPostSuccess })
                 </div>
             )}
 
-            <Button
-                className='fixed bottom-0 left-0 w-full bg-blue-500 text-white'
-                fullPageLoading
-            >
-                Share
-            </Button>
+            <div className="flex items-center gap-2 px-3 border-1 py-3" onClick={() => {
+                setStep('tag');
+            }}>
+                <BiTag className="text-lg" />
+                Tag Entities
+            </div>
+
+            <div className="flex fixed bottom-0 left-0 w-full gap-2">
+                <Button
+                    className='text-white w-full'
+                    onClick={goBack}
+                >
+                    Back
+                </Button>
+                <Button
+                    className='text-white w-full'
+                    fullPageLoading
+                >
+                    Share
+                </Button>
+            </div>
         </form>
     );
 };
+
+
+
+
+export const PostTagPanel: React.FC = () => {
+    const { mediaData, setStep, activeTagIndex, taggedData, setTaggedData } = useCreatePost();
+
+    const [tagInput, setTagInput] = useState<{ x: number; y: number; visible: boolean, index: number; }>({ x: 0, y: 0, visible: false, index: 0 });
+    const [currentTag, setCurrentTag] = useState<string>('');
+    const [inputFocused, setInputFocused] = useState<boolean>(false);
+
+    const tagCarousel: Options = {
+        ...carouselOptions,
+        start: activeTagIndex,
+    };
+
+    const onImageClick = (event: React.MouseEvent<HTMLImageElement, MouseEvent>, index: number) => {
+        const rect = event.currentTarget.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        setTagInput({ x, y, visible: true, index });
+    };
+
+    const handleTagInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setCurrentTag(event.target.value);
+    };
+
+    const handleTagInputBlur = () => {
+        if (currentTag.trim() && inputFocused) {
+            setTaggedData([...taggedData, { x: tagInput.x, y: tagInput.y, label: currentTag, index: tagInput.index }]);
+        }
+        setTagInput({ x: 0, y: 0, visible: false, index: 0 });
+        setCurrentTag('');
+    };
+
+    const handleTagInputFocus = () => {
+        setInputFocused(true);
+    };
+
+    const renderImageTags = (index: number) => {
+        return taggedData.filter(tag => tag.index === index).map((tag, i) => (
+            <TagEntity key={i} {...tag} />
+        ));
+    };
+
+    const renderImageTagsList = (index: number) => {
+        return taggedData.filter(tag => tag.index === index).map((tag, i) => (
+            <div key={i} className="bg-black text-white p-1 rounded-lg flex items-center justify-between">
+                <span className="px-3">{tag.label}</span>
+                <IonIcon icon={closeOutline} onClick={() => {
+                    setTaggedData(taggedData.filter((_, idx) => idx !== i));
+                }} />
+            </div>
+        ));
+    };
+
+    const handleFinish = async () => {
+        await addTagsForPost(21, taggedData);
+    };
+
+    return (
+        <div className="relative h-full flex flex-col gap-4">
+            <div className="flex flex-wrap gap-4 mt-20">
+                {tagInput.visible && (
+                    <div className="tag-input-container w-full px-2">
+                        <input
+                            type="text"
+                            placeholder='Tag someone...'
+                            className="border p-1 rounded tag-input w-full"
+                            value={currentTag}
+                            onChange={handleTagInputChange}
+                            onFocus={handleTagInputFocus}
+                            onBlur={handleTagInputBlur}
+                            autoFocus
+                        />
+                        <div className="arrow"></div>
+                    </div>
+                )}
+
+                <PostMediaSlider
+                    mediaData={mediaData}
+                    onImageClick={onImageClick}
+                    carouselSettings={tagCarousel}
+                    childRenderer={(index) => {
+                        return (
+                            <>
+                                {renderImageTags(index)}
+
+                                {tagInput.visible && tagInput.index === index && (
+                                    <TagEntity x={tagInput.x} y={tagInput.y} label={"Who's this?"} index={index} />
+                                )}
+                            </>
+                        );
+                    }}
+
+                    childOutSlide={(index) => (
+                        <div className={clsx(
+                            "w-full mt-1 flex flex-col gap-1",
+                            taggedData.filter(tag => tag.index === index).length > 0 ? 'visible' : 'hidden'
+                        )}>
+                            <h3 className="text-black text-left mt-2">Tags</h3>
+                            {renderImageTagsList(index)}
+                        </div>
+                    )}
+                />
+            </div>
+
+            <div className="flex fixed bottom-0 left-0 w-full gap-2">
+                <Button
+                    className='text-white w-full'
+                    onClick={() => {
+                        setStep('share');
+                    }}
+                >
+                    Back
+                </Button>
+                <Button
+                    className='text-white w-full'
+                    onClick={() => {
+                        // setStep('share');
+                        handleFinish();
+                    }}
+                >
+                    Finish
+                </Button>
+            </div>
+        </div>
+    );
+};
+
+export const TagEntity = ({ x, y, label }: Tag) => {
+    return (
+        <div
+            className="tag-label p-1 text-xs text-white bg-black/80 rounded-lg z-50"
+            style={{ position: 'absolute', left: x, top: y }}
+        >
+            {label}
+        </div>
+    );
+};
+
+// const TagEntity: React.FC<Tag> = ({ x, y, label }) => {
+//     const [position, setPosition] = useState({ x, y });
+
+//     const handleDrag = (e: any, data: any) => {
+//         setPosition({ x: data.x, y: data.y });
+//         document.body.style.pointerEvents = 'auto';
+//     };
+
+//     return (
+//         <Draggable
+//             defaultPosition={{ x, y }}
+//             onStart={() => {
+//                 // make body pointer events none
+//                 document.body.style.pointerEvents = 'none';
+//             }}
+//             onDrag={() => {
+//                 // make body pointer events none
+//                 document.body.style.pointerEvents = 'none';
+//             }}
+//             onStop={handleDrag}
+//             position={position}
+//         >
+//             <div
+//                 className="tag-label p-1 text-sm text-white bg-black/80 rounded-lg z-50 w-fit"
+//                 style={{ position: 'absolute', left: position.x - 50, top: position.y }}
+//             >
+//                 {label}
+//             </div>
+//         </Draggable>
+//     );
+// };

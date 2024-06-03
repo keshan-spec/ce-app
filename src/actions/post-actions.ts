@@ -2,7 +2,7 @@
 import { Post } from "@/types/posts";
 import { API_URL } from "./api";
 import { getSessionUser } from "./auth-actions";
-import { ImageMeta } from "@/components/PostActions/CreatePost";
+import { ImageMeta, Tag } from "@/app/context/CreatePostContext";
 
 export const maybeLikePost = async (postId: number) => {
     const user = await getSessionUser();
@@ -94,7 +94,7 @@ export const fetchPostComments = async (postId: number) => {
     return data;
 };
 
-export const addPost = async (mediaList: ImageMeta, caption?: string, location?: string) => {
+export const addPost = async (mediaList: ImageMeta, caption?: string, location?: string, associatedCars?: string) => {
     let user;
     try {
         user = await getSessionUser();
@@ -206,5 +206,80 @@ export const maybeLikeComment = async (commentId: number) => {
     } catch (e: any) {
         console.error("Error liking comment");
         throw new Error(e.message);
+    }
+};
+
+export const addTagsForPost = async (postId: number, tags: Tag[]) => {
+    console.log(tags);
+
+    try {
+        const user = await getSessionUser();
+        if (!user || !user.id) throw new Error("User session expired. Please login again.");
+
+        const response = await fetch(`${API_URL}/wp-json/app/v1/add-tags`, {
+            cache: "no-cache",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user_id: user?.id, post_id: postId, tags }),
+        });
+        const data = await response.json();
+
+        console.log(data);
+
+        if (!response.ok || response.status !== 200) {
+            throw new Error(data.message);
+        }
+
+        return data;
+    } catch (e: any) {
+        console.error("Error adding tags", e.message);
+        return e.message;
+    }
+};
+
+
+
+/*
+ {
+    entity_id: '1',
+    type: 'user',
+    x: '141',
+    y: '202',
+    entity: { id: 1, name: 'carcalendar' }
+  }
+
+*/
+export interface PostTag {
+    entity_id: number;
+    type: string;
+    x: number;
+    y: number;
+    entity: { id: number; name: string; };
+    media_id: number;
+}
+
+export const fetchTagsForPost = async (postId: number): Promise<PostTag[] | null> => {
+    try {
+        const response = await fetch(`${API_URL}/wp-json/app/v1/get-post-tags`, {
+            cache: "no-cache",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ post_id: postId }),
+        });
+        const data = await response.json();
+        console.log(data);
+
+        if (!response.ok || response.status !== 200) {
+            throw new Error(data.message);
+        }
+
+        return data;
+    } catch (e: any) {
+        console.error("Error fetching tags", e.message);
+        return e.message;
     }
 };

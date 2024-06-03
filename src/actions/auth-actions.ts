@@ -112,8 +112,6 @@ export const handleSignUp = async (user: NewUser): Promise<SignUpResponse | null
 
         const data = await response.json();
 
-        console.log(data);
-
         if (response.status !== 201) {
             return {
                 success: false,
@@ -146,6 +144,6 @@ export const updateUsername = async (user: { user_id: number; username: string; 
 
         return data;
     } catch (error) {
-        throw error;
+        return error;
     }
 };

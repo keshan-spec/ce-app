@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useDotButton } from "../Carousel/EmbalDotButtons";
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoHeight from 'embla-carousel-auto-height';
-import { maybeBookmarkPost, maybeLikePost } from "@/actions/post-actions";
+import { PostTag, fetchTagsForPost, maybeBookmarkPost, maybeLikePost } from "@/actions/post-actions";
 import { BiBookmark, BiComment, BiHeart, BiMapPin, BiSolidBookmark, BiSolidHeart, BiVolumeFull, BiVolumeMute } from "react-icons/bi";
 import clsx from "clsx";
 import NcImage from "../Image/Image";
@@ -17,7 +17,8 @@ import Link from "next/link";
 import { useObservedQuery } from "@/app/context/ObservedQuery";
 import { PostActions, PostActionsSheet } from "./PostActionSheets";
 import { IonIcon } from "@ionic/react";
-import { chatboxEllipsesSharp, chatboxOutline, heart, heartOutline, settingsOutline, shareSocialOutline } from "ionicons/icons";
+import { chatboxEllipsesSharp, chatboxOutline, heart, heartOutline, logoTableau, settingsOutline, shareSocialOutline } from "ionicons/icons";
+import { TagEntity } from "../PostActions/CreatePost";
 
 export const PostCard = ({ post, muted, setMuted, openComments }: {
     post: Post,
@@ -34,8 +35,19 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
 
     const [isLiked, setIsLiked] = useState<boolean>(post.is_liked);
     const [bookMarked, setBookMarked] = useState<boolean>(post.is_bookmarked);
+    const [tags, setTags] = useState<PostTag[]>([]);
+    const [showTags, setShowTags] = useState(false);
+
+    const fetchTags = async () => {
+        const data = await fetchTagsForPost(post.id);
+        if (data) {
+            setTags(data);
+        }
+    };
 
     useEffect(() => {
+        fetchTags();
+
         const video = videoRef.current;
 
         if (!video) return;
@@ -78,6 +90,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
             emblaApi?.off('select', onUserScroll);
         };
     }, [emblaApi]);
+
 
     const onLikePost = async () => {
         if (!isLoggedIn) {
@@ -145,6 +158,14 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
         );
     };
 
+    const renderTags = (index: number) => {
+        return tags.filter(tag => tag.media_id === post.media[index].id).map((tag, index) => {
+            return (
+                <TagEntity key={index} index={index} label={tag.entity.name} x={tag.x} y={tag.y} />
+            );
+        });
+    };
+
     const renderMedia = useMemo(() => {
         const { media } = post;
 
@@ -161,11 +182,13 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                             const maxHeight = calculatedHeight > 600 ? 600 : calculatedHeight;
 
                             return (
-                                <div key={item.id} className={clsx(
-                                    "embla__slide h-full group bg-black",
-                                    item.media_type === 'video' && "embla__slide--video"
-                                )}>
-                                    <div className="embla__slide__number w-full h-full">
+                                <div key={item.id}
+                                    onClick={() => setShowTags(prev => !prev)}
+                                    className={clsx(
+                                        "embla__slide h-full group bg-black",
+                                        item.media_type === 'video' && "embla__slide--video"
+                                    )}>
+                                    <div className="embla__slide__number w-full h-full relative">
                                         {item.media_type === 'image' && (
                                             <NcImage
                                                 key={item.id}
@@ -177,6 +200,14 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                                                 }}
                                             />
                                         )}
+
+                                        {(tags.length > 0 && !showTags) && (
+                                            <div className="absolute top-3 left-3 text-white p-1 flex items-center justify-center rounded-full bg-black/70">
+                                                <BiMapPin />
+                                            </div>
+                                        )}
+
+                                        {showTags && renderTags(index)}
 
                                         {item.media_type === 'video' && (
                                             <>
@@ -233,7 +264,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                 </div>
             </div>
         );
-    }, [post.id, muted, isLiked, selectedIndex, scrollSnaps, bookMarked]);
+    }, [post.id, muted, isLiked, selectedIndex, scrollSnaps, bookMarked, showTags, tags]);
 
     return (
         <div className="media-post-content relative mb-6 text-black" id={`PostMain-${post.id}`}>

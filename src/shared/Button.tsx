@@ -5,9 +5,10 @@ import { useFormStatus } from "react-dom";
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     icon?: React.ReactNode;
     fullPageLoading?: boolean;
+    theme?: "primary" | "secondary";
 }
 
-export const Button: React.FC<ButtonProps> = ({ fullPageLoading, icon, ...btnprops }) => {
+export const Button: React.FC<ButtonProps> = ({ fullPageLoading, icon, theme = 'primary', ...btnprops }) => {
     const { pending } = useFormStatus();
 
     const renderIcon = () => {
@@ -27,8 +28,7 @@ export const Button: React.FC<ButtonProps> = ({ fullPageLoading, icon, ...btnpro
             <button
                 {...btnprops}
                 className={clsx(
-                    "btn btn-primary btn-block btn-lg",
-                    // "uppercase bg-theme-primary w-full hover:bg-theme-secondary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline",
+                    `btn btn-${theme} btn-block btn-lg`,
                     pending && "cursor-not-allowed bg-theme-primary-light",
                     btnprops.className
                 )}
