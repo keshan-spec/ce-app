@@ -991,3 +991,141 @@ h2 span {
 	margin: 20px auto 0 auto;
 	text-align: center;
 }
+
+/******* Product-Details Page CSS *******/
+.product-details-section {
+	float: left;
+	width: 100%;
+}
+
+.product-details-section .product-details-title {
+	text-align: center;
+	font-size: 27px;
+	color: #333333;
+	font-family: 'LeagueSpartan-Medium';
+	line-height: 34px;
+}
+
+.product-details-info-row {
+	text-align: center;
+	padding: 0px 15px;
+	margin-top: 24px;
+	margin-bottom: 31px;
+	float: left;
+	width: 100%;
+}
+
+.product-details-section .product-ul {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.product-details-section .product-ul ul {
+	padding: 0px;
+	margin: 0px;
+}
+
+.product-details-section .product-ul ul li {
+	margin-bottom: 11px;
+	font-size: 16px;
+	color: #333333;
+	list-style: none;
+	line-height: 25px;
+}
+
+.product-ul ul li ion-icon {
+	color: #b89855;
+	margin-right: 8px;
+	font-size: 22px;
+	vertical-align: middle;
+}
+
+.product-share-btn {
+	float: left;
+	width: 100%;
+	text-align: center;
+}
+
+.product-share-btn a {
+	background: #f1f1f1;
+	padding: 10px 28px;
+	color: #333333;
+	display: inline-block;
+	font-size: 19px;
+	text-transform: uppercase;
+}
+
+.product-share-btn a ion-icon {
+	margin-right: 8px;
+	vertical-align: middle;
+}
+
+.product-details-btn-row {
+	float: left;
+	width: 100%;
+	margin-top: 26px;
+	display: flex;
+	border-top: solid 1px #e3e3e3;
+	padding-top: 20px;
+}
+
+.product-details-btn-row .product-btn {
+	margin-right: 3px;
+	width: 50%;
+}
+
+.product-btn button.product-button {
+	padding: 6px 4px;
+	width: 100%;
+	float: left;
+	font-size: 13px;
+	border: none;
+	color: #fff;
+	background: #b89855;
+	border-radius: 5px;
+}
+
+.product-btn button.product-button ion-icon {
+	margin-right: 3px;
+	vertical-align: middle;
+}
+
+.product-btn button.product-button.buy-tickets {
+	background: #2e2e2e;
+}
+
+.product-tab-section {
+	float: left;
+	width: 100%;
+}
+
+.product-tab-section .product-tab-wrapper {
+	padding: 0px 15px;
+}
+
+.product-tab-wrapper ul.nav {
+	background: none;
+}
+
+.product-tab-section .product-tab-wrapper ul.nav li a {
+	background: #ebebeb !important;
+	color: #131313 !important;
+	font-size: 10px !important;
+	padding: 6px 2px !important;
+	margin: 0px !important;
+	font-family: 'LeagueSpartan-Medium';
+	height: auto !important;
+	border-radius: 100px !important;
+	box-shadow: none !important;
+}
+
+.product-tab-section .product-tab-wrapper ul.nav li a.active {
+	background: #ae9159 !important;
+	color: #fff !important;
+}
+
+.product-tab-content p {
+	color: #333333;
+	font-size: 13px;
+	line-height: 26px;
+}
