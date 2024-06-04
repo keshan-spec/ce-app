@@ -1,7 +1,6 @@
 import { CreatePostProvider, CreatePostSteps } from "@/app/context/CreatePostContext";
 import { CreateActionSheet } from "@/components/ActionSheets/Create";
-import { CreatePost } from "@/components/PostActions/CreatePost";
-import SlideInFromBottomToTop from "@/shared/SlideIn";
+import SlideInPanel from "@/shared/CreatePostSlideIn";
 import { IonIcon } from "@ionic/react";
 import { homeOutline, searchOutline, idCardOutline, addOutline } from "ionicons/icons";
 import Link from "next/link";
@@ -14,15 +13,15 @@ export const Footer: React.FC = () => {
 
     return (
         <>
-            <SlideInFromBottomToTop isOpen={isOpen} onClose={() => setOpen(false)} fullScreen>
-                <CreatePostProvider>
+            <CreatePostProvider>
+                <SlideInPanel isOpen={isOpen} onClose={() => setOpen(false)}>
                     <CreatePostSteps
                         closePanel={() => {
                             setOpen(false);
                         }}
                     />
-                </CreatePostProvider>
-            </SlideInFromBottomToTop>
+                </SlideInPanel>
+            </CreatePostProvider>
             <div className="appBottomMenu">
                 <Link href="/" className={`item ${pathname == '/' ? 'active' : ''}`}>
                     <div className="col">

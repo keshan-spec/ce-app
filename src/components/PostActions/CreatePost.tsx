@@ -1,19 +1,18 @@
 'use client';
 import { IonIcon } from '@ionic/react';
-import { camera, closeOutline, images, recording, swapVertical, videocam } from 'ionicons/icons';
+import { camera, closeOutline, images, recording, swapVertical, videocam, personOutline, carOutline } from 'ionicons/icons';
 import React, { useCallback, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { Button } from '@/shared/Button';
 import { Options } from '@splidejs/splide';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
-import { addPost, addTagsForPost } from '@/actions/post-actions';
+import { addPost } from '@/actions/post-actions';
 
 import Modal from '@/shared/Modal';
 import ImageCropModal from './ImageCrop';
 import { ImageMeta, Tag, useCreatePost } from '@/app/context/CreatePostContext';
 import { forwardRef } from 'react';
-import { AssociateCar } from '../TagEntity/AssociateCar';
 import { BiTag } from 'react-icons/bi';
 import Draggable from 'react-draggable';
 import clsx from 'clsx';
@@ -84,6 +83,7 @@ export const PostInitialPanel = forwardRef((props: PostInitialPanelProps, ref: R
 
 
 interface EditMediaPanelProps { }
+
 export const EditMediaPanel: React.FC<EditMediaPanelProps> = () => {
     const { updateImage, setEditImage, setStep, editImage, media, mediaData, } = useCreatePost();
 
@@ -98,52 +98,8 @@ export const EditMediaPanel: React.FC<EditMediaPanelProps> = () => {
                 />
             </Modal>
 
-            <div className="flex flex-wrap gap-4 mt-20">
+            <div className="flex flex-wrap gap-4">
                 <PostMediaSlider mediaData={mediaData} onImageClick={(e, index) => setEditImage(index)} />
-                {/* <Splide options={carouselOptions} className="text-center carousel-slider flex items-center">
-                    {mediaData.map((item, index) => {
-                        return (
-                            <SplideSlide key={index}>
-                                <div className="max-h-96 overflow-hidden bg-black">
-                                    {item && item.startsWith('data:image') && (
-                                        <img
-                                            src={item}
-                                            id={`post-media-${index}`}
-                                            alt={`Selected ${index + 1}`}
-                                            className="max-w-full"
-                                            onClick={() => {
-                                                setEditImage(index);
-                                            }} />
-                                    )}
-
-                                    {item && item.startsWith('data:video') && (
-                                        <video src={item} controls className="max-w-full" id={`post-media-${index}`} />
-                                    )}
-                                </div>
-                            </SplideSlide>
-                        );
-                    })}
-                </Splide> */}
-            </div>
-
-            <div className="flex fixed bottom-0 left-0 w-full gap-2">
-                <Button
-                    className='w-full'
-                    theme='secondary'
-                    onClick={() => {
-                        setStep('initial');
-                    }}
-                >
-                    Back
-                </Button>
-                <Button
-                    className='text-white w-full'
-                    onClick={() => {
-                        setStep('share');
-                    }}
-                >
-                    Next
-                </Button>
             </div>
         </div>
     );
@@ -156,7 +112,7 @@ const PostMediaSlider = ({
     childRenderer,
     childOutSlide,
 }: {
-    onImageClick: (event: React.MouseEvent<HTMLImageElement, MouseEvent>, index: number) => void;
+    onImageClick?: (event: React.MouseEvent<HTMLImageElement, MouseEvent>, index: number) => void;
     mediaData: string[];
     carouselSettings?: Options;
     childRenderer?: (index: number) => JSX.Element;
@@ -167,14 +123,14 @@ const PostMediaSlider = ({
             {mediaData.map((item, index) => {
                 return (
                     <SplideSlide key={index}>
-                        <div className="relative max-h-96 h-full bg-black">
+                        <div className="relative max-h-96 min-h-96 h-full bg-black">
                             {item && item.startsWith('data:image') && (
                                 <img
                                     src={item}
                                     id={`post-media-${index}`}
                                     alt={`Selected ${index + 1}`}
-                                    className="max-w-full object-cover h-full m-auto"
-                                    onClick={(e) => onImageClick(e, index)}
+                                    className="max-w-full object-contain h-full m-auto"
+                                    onClick={(e) => onImageClick?.(e, index)}
                                 />
                             )}
 
@@ -193,18 +149,17 @@ const PostMediaSlider = ({
 };
 
 interface PostSharePanelProps {
-    onPostSuccess: () => void;
-    goBack: () => void;
+    onPostSuccess: (postId: number) => void;
 }
 
-export const PostSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess, goBack }) => {
+export const PostSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess }) => {
     const [posting, setPosting] = useState<{
         loading: boolean;
         error: string | null;
     }>({ loading: false, error: null });
     const errorDiv = useRef<HTMLDivElement>(null);
 
-    const { mediaData, setStep, setActiveTagIndex } = useCreatePost();
+    const { mediaData, setStep, taggedData } = useCreatePost();
 
     const imageMeta = useCallback((): ImageMeta => {
         let tallestImg = 0;
@@ -243,9 +198,13 @@ export const PostSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess, g
         };
 
         try {
-            await addPost(mediaList, data.caption, data.location, associateCars);
+            const response = await addPost(mediaList, data.caption, data.location, associateCars);
+            if (!response || response.error) {
+                throw new Error(response.error);
+            }
+
             setPosting({ loading: false, error: null });
-            onPostSuccess();
+            onPostSuccess(response.post_id);
         } catch (e: any) {
             setPosting({ loading: false, error: e.message });
             // // hide error after 5 seconds
@@ -256,18 +215,11 @@ export const PostSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess, g
     };
 
     return (
-        <form className="relative h-full flex flex-col gap-4" action={handleShare}>
-            <div className="flex flex-wrap gap-4 mt-20">
-                <PostMediaSlider
-                    mediaData={mediaData}
-                    onImageClick={(e, index) => {
-                        setActiveTagIndex(index);
-                        setStep('tag');
-                    }}
-                />
+        <form className="relative h-full flex flex-col" action={handleShare}>
+            <div className="flex flex-wrap gap-4">
+                <PostMediaSlider mediaData={mediaData} />
             </div>
-            <textarea placeholder="Write a caption..." className="border p-2 rounded" name='caption' />
-            <AssociateCar inputName='associatedCars' />
+            <textarea placeholder="Write a caption..." className="p-2" name='caption' />
 
             {posting.error && (
                 <div className={`fixed z-10 w-full bottom-0 h-14 p-2 mt-2 text-center text-red-500 bg-red-100`} ref={errorDiv}>
@@ -275,22 +227,31 @@ export const PostSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess, g
                 </div>
             )}
 
-            <div className="flex items-center gap-2 px-3 border-1 py-3" onClick={() => {
-                setStep('tag');
-            }}>
-                <BiTag className="text-lg" />
-                Tag Entities
+            <div className="flex items-center flex-col my-3 w-full">
+                <div className="flex items-center gap-2 px-3 border-1 py-3 w-full" onClick={() => {
+                    setStep('tag');
+                }}>
+                    <IonIcon icon={personOutline} className='text-xl' />
+                    <div className="flex items-center justify-between w-full">
+                        <span>Tag Entities</span> {taggedData.length > 0 && (
+                            <span className="text-xs">
+                                {taggedData.length > 1 ? `${taggedData.length} entities` : taggedData[0].label}
+                            </span>
+                        )}
+                    </div>
+                </div>
+                <div className="flex items-center gap-2 px-3 border-1 py-3 w-full" onClick={() => {
+                    alert('Associate Car');
+                }}>
+                    <IonIcon icon={carOutline} className='text-xl' />
+                    Associate Car
+                </div>
             </div>
+
 
             <div className="flex fixed bottom-0 left-0 w-full gap-2">
                 <Button
-                    className='text-white w-full'
-                    onClick={goBack}
-                >
-                    Back
-                </Button>
-                <Button
-                    className='text-white w-full'
+                    className='text-white w-full !rounded-none'
                     fullPageLoading
                 >
                     Share
@@ -300,11 +261,8 @@ export const PostSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess, g
     );
 };
 
-
-
-
 export const PostTagPanel: React.FC = () => {
-    const { mediaData, setStep, activeTagIndex, taggedData, setTaggedData } = useCreatePost();
+    const { mediaData, activeTagIndex, taggedData, setTaggedData } = useCreatePost();
 
     const [tagInput, setTagInput] = useState<{ x: number; y: number; visible: boolean, index: number; }>({ x: 0, y: 0, visible: false, index: 0 });
     const [currentTag, setCurrentTag] = useState<string>('');
@@ -355,10 +313,6 @@ export const PostTagPanel: React.FC = () => {
         ));
     };
 
-    const handleFinish = async () => {
-        await addTagsForPost(21, taggedData);
-    };
-
     return (
         <div className="relative h-full flex flex-col gap-4">
             <div className="flex flex-wrap gap-4 mt-20">
@@ -405,26 +359,6 @@ export const PostTagPanel: React.FC = () => {
                     )}
                 />
             </div>
-
-            <div className="flex fixed bottom-0 left-0 w-full gap-2">
-                <Button
-                    className='text-white w-full'
-                    onClick={() => {
-                        setStep('share');
-                    }}
-                >
-                    Back
-                </Button>
-                <Button
-                    className='text-white w-full'
-                    onClick={() => {
-                        // setStep('share');
-                        handleFinish();
-                    }}
-                >
-                    Finish
-                </Button>
-            </div>
         </div>
     );
 };
@@ -434,12 +368,21 @@ export interface TagEntityProps extends Tag {
     onClick?: () => void;
 }
 
-export const TagEntity = ({ x, y, label, onClick, index }: TagEntityProps) => {
+export const TagEntity = ({
+    x,
+    y,
+    label,
+    onClick,
+    index,
+}: TagEntityProps) => {
     return (
         <div
             key={index}
-            className="tag-label p-1 text-xs text-white bg-black/80 rounded-lg z-50"
-            style={{ position: 'absolute', left: x, top: y }}
+            className={clsx(
+                "tag-label p-1 text-xs text-white bg-black/80 rounded-lg z-50 absolute",
+                onClick && 'cursor-pointer',
+            )}
+            style={{ left: x, top: y }}
             onClick={onClick}
         >
             {label}

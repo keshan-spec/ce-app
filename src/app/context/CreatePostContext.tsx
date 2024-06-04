@@ -3,6 +3,7 @@ import Webcam from 'react-webcam';
 import { vibrateDevice } from '@/utils/nativeFeel';
 import { Area } from 'react-easy-crop';
 import { EditMediaPanel, PostInitialPanel, PostSharePanel, PostTagPanel } from '@/components/PostActions/CreatePost';
+import { addTagsForPost } from '@/actions/post-actions';
 
 export type ImageMeta = {
     width: number;
@@ -69,6 +70,16 @@ const CreatePostProvider: React.FC<{ children: ReactNode; }> = ({ children }) =>
     const [activeTagIndex, setActiveTagIndex] = useState<number>(0);
 
     const [taggedData, setTaggedData] = useState<Tag[]>([]);
+
+    useEffect(() => {
+        if (step === 'initial') {
+            setSelectedMedia([]);
+            setMedia([]);
+            setMediaData([]);
+            setTaggedData([]);
+            setActiveTagIndex(0);
+        }
+    }, [step]);
 
 
     useEffect(() => {
@@ -231,7 +242,26 @@ const CreatePostSteps = ({
 }: {
     closePanel: () => void;
 }) => {
-    const { step, webcamRef, setStep } = useCreatePost();
+    const { step, webcamRef, taggedData } = useCreatePost();
+
+    const addTags = async (post_id: number) => {
+        if (taggedData.length === 0) {
+            closePanel();
+            return;
+        }
+
+        try {
+            const response = await addTagsForPost(post_id, taggedData);
+            if (!response || response.error) {
+                console.error(response.error);
+            }
+
+            closePanel();
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
 
     const renderStep = useCallback(() => {
         switch (step) {
@@ -244,20 +274,13 @@ const CreatePostSteps = ({
                 return <PostTagPanel />;
             case 'share':
                 return (
-                    <PostSharePanel
-                        onPostSuccess={() => {
-                            closePanel();
-                        }}
-                        goBack={() => {
-                            setStep('edit');
-                        }}
-                    />
+                    <PostSharePanel onPostSuccess={addTags} />
                 );
         }
     }, [step]);
 
     return (
-        <div className="relative w-full h-[100dvh]">
+        <div className="relative w-full h-[94dvh]">
             {renderStep()}
         </div>
     );

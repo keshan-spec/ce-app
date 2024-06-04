@@ -19,6 +19,7 @@ import { PostActions, PostActionsSheet } from "./PostActionSheets";
 import { IonIcon } from "@ionic/react";
 import { chatboxEllipsesSharp, chatboxOutline, heart, heartOutline, logoTableau, settingsOutline, shareSocialOutline } from "ionicons/icons";
 import { TagEntity } from "../PostActions/CreatePost";
+import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 
 export const PostCard = ({ post, muted, setMuted, openComments }: {
     post: Post,
@@ -295,7 +296,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
         <div className="media-post-content relative mb-6 text-black" id={`PostMain-${post.id}`}>
             <div className="media-post-header">
                 <div className="media-post-avatar border-black border-2" style={{
-                    backgroundImage: `url(${post.user_profile_image})`
+                    backgroundImage: `url(${post.user_profile_image || PLACEHOLDER_PFP})`
                 }} />
                 <Link href={`/profile/${post.user_id}`} passHref>
                     <div className="media-post-user text-black">{post.username}</div>

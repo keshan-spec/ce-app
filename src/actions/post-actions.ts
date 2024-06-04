@@ -210,8 +210,6 @@ export const maybeLikeComment = async (commentId: number) => {
 };
 
 export const addTagsForPost = async (postId: number, tags: Tag[]) => {
-    console.log(tags);
-
     try {
         const user = await getSessionUser();
         if (!user || !user.id) throw new Error("User session expired. Please login again.");
@@ -224,8 +222,8 @@ export const addTagsForPost = async (postId: number, tags: Tag[]) => {
             },
             body: JSON.stringify({ user_id: user?.id, post_id: postId, tags }),
         });
-        const data = await response.json();
 
+        const data = await response.json();
         console.log(data);
 
         if (!response.ok || response.status !== 200) {
@@ -235,7 +233,7 @@ export const addTagsForPost = async (postId: number, tags: Tag[]) => {
         return data;
     } catch (e: any) {
         console.error("Error adding tags", e.message);
-        return e.message;
+        return null;
     }
 };
 
