@@ -429,11 +429,18 @@ export const PostTagPanel: React.FC = () => {
     );
 };
 
-export const TagEntity = ({ x, y, label }: Tag) => {
+
+export interface TagEntityProps extends Tag {
+    onClick?: () => void;
+}
+
+export const TagEntity = ({ x, y, label, onClick, index }: TagEntityProps) => {
     return (
         <div
+            key={index}
             className="tag-label p-1 text-xs text-white bg-black/80 rounded-lg z-50"
             style={{ position: 'absolute', left: x, top: y }}
+            onClick={onClick}
         >
             {label}
         </div>

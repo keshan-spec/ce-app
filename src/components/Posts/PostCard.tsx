@@ -158,12 +158,43 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
         );
     };
 
+    const handleTagClick = (tag: PostTag) => {
+        switch (tag.type) {
+            case 'user':
+                window.location.href = `/profile/${tag.entity.id}`;
+                break;
+            case 'car':
+                window.location.href = `/profile/garage/${tag.entity.id}`;
+                break;
+            case 'event':
+                window.location.href = `/event/${tag.entity.id}`;
+                break;
+            default:
+                break;
+        }
+    };
+
     const renderTags = (index: number) => {
-        return tags.filter(tag => tag.media_id === post.media[index].id).map((tag, index) => {
-            return (
-                <TagEntity key={index} index={index} label={tag.entity.name} x={tag.x} y={tag.y} />
-            );
-        });
+        const filteredTags = tags.filter(tag => tag.media_id === post.media[index].id);
+
+        if (filteredTags.length === 0) {
+            return null;
+        }
+
+        return (
+            <>
+                {showTags && filteredTags.map((tag, index) => {
+                    return (
+                        <TagEntity key={index} index={index} label={tag.entity.name} x={tag.x} y={tag.y} onClick={() => {
+                            handleTagClick(tag);
+                        }} />
+                    );
+                })}
+                <div className="absolute bottom-3 left-3 text-white p-1 flex items-center justify-center rounded-full bg-black/70">
+                    <BiMapPin />
+                </div>
+            </>
+        );
     };
 
     const renderMedia = useMemo(() => {
@@ -201,13 +232,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                                             />
                                         )}
 
-                                        {(tags.length > 0 && !showTags) && (
-                                            <div className="absolute top-3 left-3 text-white p-1 flex items-center justify-center rounded-full bg-black/70">
-                                                <BiMapPin />
-                                            </div>
-                                        )}
-
-                                        {showTags && renderTags(index)}
+                                        {renderTags(index)}
 
                                         {item.media_type === 'video' && (
                                             <>

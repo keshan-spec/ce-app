@@ -239,21 +239,9 @@ export const addTagsForPost = async (postId: number, tags: Tag[]) => {
     }
 };
 
-
-
-/*
- {
-    entity_id: '1',
-    type: 'user',
-    x: '141',
-    y: '202',
-    entity: { id: 1, name: 'carcalendar' }
-  }
-
-*/
 export interface PostTag {
     entity_id: number;
-    type: string;
+    type: 'car' | 'user' | 'event';
     x: number;
     y: number;
     entity: { id: number; name: string; };
@@ -271,15 +259,12 @@ export const fetchTagsForPost = async (postId: number): Promise<PostTag[] | null
             body: JSON.stringify({ post_id: postId }),
         });
         const data = await response.json();
-        console.log(data);
-
         if (!response.ok || response.status !== 200) {
             throw new Error(data.message);
         }
 
         return data;
     } catch (e: any) {
-        console.error("Error fetching tags", e.message);
-        return e.message;
+        return [];
     }
 };
