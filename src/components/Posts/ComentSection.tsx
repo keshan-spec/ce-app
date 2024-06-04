@@ -106,7 +106,7 @@ const CommentForm: React.FC<{ postId: number; onCommentAdded: () => void; }> = (
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex items-start space-x-2 py-2 min-h-6 bg-white">
+        <form onSubmit={handleSubmit} className="flex items-start space-x-2 py-2 min-h-11 bg-white">
             <div className="comments-container-footer">
                 <div className="comment-submit-button">
                     <button
@@ -170,7 +170,7 @@ const Comment: React.FC<{
     };
 }> = ({ comment }) => {
     const [likesCount, setLikesCount] = useState<number>(parseInt(comment.likes_count ?? '0'));
-    const [liked, setLiked] = useState(false);
+    const [liked, setLiked] = useState(comment.liked);
     const [error, setError] = useState<string | null>(null);
 
     const handleLike = async () => {
@@ -182,7 +182,11 @@ const Comment: React.FC<{
         setLikesCount(newLikesCount);
 
         try {
-            await maybeLikeComment(comment.id);
+            const responsne = await maybeLikeComment(comment.id);
+            if (responsne) {
+                comment.liked = newLikedState;
+                comment.likes_count = newLikesCount.toString();
+            }
         } catch (error: any) {
             // Revert the UI update if the API call fails
             setLiked(liked);
