@@ -182,15 +182,25 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
             return null;
         }
 
+        const tagsHtml = filteredTags.map((tag, index) => {
+            return (
+                <TagEntity
+                    key={index}
+                    index={index}
+                    label={tag.entity.name}
+                    x={tag.x}
+                    y={tag.y}
+                    type={tag.type}
+                    id={tag.entity.id}
+                    onClick={() => {
+                        handleTagClick(tag);
+                    }} />
+            );
+        });
+
         return (
             <>
-                {showTags && filteredTags.map((tag, index) => {
-                    return (
-                        <TagEntity key={index} index={index} label={tag.entity.name} x={tag.x} y={tag.y} onClick={() => {
-                            handleTagClick(tag);
-                        }} />
-                    );
-                })}
+                {showTags && tagsHtml}
                 <div className="absolute bottom-3 left-3 text-white p-1 flex items-center justify-center rounded-full bg-black/70">
                     <BiMapPin />
                 </div>

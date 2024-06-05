@@ -266,3 +266,26 @@ export const fetchTagsForPost = async (postId: number): Promise<PostTag[] | null
         return [];
     }
 };
+
+export const fetchTaggableEntites = async (search: string): Promise<any> => {
+    try {
+        const response = await fetch(`${API_URL}/wp-json/app/v1/get-taggable-entities`, {
+            cache: "no-cache",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ search }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || response.status !== 200) {
+            throw new Error(data.message);
+        }
+
+        return data;
+    } catch (e: any) {
+        return [];
+    }
+};

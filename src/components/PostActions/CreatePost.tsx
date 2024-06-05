@@ -7,7 +7,7 @@ import { Button } from '@/shared/Button';
 import { Options } from '@splidejs/splide';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
-import { addPost } from '@/actions/post-actions';
+import { addPost, fetchTaggableEntites } from '@/actions/post-actions';
 
 import Modal from '@/shared/Modal';
 import ImageCropModal from './ImageCrop';
@@ -16,6 +16,8 @@ import { forwardRef } from 'react';
 import { BiTag } from 'react-icons/bi';
 import Draggable from 'react-draggable';
 import clsx from 'clsx';
+import { debounce } from '@/utils/utils';
+import { useQuery } from '@tanstack/react-query';
 
 const carouselOptions: Options = {
     perPage: 1,
@@ -263,10 +265,23 @@ export const PostSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess })
 
 export const PostTagPanel: React.FC = () => {
     const { mediaData, activeTagIndex, taggedData, setTaggedData } = useCreatePost();
-
     const [tagInput, setTagInput] = useState<{ x: number; y: number; visible: boolean, index: number; }>({ x: 0, y: 0, visible: false, index: 0 });
-    const [currentTag, setCurrentTag] = useState<string>('');
-    const [inputFocused, setInputFocused] = useState<boolean>(false);
+
+    const [entities, setEntities] = useState<any[]>([]);
+    const [currentTag, setCurrentTag] = useState('');
+
+    const { data, error, isFetching, isLoading, refetch } = useQuery<any[], Error>({
+        queryKey: ["taggable-entities", currentTag],
+        queryFn: () => {
+            console.log('Fetching taggable entities', currentTag);
+            return fetchTaggableEntites(currentTag);
+        },
+        retry: 0,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        enabled: currentTag.trim().length > 3,
+    });
+
 
     const tagCarousel: Options = {
         ...carouselOptions,
@@ -280,20 +295,39 @@ export const PostTagPanel: React.FC = () => {
         setTagInput({ x, y, visible: true, index });
     };
 
-    const handleTagInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setCurrentTag(event.target.value);
+    const handleTagInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.value.trim().length === 0) {
+            setEntities([]);
+            return;
+        }
+
+        if (event.target.value.trim().length < 4) {
+            return;
+        }
+
+        try {
+            // const response = await fetchTaggableEntites(event.target.value);
+            // if (response) {
+            //     setEntities(response);
+            // }
+            await refetch();
+            if (data) {
+                console.log(data);
+                setEntities(data);
+            }
+        } catch (e: any) {
+            console.error('Error fetching taggable entities', e.message);
+        }
     };
+
+    const debouncedHandleTagInputChange = useCallback(debounce(handleTagInputChange, 500), []);
 
     const handleTagInputBlur = () => {
-        if (currentTag.trim() && inputFocused) {
-            setTaggedData([...taggedData, { x: tagInput.x, y: tagInput.y, label: currentTag, index: tagInput.index }]);
-        }
-        setTagInput({ x: 0, y: 0, visible: false, index: 0 });
-        setCurrentTag('');
-    };
-
-    const handleTagInputFocus = () => {
-        setInputFocused(true);
+        // if (currentTag.trim() && inputFocused) {
+        //     setTaggedData([...taggedData, { x: tagInput.x, y: tagInput.y, label: currentTag, index: tagInput.index }]);
+        // }
+        // setEntities([]);
+        // setCurrentTag('');
     };
 
     const renderImageTags = (index: number) => {
@@ -315,20 +349,60 @@ export const PostTagPanel: React.FC = () => {
 
     return (
         <div className="relative h-full flex flex-col gap-4">
-            <div className="flex flex-wrap gap-4 mt-20">
+            <div className="flex flex-wrap gap-4">
                 {tagInput.visible && (
-                    <div className="tag-input-container w-full px-2">
+                    <div className="tag-input-container w-full px-2 relative">
                         <input
                             type="text"
                             placeholder='Tag someone...'
-                            className="border p-1 rounded tag-input w-full"
-                            value={currentTag}
-                            onChange={handleTagInputChange}
-                            onFocus={handleTagInputFocus}
+                            className="border p-1 rounded-md w-full px-2"
+                            onChange={(e) => {
+                                setCurrentTag(e.target.value);
+                                debouncedHandleTagInputChange(e);
+                            }}
+                            defaultValue={currentTag}
                             onBlur={handleTagInputBlur}
                             autoFocus
                         />
-                        <div className="arrow"></div>
+
+                        <div className="results absolute w-full z-50 left-0 px-2 bg-white">
+                            {(isFetching || isLoading) && (
+                                <div className="tag-suggestions max-h-36 overflow-scroll shadow-md w-full border">
+                                    <div className="tag-suggestion p-1 border-b flex items-center gap-2 animate-pulse">
+                                        <div className="w-8 h-8 rounded-full bg-gray-200 "></div>
+                                        <div className='w-32 h-4 bg-gray-200'></div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* if no data */}
+                            {!isFetching && !isLoading && data && data.length === 0 && (
+                                <div className="tag-suggestions max-h-36 overflow-scroll shadow-md w-full border">
+                                    <div className="tag-suggestion p-1 border-b">No results found</div>
+                                </div>
+                            )}
+
+                            {(!(isFetching || isLoading) && (data && data.length > 0)) && (
+                                <div className="tag-suggestions max-h-44 overflow-scroll shadow-md w-full border">
+                                    {data.map((entity, idx) => (
+                                        <div key={idx} className="tag-suggestion p-1 border-b" onClick={() => {
+                                            setCurrentTag('');
+                                            setTaggedData([...taggedData, {
+                                                x: tagInput.x,
+                                                y: tagInput.y,
+                                                index: tagInput.index,
+                                                label: entity.name,
+                                                type: entity.type,
+                                                id: entity.entity_id,
+                                            }]);
+                                            setTagInput({ x: 0, y: 0, visible: false, index: 0 });
+                                        }}>
+                                            {entity.name}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
 
@@ -342,7 +416,7 @@ export const PostTagPanel: React.FC = () => {
                                 {renderImageTags(index)}
 
                                 {tagInput.visible && tagInput.index === index && (
-                                    <TagEntity x={tagInput.x} y={tagInput.y} label={"Who's this?"} index={index} />
+                                    <TagEntity x={tagInput.x} y={tagInput.y} label={"Who's this?"} index={index} type='user' id={0} />
                                 )}
                             </>
                         );
@@ -350,7 +424,7 @@ export const PostTagPanel: React.FC = () => {
 
                     childOutSlide={(index) => (
                         <div className={clsx(
-                            "w-full mt-1 flex flex-col gap-1",
+                            "w-fit mt-1 flex flex-col gap-1 max-w-sm",
                             taggedData.filter(tag => tag.index === index).length > 0 ? 'visible' : 'hidden'
                         )}>
                             <h3 className="text-black text-left mt-2">Tags</h3>
@@ -378,11 +452,14 @@ export const TagEntity = ({
     return (
         <div
             key={index}
+            role='button'
             className={clsx(
                 "tag-label p-1 text-xs text-white bg-black/80 rounded-lg z-50 absolute",
-                onClick && 'cursor-pointer',
             )}
-            style={{ left: x, top: y }}
+            style={{
+                left: `${x - 40}px`,
+                top: `${y - 40}px`
+            }}
             onClick={onClick}
         >
             {label}

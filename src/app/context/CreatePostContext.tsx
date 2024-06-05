@@ -19,6 +19,8 @@ export interface Tag {
     y: number;
     label: string;
     index: number;
+    type: 'car' | 'user' | 'event';
+    id: number;
 }
 
 type Step = 'initial' | 'edit' | 'share' | 'tag';
