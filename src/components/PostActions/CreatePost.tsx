@@ -296,8 +296,6 @@ export const PostTagPanel: React.FC = () => {
     };
 
     const onImageClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: number) => {
-        console.log('Image clicked', index);
-
         const rect = event.currentTarget.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
@@ -314,10 +312,6 @@ export const PostTagPanel: React.FC = () => {
         }
 
         try {
-            // const response = await fetchTaggableEntites(event.target.value);
-            // if (response) {
-            //     setEntities(response);
-            // }
             await refetch({
                 cancelRefetch: isFetching || isLoading,
             });
@@ -330,7 +324,14 @@ export const PostTagPanel: React.FC = () => {
 
     const renderImageTags = (index: number) => {
         return taggedData.filter(tag => tag.index === index).map((tag, i) => (
-            <TagEntity key={i} {...tag} />
+            <DraggableTagEntity key={i} {...tag} onPositionChange={(x, y) => {
+                setTaggedData(taggedData.map((t, idx) => {
+                    if (idx === i) {
+                        return { ...t, x, y };
+                    }
+                    return t;
+                }));
+            }} />
         ));
     };
 
@@ -348,63 +349,68 @@ export const PostTagPanel: React.FC = () => {
     return (
         <div className="relative h-full flex flex-col gap-4">
             <div className="flex flex-wrap gap-4">
-                {tagInput.visible && (
-                    <div className="tag-input-container w-full px-2 relative">
-                        <input
-                            type="text"
-                            placeholder='Tag someone...'
-                            className="border p-1 rounded-md w-full px-2"
-                            onChange={(e) => {
-                                setCurrentTag(e.target.value);
-                                debouncedHandleTagInputChange(e);
-                            }}
-                            defaultValue={currentTag}
-                            autoFocus
-                        />
+                <div className="tag-input-container w-full px-2 relative">
+                    <input
+                        disabled={!tagInput.visible}
+                        type="text"
+                        placeholder='Tag someone...'
+                        className="border p-1 rounded-md w-full px-2"
+                        onChange={(e) => {
+                            setCurrentTag(e.target.value);
+                            debouncedHandleTagInputChange(e);
+                        }}
+                        onBlur={() => {
+                            setTimeout(() => {
+                                setCurrentTag('');
+                                setTagInput({ x: 0, y: 0, visible: false, index: 0 });
+                            }, 300);
+                        }}
+                        defaultValue={currentTag}
+                        autoFocus
+                    />
 
-                        <div className="results absolute w-full z-50 left-0 px-2 bg-white">
-                            {(isFetching || isLoading) && (
-                                <div className="tag-suggestions max-h-36 overflow-scroll shadow-md w-full border">
-                                    <div className="tag-suggestion p-1 border-b flex items-center gap-2 animate-pulse">
-                                        <div className="w-8 h-8 rounded-full bg-gray-200 "></div>
-                                        <div className='w-32 h-4 bg-gray-200'></div>
-                                    </div>
+                    <div className="results absolute w-full z-50 left-0 px-2 bg-white">
+                        {(isFetching || isLoading) && (
+                            <div className="tag-suggestions max-h-36 overflow-scroll shadow-md w-full border">
+                                <div className="tag-suggestion p-1 border-b flex items-center gap-2 animate-pulse">
+                                    <div className="w-8 h-8 rounded-full bg-gray-200 "></div>
+                                    <div className='w-32 h-4 bg-gray-200'></div>
                                 </div>
-                            )}
+                            </div>
+                        )}
 
-                            {/* if no data */}
-                            {!isFetching && !isLoading && data && data.length === 0 && (
-                                <div className="tag-suggestions max-h-36 overflow-scroll shadow-md w-full border">
-                                    <div className="tag-suggestion p-1 border-b">No results found</div>
-                                </div>
-                            )}
+                        {/* if no data */}
+                        {!isFetching && !isLoading && data && data.length === 0 && (
+                            <div className="tag-suggestions max-h-36 overflow-scroll shadow-md w-full border">
+                                <div className="tag-suggestion p-1 border-b">No results found</div>
+                            </div>
+                        )}
 
-                            {(!(isFetching || isLoading) && (data && data.length > 0)) && (
-                                <div className="tag-suggestions max-h-44 overflow-scroll shadow-md w-full border">
-                                    {data.map((entity, idx) => (
-                                        <div key={idx} className="tag-suggestion p-1 border-b flex items-center gap-2" onClick={() => {
-                                            setCurrentTag('');
-                                            setTaggedData([...taggedData, {
-                                                x: tagInput.x,
-                                                y: tagInput.y,
-                                                index: tagInput.index,
-                                                label: entity.name,
-                                                type: entity.type,
-                                                id: entity.entity_id,
-                                            }]);
-                                            setTagInput({ x: 0, y: 0, visible: false, index: 0 });
-                                        }}>
-                                            <div className="w-8 h-8 rounded-full bg-gray-200 border-2">
-                                                <img src={entity.profile_image || PLACEHOLDER_PFP} alt={entity.name} className="w-full h-full rounded-full" />
-                                            </div>
-                                            <div>{entity.name}</div>
+                        {(!(isFetching || isLoading) && (data && data.length > 0 && currentTag.length > 3)) && (
+                            <div className="tag-suggestions max-h-44 overflow-scroll shadow-md w-full border">
+                                {data.map((entity, idx) => (
+                                    <div key={idx} className="tag-suggestion p-1 border-b flex items-center gap-2" onClick={() => {
+                                        setCurrentTag('');
+                                        setTaggedData([...taggedData, {
+                                            x: tagInput.x,
+                                            y: tagInput.y,
+                                            index: tagInput.index,
+                                            label: entity.name,
+                                            type: entity.type,
+                                            id: entity.entity_id,
+                                        }]);
+                                        setTagInput({ x: 0, y: 0, visible: false, index: 0 });
+                                    }}>
+                                        <div className="w-8 h-8 rounded-full bg-gray-200 border-2">
+                                            <img src={entity.profile_image || PLACEHOLDER_PFP} alt={entity.name} className="w-full h-full rounded-full" />
                                         </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
+                                        <div>{entity.name}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
 
                 <PostMediaSlider
                     mediaData={mediaData}
@@ -417,7 +423,17 @@ export const PostTagPanel: React.FC = () => {
                                 {renderImageTags(index)}
 
                                 {tagInput.visible && tagInput.index === index && (
-                                    <TagEntity x={tagInput.x} y={tagInput.y} label={"Who's this?"} index={index} type='user' id={0} />
+                                    <DraggableTagEntity
+                                        x={tagInput.x}
+                                        y={tagInput.y}
+                                        label={"Who's this?"}
+                                        index={index}
+                                        type='user'
+                                        id={0}
+                                        onPositionChange={(x, y) => {
+                                            setTagInput({ x, y, visible: true, index });
+                                        }}
+                                    />
                                 )}
                             </>
                         );
@@ -441,6 +457,7 @@ export const PostTagPanel: React.FC = () => {
 
 export interface TagEntityProps extends Tag {
     onClick?: () => void;
+    onPositionChange?: (x: number, y: number) => void;
 }
 
 export const TagEntity = ({
@@ -450,6 +467,7 @@ export const TagEntity = ({
     onClick,
     index,
 }: TagEntityProps) => {
+
     return (
         <div
             key={index}
@@ -468,34 +486,45 @@ export const TagEntity = ({
     );
 };
 
-// const TagEntity: React.FC<Tag> = ({ x, y, label }) => {
-//     const [position, setPosition] = useState({ x, y });
+export const DraggableTagEntity = ({
+    x,
+    y,
+    label,
+    onClick,
+    index,
+    onPositionChange
+}: TagEntityProps) => {
+    const [position, setPosition] = useState({
+        x: x - 100,
+        y: y - 80
+    });
 
-//     const handleDrag = (e: any, data: any) => {
-//         setPosition({ x: data.x, y: data.y });
-//         document.body.style.pointerEvents = 'auto';
-//     };
+    const handleDrag = (e: any, data: any) => {
+        setPosition({ x: data.x, y: data.y });
+        onPositionChange?.(data.x, data.y);
+    };
 
-//     return (
-//         <Draggable
-//             defaultPosition={{ x, y }}
-//             onStart={() => {
-//                 // make body pointer events none
-//                 document.body.style.pointerEvents = 'none';
-//             }}
-//             onDrag={() => {
-//                 // make body pointer events none
-//                 document.body.style.pointerEvents = 'none';
-//             }}
-//             onStop={handleDrag}
-//             position={position}
-//         >
-//             <div
-//                 className="tag-label p-1 text-sm text-white bg-black/80 rounded-lg z-50 w-fit"
-//                 style={{ position: 'absolute', left: position.x - 50, top: position.y }}
-//             >
-//                 {label}
-//             </div>
-//         </Draggable>
-//     );
-// };
+    return (
+        <Draggable
+            defaultPosition={{ x, y }}
+            onStop={handleDrag}
+            position={position}
+        >
+            <div
+                key={index}
+                role='button'
+                className={clsx(
+                    "tag-label p-1 text-xs text-white bg-black/80 rounded-lg z-50 absolute",
+                )}
+                style={{
+                    left: `${x - 100}px`,
+                    top: `${y - 80}px`
+                }}
+                onClick={onClick}
+            >
+                {label}
+            </div>
+        </Draggable>
+
+    );
+};
