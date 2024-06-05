@@ -9,7 +9,7 @@ import { UserProfileSkeleton } from './UserProfileSkeleton';
 import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
 import { maybeFollowUser } from '@/actions/profile-actions';
 import { redirect } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ProfileLinksExternal } from './ProfileLinks';
 
@@ -37,7 +37,6 @@ const getUser = (profileId: string | undefined) => {
         };
     }
 
-    // 59899
     const { data, isFetching, refetch } = useQuery({
         queryKey: ["user", profileId],
         queryFn: () => getUserDetails(profileId),
@@ -45,6 +44,7 @@ const getUser = (profileId: string | undefined) => {
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         retryOnMount: false,
+        staleTime: 60 * 1000,
     });
 
     return {

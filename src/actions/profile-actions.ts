@@ -3,10 +3,6 @@ import { API_URL } from "./api";
 import { getSessionUser } from "./auth-actions";
 
 export const getUserPosts = async (profileId: string, page: number, tagged = false, limit = 10) => {
-    if (tagged) {
-        return [];
-    }
-
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-user-posts`, {
         cache: "no-cache",
         method: "POST",
@@ -17,6 +13,8 @@ export const getUserPosts = async (profileId: string, page: number, tagged = fal
     });
 
     const data = await response.json();
+    console.log(data);
+
     if (response.status !== 200) {
         return [];
     }

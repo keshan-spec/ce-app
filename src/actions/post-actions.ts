@@ -267,15 +267,18 @@ export const fetchTagsForPost = async (postId: number): Promise<PostTag[] | null
     }
 };
 
-export const fetchTaggableEntites = async (search: string): Promise<any> => {
+export const fetchTaggableEntites = async (search: string, tagged_entities: Tag[]): Promise<any> => {
     try {
+        const user = await getSessionUser();
+        if (!user || !user.id) throw new Error("User session expired. Please login again.");
+
         const response = await fetch(`${API_URL}/wp-json/app/v1/get-taggable-entities`, {
             cache: "no-cache",
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ search }),
+            body: JSON.stringify({ search, user_id: user.id, tagged_entities }),
         });
 
         const data = await response.json();

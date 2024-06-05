@@ -18,6 +18,7 @@ import Draggable from 'react-draggable';
 import clsx from 'clsx';
 import { debounce } from '@/utils/utils';
 import { useQuery } from '@tanstack/react-query';
+import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
 
 const carouselOptions: Options = {
     perPage: 1,
@@ -113,31 +114,39 @@ const PostMediaSlider = ({
     carouselSettings = carouselOptions,
     childRenderer,
     childOutSlide,
+    showControls = true
 }: {
-    onImageClick?: (event: React.MouseEvent<HTMLImageElement, MouseEvent>, index: number) => void;
+    onImageClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: number) => void;
     mediaData: string[];
     carouselSettings?: Options;
     childRenderer?: (index: number) => JSX.Element;
     childOutSlide?: (index: number) => JSX.Element;
+    showControls?: boolean;
 }) => {
     return (
         <Splide options={carouselSettings} className="text-center carousel-slider flex items-center justify-center">
             {mediaData.map((item, index) => {
                 return (
                     <SplideSlide key={index}>
-                        <div className="relative max-h-96 min-h-96 h-full bg-black">
+                        <div className="relative max-h-96 min-h-96 h-full bg-black"
+                            onClick={(e) => onImageClick?.(e, index)}
+                        >
                             {item && item.startsWith('data:image') && (
                                 <img
                                     src={item}
                                     id={`post-media-${index}`}
                                     alt={`Selected ${index + 1}`}
                                     className="max-w-full object-contain h-full m-auto"
-                                    onClick={(e) => onImageClick?.(e, index)}
+                                // onClick={(e) => onImageClick?.(e, index)}
                                 />
                             )}
 
                             {item && item.startsWith('data:video') && (
-                                <video src={item} controls className="max-w-full" id={`post-media-${index}`} />
+                                <video
+                                    controls={showControls}
+                                    className="max-w-full h-full m-auto" id={`post-media-${index}`}>
+                                    <source src={item} type="video/mp4" />
+                                </video>
                             )}
 
                             {childRenderer?.(index)}
@@ -266,15 +275,13 @@ export const PostSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess })
 export const PostTagPanel: React.FC = () => {
     const { mediaData, activeTagIndex, taggedData, setTaggedData } = useCreatePost();
     const [tagInput, setTagInput] = useState<{ x: number; y: number; visible: boolean, index: number; }>({ x: 0, y: 0, visible: false, index: 0 });
-
-    const [entities, setEntities] = useState<any[]>([]);
     const [currentTag, setCurrentTag] = useState('');
 
     const { data, error, isFetching, isLoading, refetch } = useQuery<any[], Error>({
-        queryKey: ["taggable-entities", currentTag],
+        queryKey: ["taggable-entities"],
         queryFn: () => {
-            console.log('Fetching taggable entities', currentTag);
-            return fetchTaggableEntites(currentTag);
+            // console.log('Fetching taggable entities', currentTag);
+            return fetchTaggableEntites(currentTag, taggedData);
         },
         retry: 0,
         refetchOnWindowFocus: false,
@@ -288,7 +295,9 @@ export const PostTagPanel: React.FC = () => {
         start: activeTagIndex,
     };
 
-    const onImageClick = (event: React.MouseEvent<HTMLImageElement, MouseEvent>, index: number) => {
+    const onImageClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: number) => {
+        console.log('Image clicked', index);
+
         const rect = event.currentTarget.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
@@ -297,7 +306,6 @@ export const PostTagPanel: React.FC = () => {
 
     const handleTagInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.value.trim().length === 0) {
-            setEntities([]);
             return;
         }
 
@@ -310,25 +318,15 @@ export const PostTagPanel: React.FC = () => {
             // if (response) {
             //     setEntities(response);
             // }
-            await refetch();
-            if (data) {
-                console.log(data);
-                setEntities(data);
-            }
+            await refetch({
+                cancelRefetch: isFetching || isLoading,
+            });
         } catch (e: any) {
             console.error('Error fetching taggable entities', e.message);
         }
     };
 
     const debouncedHandleTagInputChange = useCallback(debounce(handleTagInputChange, 500), []);
-
-    const handleTagInputBlur = () => {
-        // if (currentTag.trim() && inputFocused) {
-        //     setTaggedData([...taggedData, { x: tagInput.x, y: tagInput.y, label: currentTag, index: tagInput.index }]);
-        // }
-        // setEntities([]);
-        // setCurrentTag('');
-    };
 
     const renderImageTags = (index: number) => {
         return taggedData.filter(tag => tag.index === index).map((tag, i) => (
@@ -361,7 +359,6 @@ export const PostTagPanel: React.FC = () => {
                                 debouncedHandleTagInputChange(e);
                             }}
                             defaultValue={currentTag}
-                            onBlur={handleTagInputBlur}
                             autoFocus
                         />
 
@@ -385,7 +382,7 @@ export const PostTagPanel: React.FC = () => {
                             {(!(isFetching || isLoading) && (data && data.length > 0)) && (
                                 <div className="tag-suggestions max-h-44 overflow-scroll shadow-md w-full border">
                                     {data.map((entity, idx) => (
-                                        <div key={idx} className="tag-suggestion p-1 border-b" onClick={() => {
+                                        <div key={idx} className="tag-suggestion p-1 border-b flex items-center gap-2" onClick={() => {
                                             setCurrentTag('');
                                             setTaggedData([...taggedData, {
                                                 x: tagInput.x,
@@ -397,7 +394,10 @@ export const PostTagPanel: React.FC = () => {
                                             }]);
                                             setTagInput({ x: 0, y: 0, visible: false, index: 0 });
                                         }}>
-                                            {entity.name}
+                                            <div className="w-8 h-8 rounded-full bg-gray-200 border-2">
+                                                <img src={entity.profile_image || PLACEHOLDER_PFP} alt={entity.name} className="w-full h-full rounded-full" />
+                                            </div>
+                                            <div>{entity.name}</div>
                                         </div>
                                     ))}
                                 </div>
@@ -410,6 +410,7 @@ export const PostTagPanel: React.FC = () => {
                     mediaData={mediaData}
                     onImageClick={onImageClick}
                     carouselSettings={tagCarousel}
+                    showControls={false}
                     childRenderer={(index) => {
                         return (
                             <>
