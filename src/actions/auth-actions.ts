@@ -52,6 +52,7 @@ export const getUserDetails = async (id: string): Promise<UserResponse | null> =
         headers: {
             "Content-Type": "application/json",
         },
+        cache: "no-cache",
         body: JSON.stringify({ user_id: id }),
     });
 

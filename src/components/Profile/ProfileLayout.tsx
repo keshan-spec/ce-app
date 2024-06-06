@@ -9,7 +9,7 @@ import { UserProfileSkeleton } from './UserProfileSkeleton';
 import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
 import { maybeFollowUser } from '@/actions/profile-actions';
 import { redirect } from 'next/navigation';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ProfileLinksExternal } from './ProfileLinks';
 
@@ -63,22 +63,34 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
 }) => {
     const { user, isLoggedIn, isFetching, sessionUser, refetch, canEditProfile } = getUser(profileId);
 
+    console.log(user);
+
     const handleFollowClick = async () => {
         if (!profileId) return;
 
-        if (!isLoggedIn) {
+        if (!isLoggedIn || !sessionUser) {
             redirect(`/login?callbackUrl=${encodeURIComponent(`/profile/${profileId}`)}`);
         }
 
         try {
             const response = await maybeFollowUser(profileId);
-            refetch?.();
+
+            if (response && response.success) {
+                const followers = user?.followers;
+
+                if (followers?.includes(sessionUser?.id)) {
+                    user?.followers?.splice(followers.indexOf(sessionUser?.id), 1);
+                } else {
+                    user?.followers?.push(sessionUser?.id);
+                }
+            }
+            refetch();
         } catch (error) {
             console.error(error);
         }
     };
 
-    const renderFollowBtn = useMemo(() => {
+    const renderFollowBtn = useCallback(() => {
         let text: string = "Follow";
         let icon: string = "fas fa-plus";
 
@@ -96,7 +108,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                 <i className={`${icon} mr-2`}></i> {text}
             </Button>
         );
-    }, [user?.id, user?.followers]);
+    }, [user]);
 
     if (!isLoggedIn && currentUser) {
         return <NoAuthWall redirectTo="/profile" />;
@@ -150,7 +162,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
 
             <div className="section mb-2">
                 <div className="profile-links">
-                    {profileId && renderFollowBtn}
+                    {profileId && renderFollowBtn()}
 
                     {(isLoggedIn && canEditProfile) && (
                         <button className="profile-link"
