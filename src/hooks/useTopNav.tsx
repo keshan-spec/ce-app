@@ -2,6 +2,7 @@
 import { getQueryClient } from "@/app/context/QueryClientProvider";
 import { Garage } from "@/types/garage";
 import { Post } from "@/types/posts";
+import { useRouter } from "next/navigation";
 
 import { useCallback } from "react";
 
@@ -12,7 +13,7 @@ interface TopNavProps {
 export type TopNavMode = 'view-page' | 'default';
 
 interface TopNavType {
-    returnTo: string;
+    returnTo: () => void;
     title: string;
     mode: TopNavMode;
     showMenuIcon: boolean;
@@ -29,6 +30,7 @@ export const useTopNav = ({
     const isGarageViewPage = pathname.includes('/profile/garage/');
     const isPostViewPage = pathname.includes('/posts/');
     const param = pathname.split('/').pop();
+    const router = useRouter();
 
     const showMenuIcon = () => {
         if (pathname.includes('/profile') || pathname.includes('/posts/')) {
@@ -77,7 +79,7 @@ export const useTopNav = ({
     }, [isGarageViewPage, isPostViewPage, param]);
 
     return {
-        returnTo: getReturnTo(pathname),
+        returnTo: () => router.back(),
         title: getHeaderTitle(),
         subtitle: getSubtitle(),
         mode: isGarageViewPage || isPostViewPage ? 'view-page' : 'default',

@@ -31,11 +31,11 @@ export const TopNav: React.FC = () => {
                             <IonIcon icon={menuOutline} />
                         </span>
                     ) : (
-                        <Link href={returnTo}>
+                        <button onClick={returnTo}>
                             <span className="headerButton">
                                 <IonIcon icon={chevronBackOutline} />
                             </span>
-                        </Link>
+                        </button>
                     )}
                 </div>
 
