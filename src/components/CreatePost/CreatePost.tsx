@@ -5,20 +5,20 @@ import React, { useCallback, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { Button } from '@/shared/Button';
 import { Options } from '@splidejs/splide';
-import { Splide, SplideSlide } from '@splidejs/react-splide';
+import { Splide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
 import { addPost, fetchTaggableEntites } from '@/actions/post-actions';
 
 import Modal from '@/shared/Modal';
 import ImageCropModal from './ImageCrop';
-import { ImageMeta, Tag, useCreatePost } from '@/app/context/CreatePostContext';
+import { ImageMeta, useCreatePost } from '@/app/context/CreatePostContext';
 import { forwardRef } from 'react';
-import { BiTag } from 'react-icons/bi';
-import Draggable from 'react-draggable';
 import clsx from 'clsx';
 import { debounce } from '@/utils/utils';
 import { useQuery } from '@tanstack/react-query';
 import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
+import { DraggableTagEntity, TagEntity } from '../TagEntity/TagEntity';
+import PostMediaSlider from './PostMediaSlider';
 
 const carouselOptions: Options = {
     perPage: 1,
@@ -84,10 +84,7 @@ export const PostInitialPanel = forwardRef((props: PostInitialPanelProps, ref: R
     );
 });
 
-
-interface EditMediaPanelProps { }
-
-export const EditMediaPanel: React.FC<EditMediaPanelProps> = () => {
+export const EditMediaPanel = () => {
     const { updateImage, setEditImage, setStep, editImage, media, mediaData, } = useCreatePost();
 
     return (
@@ -108,57 +105,6 @@ export const EditMediaPanel: React.FC<EditMediaPanelProps> = () => {
     );
 };
 
-const PostMediaSlider = ({
-    onImageClick,
-    mediaData,
-    carouselSettings = carouselOptions,
-    childRenderer,
-    childOutSlide,
-    showControls = true
-}: {
-    onImageClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: number) => void;
-    mediaData: string[];
-    carouselSettings?: Options;
-    childRenderer?: (index: number) => JSX.Element;
-    childOutSlide?: (index: number) => JSX.Element;
-    showControls?: boolean;
-}) => {
-    return (
-        <Splide options={carouselSettings} className="text-center carousel-slider flex items-center justify-center">
-            {mediaData.map((item, index) => {
-                return (
-                    <SplideSlide key={index}>
-                        <div className="relative max-h-96 min-h-96 h-full bg-black"
-                            onClick={(e) => onImageClick?.(e, index)}
-                        >
-                            {item && item.startsWith('data:image') && (
-                                <img
-                                    src={item}
-                                    id={`post-media-${index}`}
-                                    alt={`Selected ${index + 1}`}
-                                    className="max-w-full object-contain h-full m-auto"
-                                // onClick={(e) => onImageClick?.(e, index)}
-                                />
-                            )}
-
-                            {item && item.startsWith('data:video') && (
-                                <video
-                                    controls={showControls}
-                                    className="max-w-full h-full m-auto" id={`post-media-${index}`}>
-                                    <source src={item} type="video/mp4" />
-                                </video>
-                            )}
-
-                            {childRenderer?.(index)}
-                        </div>
-                        {childOutSlide?.(index)}
-                    </SplideSlide>
-                );
-            })}
-        </Splide>
-    );
-};
-
 interface PostSharePanelProps {
     onPostSuccess: (postId: number) => void;
 }
@@ -168,6 +114,7 @@ export const PostSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess })
         loading: boolean;
         error: string | null;
     }>({ loading: false, error: null });
+
     const errorDiv = useRef<HTMLDivElement>(null);
 
     const { mediaData, setStep, taggedData } = useCreatePost();
@@ -276,8 +223,9 @@ export const PostTagPanel: React.FC = () => {
     const { mediaData, activeTagIndex, taggedData, setTaggedData } = useCreatePost();
     const [tagInput, setTagInput] = useState<{ x: number; y: number; visible: boolean, index: number; }>({ x: 0, y: 0, visible: false, index: 0 });
     const [currentTag, setCurrentTag] = useState('');
+    const splideRef = useRef<Splide>(null);
 
-    const { data, error, isFetching, isLoading, refetch } = useQuery<any[], Error>({
+    const { data, isFetching, isLoading, refetch } = useQuery<any[], Error>({
         queryKey: ["taggable-entities"],
         queryFn: () => {
             // console.log('Fetching taggable entities', currentTag);
@@ -288,7 +236,6 @@ export const PostTagPanel: React.FC = () => {
         refetchOnMount: false,
         enabled: currentTag.trim().length > 3,
     });
-
 
     const tagCarousel: Options = {
         ...carouselOptions,
@@ -324,14 +271,25 @@ export const PostTagPanel: React.FC = () => {
 
     const renderImageTags = (index: number) => {
         return taggedData.filter(tag => tag.index === index).map((tag, i) => (
-            <DraggableTagEntity key={i} {...tag} onPositionChange={(x, y) => {
-                setTaggedData(taggedData.map((t, idx) => {
-                    if (idx === i) {
-                        return { ...t, x, y };
-                    }
-                    return t;
-                }));
-            }} />
+            <TagEntity
+                key={i} {...tag}
+                onPositionChange={(x, y) => {
+                    setTaggedData(taggedData.map((t, idx) => {
+                        if (idx === i) {
+                            return { ...t, x, y };
+                        }
+                        return t;
+                    }));
+                }}
+            // onDragStart={() => {
+            //     console.log('Drag start');
+            //     splideRef.current!.splide.Components.Drag.disable(true);
+            // }}
+            // onDragEnd={() => {
+            //     // splideRef.current!.splide.Components.Drag.disable(false);
+            //     console.log('Drag end');
+            // }}
+            />
         ));
     };
 
@@ -413,6 +371,7 @@ export const PostTagPanel: React.FC = () => {
                 </div>
 
                 <PostMediaSlider
+                    ref={splideRef}
                     mediaData={mediaData}
                     onImageClick={onImageClick}
                     carouselSettings={tagCarousel}
@@ -423,16 +382,16 @@ export const PostTagPanel: React.FC = () => {
                                 {renderImageTags(index)}
 
                                 {tagInput.visible && tagInput.index === index && (
-                                    <DraggableTagEntity
+                                    <TagEntity
                                         x={tagInput.x}
                                         y={tagInput.y}
                                         label={"Who's this?"}
                                         index={index}
                                         type='user'
                                         id={0}
-                                        onPositionChange={(x, y) => {
-                                            setTagInput({ x, y, visible: true, index });
-                                        }}
+                                    // onPositionChange={(x, y) => {
+                                    //     setTagInput({ x, y, visible: true, index });
+                                    // }}
                                     />
                                 )}
                             </>
@@ -454,77 +413,3 @@ export const PostTagPanel: React.FC = () => {
     );
 };
 
-
-export interface TagEntityProps extends Tag {
-    onClick?: () => void;
-    onPositionChange?: (x: number, y: number) => void;
-}
-
-export const TagEntity = ({
-    x,
-    y,
-    label,
-    onClick,
-    index,
-}: TagEntityProps) => {
-
-    return (
-        <div
-            key={index}
-            role='button'
-            className={clsx(
-                "tag-label p-1 text-xs text-white bg-black/80 rounded-lg z-50 absolute",
-            )}
-            style={{
-                left: `${x - 40}px`,
-                top: `${y - 40}px`
-            }}
-            onClick={onClick}
-        >
-            {label}
-        </div>
-    );
-};
-
-export const DraggableTagEntity = ({
-    x,
-    y,
-    label,
-    onClick,
-    index,
-    onPositionChange
-}: TagEntityProps) => {
-    const [position, setPosition] = useState({
-        x: x - 100,
-        y: y - 80
-    });
-
-    const handleDrag = (e: any, data: any) => {
-        setPosition({ x: data.x, y: data.y });
-        onPositionChange?.(data.x, data.y);
-    };
-
-    return (
-        <Draggable
-            defaultPosition={{ x, y }}
-            onStop={handleDrag}
-            position={position}
-        >
-            <div
-                key={index}
-                role='button'
-                className={clsx(
-                    "tag-label p-1 text-xs text-white bg-black/80 rounded-lg z-50 absolute",
-                )}
-                style={{
-                    left: `${x - 100}px`,
-                    top: `${y - 80}px`
-                }}
-                onClick={onClick}
-            >
-                {label}
-            </div>
-        </Draggable>
-
-    );
-};

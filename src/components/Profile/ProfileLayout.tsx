@@ -63,8 +63,6 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
 }) => {
     const { user, isLoggedIn, isFetching, sessionUser, refetch, canEditProfile } = getUser(profileId);
 
-    console.log(user);
-
     const handleFollowClick = async () => {
         if (!profileId) return;
 

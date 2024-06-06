@@ -7,7 +7,7 @@ import { useDotButton } from "../Carousel/EmbalDotButtons";
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoHeight from 'embla-carousel-auto-height';
 import { PostTag, fetchTagsForPost, maybeBookmarkPost, maybeLikePost } from "@/actions/post-actions";
-import { BiBookmark, BiComment, BiHeart, BiMapPin, BiSolidBookmark, BiSolidHeart, BiVolumeFull, BiVolumeMute } from "react-icons/bi";
+import { BiBookmark, BiMapPin, BiSolidBookmark, BiVolumeFull, BiVolumeMute } from "react-icons/bi";
 import clsx from "clsx";
 import NcImage from "../Image/Image";
 import { NativeShare } from "../ActionSheets/Share";
@@ -15,11 +15,11 @@ import { DotButton } from "./Posts";
 import { formatPostDate } from "@/utils/dateUtils";
 import Link from "next/link";
 import { useObservedQuery } from "@/app/context/ObservedQuery";
-import { PostActions, PostActionsSheet } from "./PostActionSheets";
+import { PostActionsSheet } from "./PostActionSheets";
 import { IonIcon } from "@ionic/react";
-import { chatboxEllipsesSharp, chatboxOutline, heart, heartOutline, logoTableau, settingsOutline, shareSocialOutline } from "ionicons/icons";
-import { TagEntity } from "../PostActions/CreatePost";
+import { chatboxOutline, heart, heartOutline } from "ionicons/icons";
 import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
+import { TagEntity } from "../TagEntity/TagEntity";
 
 export const PostCard = ({ post, muted, setMuted, openComments }: {
     post: Post,

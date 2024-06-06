@@ -14,8 +14,6 @@ import { EmblaOptionsType } from 'embla-carousel';
 import { Post } from "@/types/posts";
 import { useObservedQuery } from "@/app/context/ObservedQuery";
 
-import SlideInFromBottomToTop from "@/shared/SlideIn";
-import { ComentsSection } from "./ComentSection";
 import clsx from "clsx";
 
 import { PostCard } from "./PostCard";

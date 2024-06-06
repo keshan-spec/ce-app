@@ -2,7 +2,7 @@ import React, { createContext, useState, ReactNode, useContext, useCallback, use
 import Webcam from 'react-webcam';
 import { vibrateDevice } from '@/utils/nativeFeel';
 import { Area } from 'react-easy-crop';
-import { EditMediaPanel, PostInitialPanel, PostSharePanel, PostTagPanel } from '@/components/PostActions/CreatePost';
+import { EditMediaPanel, PostInitialPanel, PostSharePanel, PostTagPanel } from '@/components/CreatePost/CreatePost';
 import { addTagsForPost } from '@/actions/post-actions';
 
 export type ImageMeta = {
