@@ -1,6 +1,6 @@
 'use client';
 import { IonIcon } from '@ionic/react';
-import { camera, closeOutline, images, recording, swapVertical, videocam, personOutline, carOutline } from 'ionicons/icons';
+import { camera, closeOutline, images, recording, swapVertical, videocam, personOutline, carOutline, cameraReverse, cameraSharp } from 'ionicons/icons';
 import React, { useCallback, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { Button } from '@/shared/Button';
@@ -40,6 +40,8 @@ export const PostInitialPanel = forwardRef((props: PostInitialPanelProps, ref: R
         handleMediaChange,
     } = useCreatePost();
 
+    const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
+
     return (
         <>
             <input
@@ -56,7 +58,7 @@ export const PostInitialPanel = forwardRef((props: PostInitialPanelProps, ref: R
                 ref={ref}
                 className="absolute inset-0 w-full h-full object-cover"
                 videoConstraints={{
-                    // facingMode: 'environment',
+                    facingMode: facingMode,
                     // frameRate: { ideal: 60 },
                     height: 720,
                     width: 1280
@@ -82,6 +84,12 @@ export const PostInitialPanel = forwardRef((props: PostInitialPanelProps, ref: R
                 <button onClick={switchMode} className="flex flex-col items-center gap-1 text-white px-4 py-2">
                     <IonIcon icon={swapVertical} />
                     Switch
+                </button>
+                <button onClick={() => {
+                    setFacingMode(facingMode === 'user' ? 'environment' : 'user');
+                }} className="flex flex-col items-center gap-1 text-white px-4 py-2">
+                    <IonIcon icon={facingMode === 'user' ? cameraReverse : cameraSharp} />
+                    {facingMode === 'user' ? 'Front' : 'Back'}
                 </button>
             </div>
         </>
