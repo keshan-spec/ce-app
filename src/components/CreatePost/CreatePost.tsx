@@ -172,12 +172,20 @@ export const PostSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess })
         }
     };
 
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+    const handleFocus = () => {
+        if (textAreaRef.current) {
+            textAreaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    };
+
     return (
         <form className="relative h-full flex flex-col" action={handleShare}>
             <div className="flex flex-wrap gap-4">
                 <PostMediaSlider mediaData={mediaData} />
             </div>
-            <textarea placeholder="Write a caption..." className="p-2" name='caption' />
+            <textarea placeholder="Write a caption..." className="p-2" name='caption' ref={textAreaRef} onFocus={handleFocus}></textarea>
 
             {posting.error && (
                 <div className={`fixed z-10 w-full bottom-0 h-14 p-2 mt-2 text-center text-red-500 bg-red-100`} ref={errorDiv}>

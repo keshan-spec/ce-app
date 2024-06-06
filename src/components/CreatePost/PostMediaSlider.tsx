@@ -42,8 +42,8 @@ const PostMediaSlider = forwardRef((props: PostMediaSliderProps, ref: React.Forw
             {mediaData.map((item, index) => {
                 return (
                     <>
-                        <SplideSlide key={index} className="relative max-h-96 h-fit">
-                            <div className="max-h-96 h-full bg-black"
+                        <SplideSlide key={index}>
+                            <div className="relative max-h-96 h-full bg-black"
                                 onClick={(e) => onImageClick?.(e, index)}
                             >
                                 {item && item.startsWith('data:image') && (
