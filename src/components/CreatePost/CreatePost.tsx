@@ -52,13 +52,17 @@ export const PostInitialPanel = forwardRef((props: PostInitialPanelProps, ref: R
             />
 
             <Webcam
-                audio={false}
+                forceScreenshotSourceSize
                 ref={ref}
                 className="absolute inset-0 w-full h-full object-cover"
                 videoConstraints={{
-                    facingMode: 'environment',
-                    frameRate: { ideal: 60, max: 60 },
+                    // facingMode: 'environment',
+                    // frameRate: { ideal: 60 },
+                    height: 720,
+                    width: 1280
                 }}
+                height="360"
+                width="640"
             />
 
             <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 h-24 w-3/4 rounded-lg backdrop-blur-xl flex justify-between items-center">
