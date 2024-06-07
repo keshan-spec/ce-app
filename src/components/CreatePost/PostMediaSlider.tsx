@@ -31,12 +31,6 @@ const PostMediaSlider = forwardRef((props: PostMediaSliderProps, ref: React.Forw
         showControls = false,
     } = props;
 
-    useEffect(() => {
-        if (ref) {
-            console.log('ref.current', ref);
-        }
-    }, [ref]);
-
     return (
         <Splide ref={ref} options={carouselSettings} className="text-center carousel-slider flex items-center justify-center">
             {mediaData.map((item, index) => {

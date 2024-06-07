@@ -1,7 +1,7 @@
 'use client';
 import { IonIcon } from '@ionic/react';
 import { camera, closeOutline, images, recording, swapVertical, videocam, personOutline, carOutline, cameraReverse, cameraSharp } from 'ionicons/icons';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { Button } from '@/shared/Button';
 import { Options } from '@splidejs/splide';
@@ -57,20 +57,19 @@ export const PostInitialPanel = forwardRef((props: PostInitialPanelProps, ref: R
                 forceScreenshotSourceSize
                 ref={ref}
                 className="absolute inset-0 w-full h-full object-cover"
+                allowFullScreen={true}
+                autoFocus={true}
                 videoConstraints={{
-                    facingMode: facingMode,
-                    // frameRate: { ideal: 60 },
+                    facingMode,
                     height: 720,
                     width: 1280
                 }}
-                height="360"
-                width="640"
             />
 
-            <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 h-24 w-3/4 rounded-lg backdrop-blur-xl flex justify-between items-center">
+            <div className="absolute bottom-10 left-1/2 transform px-4 -translate-x-1/2 h-24 w-full rounded-lg backdrop-blur-xl flex justify-between items-center">
                 <button
                     onClick={() => document.getElementById('galleryInput')?.click()}
-                    className="flex flex-col items-center gap-1 text-white px-4 py-2">
+                    className="flex flex-col items-center gap-1 text-white py-2">
                     <IonIcon icon={images}
                     />
                     Gallery
@@ -81,13 +80,13 @@ export const PostInitialPanel = forwardRef((props: PostInitialPanelProps, ref: R
                         <IonIcon icon={isVideoMode ? capturing ? recording : videocam : camera} />
                     </div>
                 </button>
-                <button onClick={switchMode} className="flex flex-col items-center gap-1 text-white px-4 py-2">
+                <button onClick={switchMode} className="flex flex-col items-center gap-1 text-white py-2">
                     <IonIcon icon={swapVertical} />
                     Switch
                 </button>
                 <button onClick={() => {
                     setFacingMode(facingMode === 'user' ? 'environment' : 'user');
-                }} className="flex flex-col items-center gap-1 text-white px-4 py-2">
+                }} className="flex flex-col items-center gap-1 text-white py-2">
                     <IonIcon icon={facingMode === 'user' ? cameraReverse : cameraSharp} />
                     {facingMode === 'user' ? 'Front' : 'Back'}
                 </button>
@@ -192,6 +191,13 @@ export const PostSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess })
         }
     };
 
+    const getTaggedEntities = (type: 'user' | 'car') => {
+        return taggedData.filter(tag => tag.type === type).map(tag => tag);
+    };
+
+    const taggedUsers = useMemo(() => getTaggedEntities('user'), [taggedData]);
+    const taggedCars = useMemo(() => getTaggedEntities('car'), [taggedData]);
+
     return (
         <form className="relative h-full flex flex-col" action={handleShare}>
             <div className="flex flex-wrap gap-4">
@@ -211,18 +217,24 @@ export const PostSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess })
                 }}>
                     <IonIcon icon={personOutline} className='text-xl' />
                     <div className="flex items-center justify-between w-full">
-                        <span>Tag Entities</span> {taggedData.length > 0 && (
+                        <span>Tag Entities</span> {taggedUsers.length > 0 && (
                             <span className="text-xs">
-                                {taggedData.length > 1 ? `${taggedData.length} entities` : taggedData[0].label}
+                                {taggedUsers.length > 1 ? `${taggedUsers.length} entities` : taggedUsers[0].label}
                             </span>
                         )}
                     </div>
                 </div>
                 <div className="flex items-center gap-2 px-3 border-1 py-3 w-full" onClick={() => {
-                    alert('Associate Car');
+                    setStep('associate-car');
                 }}>
                     <IonIcon icon={carOutline} className='text-xl' />
-                    Associate Car
+                    <div className="flex items-center justify-between w-full">
+                        <span>Associated Cars</span> {taggedCars.length > 0 && (
+                            <span className="text-xs">
+                                {taggedCars.length > 1 ? `${taggedCars.length} entities` : taggedCars[0].label}
+                            </span>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -240,7 +252,7 @@ export const PostSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess })
 };
 
 export const PostTagPanel: React.FC = () => {
-    const { mediaData, activeTagIndex, taggedData, setTaggedData } = useCreatePost();
+    const { mediaData, activeTagIndex, taggedData, setTaggedData, step } = useCreatePost();
     const [tagInput, setTagInput] = useState<{ x: number; y: number; visible: boolean, index: number; }>({ x: 0, y: 0, visible: false, index: 0 });
     const [currentTag, setCurrentTag] = useState('');
     const splideRef = useRef<Splide>(null);
@@ -248,8 +260,7 @@ export const PostTagPanel: React.FC = () => {
     const { data, isFetching, isLoading, refetch } = useQuery<any[], Error>({
         queryKey: ["taggable-entities"],
         queryFn: () => {
-            // console.log('Fetching taggable entities', currentTag);
-            return fetchTaggableEntites(currentTag, taggedData);
+            return fetchTaggableEntites(currentTag, taggedData, step === 'associate-car');
         },
         retry: 0,
         refetchOnWindowFocus: false,
@@ -380,7 +391,7 @@ export const PostTagPanel: React.FC = () => {
                                         setTagInput({ x: 0, y: 0, visible: false, index: 0 });
                                     }}>
                                         <div className="w-8 h-8 rounded-full bg-gray-200 border-2">
-                                            <img src={entity.profile_image || PLACEHOLDER_PFP} alt={entity.name} className="w-full h-full rounded-full" />
+                                            <img src={entity.image || PLACEHOLDER_PFP} alt={entity.name} className="w-full h-full rounded-full" />
                                         </div>
                                         <div>{entity.name}</div>
                                     </div>

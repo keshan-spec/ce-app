@@ -2,7 +2,7 @@
 
 import { useUser } from "@/hooks/useUser";
 import { Post } from "@/types/posts";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { use, useEffect, useMemo, useRef, useState } from "react";
 import { useDotButton } from "../Carousel/EmbalDotButtons";
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoHeight from 'embla-carousel-auto-height';
@@ -17,9 +17,10 @@ import Link from "next/link";
 import { useObservedQuery } from "@/app/context/ObservedQuery";
 import { PostActionsSheet } from "./PostActionSheets";
 import { IonIcon } from "@ionic/react";
-import { chatboxOutline, heart, heartOutline } from "ionicons/icons";
+import { carOutline, chatboxOutline, heart, heartOutline } from "ionicons/icons";
 import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 import { TagEntity } from "../TagEntity/TagEntity";
+import { AssociatedCar } from "../TagEntity/AssociateCar";
 
 export const PostCard = ({ post, muted, setMuted, openComments }: {
     post: Post,
@@ -46,9 +47,26 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
         }
     };
 
+    // intersection observer to fetch tags
     useEffect(() => {
-        fetchTags();
+        const postMainElement = document.getElementById(`PostMain-${post.id}`);
 
+        let observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                fetchTags();
+            }
+        }, { threshold: [0.6] });
+
+        if (postMainElement) {
+            observer.observe(postMainElement);
+        }
+
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
+
+    useEffect(() => {
         const video = videoRef.current;
 
         if (!video) return;
@@ -176,7 +194,8 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
     };
 
     const renderTags = (index: number) => {
-        const filteredTags = tags.filter(tag => tag.media_id === post.media[index].id);
+        const userTags = tags.filter(tag => tag.type === 'user');
+        const filteredTags = userTags.filter(tag => tag.media_id === post.media[index].id);
 
         if (filteredTags.length === 0) {
             return null;
@@ -208,6 +227,28 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
         );
     };
 
+
+    const renderAssociatedCarTags = (index: number) => {
+        const vehicleTags = tags.filter(tag => tag.type === 'car');
+        const filteredTags = vehicleTags.filter(tag => tag.media_id === post.media[index].id);
+
+        if (filteredTags.length === 0) {
+            return null;
+        }
+
+        return (
+            <div key={index}
+                className="p-1 flex items-center justify-between text-white bg-black/70"
+                data-bs-toggle="offcanvas" data-bs-target={`#post-assoctiated-cars-${post.id}`}
+            >
+                <IonIcon icon={carOutline} className='text-lg' />
+                <span className="text-white text-xs">
+                    View associated {filteredTags.length > 1 ? 'cars' : 'car'}
+                </span>
+            </div>
+        );
+    };
+
     const renderMedia = useMemo(() => {
         const { media } = post;
 
@@ -216,7 +257,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
         }
 
         return (
-            <div className="embla" onDoubleClick={onLikePost}>
+            <div className="embla !mb-0" onDoubleClick={onLikePost}>
                 <div className="embla__viewport bg-black" ref={emblaRef}>
                     <div className="embla__container !items-center">
                         {media.map((item, index) => {
@@ -227,10 +268,10 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                                 <div key={item.id}
                                     onClick={() => setShowTags(prev => !prev)}
                                     className={clsx(
-                                        "embla__slide h-full group bg-black",
+                                        "embla__slide h-full group bg-black relative flex flex-col",
                                         item.media_type === 'video' && "embla__slide--video"
                                     )}>
-                                    <div className="embla__slide__number w-full h-full relative">
+                                    <div className="embla__slide__number w-full h-full ">
                                         {item.media_type === 'image' && (
                                             <NcImage
                                                 key={item.id}
@@ -270,6 +311,8 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                                             </>
                                         )}
                                     </div>
+
+                                    {renderAssociatedCarTags(index)}
                                 </div>
                             );
                         })}
@@ -351,6 +394,12 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                         />
                     </div>
                 )}
+
+                <AssociatedCar
+                    tags={tags}
+                    post={post}
+                    index={selectedIndex}
+                />
             </div>
 
             <span className="media-post-likecount">{post.likes_count ?? 0} likes</span>

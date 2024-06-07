@@ -23,7 +23,7 @@ export interface Tag {
     id: number;
 }
 
-type Step = 'initial' | 'edit' | 'share' | 'tag';
+type Step = 'initial' | 'edit' | 'share' | 'tag' | 'associate-car';
 
 interface CreatePostContextType {
     media: string[];
@@ -272,6 +272,7 @@ const CreatePostSteps = ({
                 return <PostInitialPanel ref={webcamRef} />;
             case 'edit':
                 return <EditMediaPanel />;
+            case 'associate-car':
             case 'tag':
                 return <PostTagPanel />;
             case 'share':

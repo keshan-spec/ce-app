@@ -39,14 +39,18 @@ export const getUserGarage = async (profileId: string) => {
     return data;
 };
 
-export const getGaragePosts = async (garageId: string, page: number, limit = 10) => {
+export const getGaragePosts = async (garageId: string, tagged: boolean, page: number, limit = 10,) => {
+    if (tagged) {
+        return [];
+    }
+
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-garage-posts`, {
         cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ garage_id: garageId, page, limit, }),
+        body: JSON.stringify({ garage_id: garageId, page, limit, tagged }),
     });
 
     const data = await response.json();

@@ -52,9 +52,11 @@ const SlideInPanel: React.FC<SlideInFromBottomToTopProps> = ({
                 setStep('edit');
                 break;
             case 'tag':
+            case 'associate-car':
                 setStep('share');
                 break;
             default:
+                onClose();
                 break;
         }
     }, [onClose, setStep, step]);
@@ -68,6 +70,7 @@ const SlideInPanel: React.FC<SlideInFromBottomToTopProps> = ({
                 setStep('share');
                 break;
             case 'tag':
+            case 'associate-car':
                 setStep('share');
                 break;
             default:
@@ -85,6 +88,7 @@ const SlideInPanel: React.FC<SlideInFromBottomToTopProps> = ({
                 icon = 'fas fa-arrow-left';
                 break;
             case 'tag':
+            case 'associate-car':
                 title = 'Tag Image';
                 icon = 'fas fa-arrow-left';
                 break;
@@ -113,7 +117,7 @@ const SlideInPanel: React.FC<SlideInFromBottomToTopProps> = ({
                     <span className="text-md font-semibold">{title}</span>
                 </div>
                 <div className="flex items-center pr-3">
-                    {(step === 'edit' || step === 'tag') && (
+                    {(step === 'edit' || step === 'tag' || step === 'associate-car') && (
                         <span
                             onClick={() => handleNext()}
                             className="text-md font-semibold text-theme-primary">

@@ -242,7 +242,15 @@ export interface PostTag {
     type: 'car' | 'user' | 'event';
     x: number;
     y: number;
-    entity: { id: number; name: string; };
+    entity: {
+        id: number;
+        name: string;
+        image?: string;
+        owner?: {
+            id: number;
+            name: string;
+        };
+    };
     media_id: number;
 }
 
@@ -267,12 +275,14 @@ export const fetchTagsForPost = async (postId: number): Promise<PostTag[] | null
     }
 };
 
-export const fetchTaggableEntites = async (search: string, tagged_entities: Tag[]): Promise<any> => {
+export const fetchTaggableEntites = async (search: string, tagged_entities: Tag[], is_vehicle?: boolean): Promise<any> => {
+    const url = is_vehicle ? `${API_URL}/wp-json/app/v1/get-taggable-vehicles` : `${API_URL}/wp-json/app/v1/get-taggable-entities`;
+
     try {
         const user = await getSessionUser();
         if (!user || !user.id) throw new Error("User session expired. Please login again.");
 
-        const response = await fetch(`${API_URL}/wp-json/app/v1/get-taggable-entities`, {
+        const response = await fetch(url, {
             cache: "no-cache",
             method: "POST",
             headers: {
@@ -282,6 +292,7 @@ export const fetchTaggableEntites = async (search: string, tagged_entities: Tag[
         });
 
         const data = await response.json();
+        console.log(data);
 
         if (!response.ok || response.status !== 200) {
             throw new Error(data.message);
