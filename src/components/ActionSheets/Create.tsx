@@ -21,16 +21,14 @@ export const CreateActionSheet: React.FC<CreateActionSheetProps> = ({ onAddPost 
             </PopUp>
             <div className="offcanvas-body">
                 <ul className="action-button-list">
-                    {typeof window.ReactNativeWebView === 'undefined' ? null : (
-                        <li>
-                            <button className="btn btn-list" data-bs-dismiss="offcanvas" onClick={onAddPost}>
-                                <span>
-                                    <IonIcon icon={shareOutline} role="img" className="md hydrated" aria-label="share outline" />
-                                    Add Post
-                                </span>
-                            </button>
-                        </li>
-                    )}
+                    <li>
+                        <button className="btn btn-list" data-bs-dismiss="offcanvas" onClick={onAddPost}>
+                            <span>
+                                <IonIcon icon={shareOutline} role="img" className="md hydrated" aria-label="share outline" />
+                                Add Post
+                            </span>
+                        </button>
+                    </li>
                     <li>
                         <button className="btn btn-list" data-bs-dismiss="offcanvas" onClick={() => {
                             setIsScanning(true);
