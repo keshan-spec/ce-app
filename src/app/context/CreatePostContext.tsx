@@ -73,6 +73,8 @@ const CreatePostProvider: React.FC<{ children: ReactNode; }> = ({ children }) =>
 
     const [taggedData, setTaggedData] = useState<Tag[]>([]);
 
+
+
     useEffect(() => {
         if (step === 'initial') {
             setSelectedMedia([]);
@@ -97,6 +99,8 @@ const CreatePostProvider: React.FC<{ children: ReactNode; }> = ({ children }) =>
 
     useEffect(() => {
         // Un edited media
+        console.log('Selected media:', selectedMedia);
+
         const media = selectedMedia.filter(media => media !== null) as string[];
         media.push(...recordedChunks.map(chunk => URL.createObjectURL(chunk)));
 

@@ -26,8 +26,8 @@ export const TagEntity = ({
                 "tag-label p-1 text-xs text-white bg-black/80 rounded-lg z-50 absolute",
             )}
             style={{
-                left: `${x - 40}px`,
-                top: `${y - 40}px`
+                // left: `${x - 40}px`,
+                // top: `${y - 40}px`
             }}
             onClick={onClick}
         >

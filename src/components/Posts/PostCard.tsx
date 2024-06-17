@@ -258,8 +258,8 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
 
         return (
             <div className="embla !mb-0" onDoubleClick={onLikePost}>
-                <div className="embla__viewport bg-black" ref={emblaRef}>
-                    <div className="embla__container !items-center">
+                <div className="embla__viewport relative bg-black" ref={emblaRef}>
+                    <div className="embla__container !items-center max-h-[500px]">
                         {media.map((item, index) => {
                             const calculatedHeight = parseInt(item.media_height) ? parseInt(item.media_height) : 400;
                             const maxHeight = calculatedHeight > 600 ? 600 : calculatedHeight;
@@ -268,10 +268,10 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                                 <div key={item.id}
                                     onClick={() => setShowTags(prev => !prev)}
                                     className={clsx(
-                                        "embla__slide h-full group bg-black relative flex flex-col",
+                                        "embla__slide h-full group bg-black flex flex-col",
                                         item.media_type === 'video' && "embla__slide--video"
                                     )}>
-                                    <div className="embla__slide__number w-full h-full ">
+                                    <div className="embla__slide__number w-full h-full">
                                         {item.media_type === 'image' && (
                                             <NcImage
                                                 key={item.id}
@@ -279,6 +279,9 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                                                 className="object-contain w-full"
                                                 imageDimension={{
                                                     width: parseInt(item.media_width) || 400,
+                                                    height: maxHeight || 400
+                                                }}
+                                                style={{
                                                     height: maxHeight || 400
                                                 }}
                                             />
@@ -298,8 +301,12 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                                                         id={`video-${item.id}`}
                                                         className="object-contain w-full cursor-pointer"
                                                         ref={videoRef}
+                                                        style={{
+                                                            width: parseInt(item.media_width) || 400,
+                                                            height: maxHeight || 400
+                                                        }}
                                                         width={parseInt(item.media_width) || 400}
-                                                        height={parseInt(item.media_height) || 400}
+                                                        height={maxHeight || 400}
                                                         onClick={() => videoRef.current?.paused ? videoRef.current?.play() : videoRef.current?.pause()}
                                                     >
                                                         <source src={item.media_url} type={item.media_mime_type} />
@@ -312,12 +319,13 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                                         )}
                                     </div>
 
-                                    {renderAssociatedCarTags(index)}
                                 </div>
                             );
                         })}
                     </div>
                 </div>
+
+                {renderAssociatedCarTags(selectedIndex)}
 
                 <div className={
                     clsx("flex flex-col",

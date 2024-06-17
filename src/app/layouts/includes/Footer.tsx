@@ -1,3 +1,5 @@
+'use client';
+
 import { CreatePostProvider, CreatePostSteps } from "@/app/context/CreatePostContext";
 import { CreateActionSheet } from "@/components/ActionSheets/Create";
 import SlideInPanel from "@/shared/CreatePostSlideIn";
@@ -5,11 +7,40 @@ import { IonIcon } from "@ionic/react";
 import { homeOutline, searchOutline, idCardOutline, addOutline } from "ionicons/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+declare global {
+    interface Window {
+        ReactNativeWebView: {
+            postMessage: (message: string) => void;
+        };
+    }
+}
 
 export const Footer: React.FC = () => {
     const pathname = usePathname();
     const [isOpen, setOpen] = useState<boolean>(false);
+
+    const onAddPost = () => {
+        // setOpen(true);
+        // return;
+
+        if (typeof window.ReactNativeWebView === 'undefined') {
+            console.log('window.ReactNativeWebView:', window.ReactNativeWebView);
+            throw new Error('This is not a react native webview');
+        }
+
+        try {
+            if (window !== undefined && window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(JSON.stringify({
+                    type: 'createPost',
+                    page: pathname,
+                }));
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    };
 
     return (
         <>
@@ -41,7 +72,7 @@ export const Footer: React.FC = () => {
                     <span className="fab -mt-6" data-bs-toggle="offcanvas" data-bs-target="#actionSheetCreate">
                         <IonIcon icon={addOutline} role="img" className="md hydrated" aria-label="add outline" />
                     </span>
-                    <CreateActionSheet onAddPost={() => setOpen(true)} />
+                    <CreateActionSheet onAddPost={onAddPost} />
                 </div>
 
                 <Link href="/posts" className={`item ${pathname.includes('/posts') ? 'active' : ''}`}>
