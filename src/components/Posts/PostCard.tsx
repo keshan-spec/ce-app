@@ -259,9 +259,9 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
         return (
             <div className="embla !mb-0" onDoubleClick={onLikePost}>
                 <div className="embla__viewport relative bg-black" ref={emblaRef}>
-                    <div className="embla__container !items-center max-h-[500px]">
+                    <div className="embla__container !items-center">
                         {media.map((item, index) => {
-                            const calculatedHeight = parseInt(item.media_height) ? parseInt(item.media_height) : 400;
+                            const calculatedHeight = parseInt(item.media_height) ? parseInt(item.media_height) : 500;
                             const maxHeight = calculatedHeight > 600 ? 600 : calculatedHeight;
 
                             return (
@@ -292,7 +292,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                                         {item.media_type === 'video' && (
                                             <>
                                                 <div
-                                                    className={`w-full h-full flex items-center justify-center relative`}
+                                                    className={`w-full h-full flex items-center justify-center`}
                                                     style={{ width: item.media_width, height: maxHeight }}
                                                 >
                                                     <video
