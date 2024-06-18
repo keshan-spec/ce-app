@@ -255,3 +255,66 @@ export const NearYouEvents: React.FC<EventProps> = ({ }) => {
         </div>
     );
 };
+
+export const Events: React.FC<EventProps> = ({ }) => {
+    const { data, error, isFetching, isLoading } = useQuery<any[], Error>({
+        queryKey: ["filtered-events"],
+        queryFn: () => {
+            return fetchTrendingEvents();
+        },
+        retry: 1,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        // cacheTime: 1000,
+        staleTime: 1000,
+    });
+
+    const [activeEvent, setActiveEvent] = useState<string>();
+
+    return (
+        <>
+            <SlideInFromBottomToTop isOpen={activeEvent ? true : false} onClose={() => setActiveEvent(undefined)}>
+                {activeEvent && <ViewEvent eventId={activeEvent} />}
+            </SlideInFromBottomToTop>
+
+            <div className="section mt-2 mb-3">
+                {error instanceof Error && <p className="px-3">Error: {error?.message ?? "An error occured"}</p>}
+                <div className="row">
+
+                    {(isLoading || isFetching) && (
+                        <>
+                            <div className="col-6">
+                                <div className="card mb-3">
+                                    <CarEventCardSkeleton />
+                                </div>
+                            </div>
+                            <div className="col-6">
+                                <div className="card mb-3">
+                                    <CarEventCardSkeleton />
+                                </div>
+                            </div>
+                            <div className="col-6">
+                                <div className="card mb-3">
+                                    <CarEventCardSkeleton />
+                                </div>
+                            </div>
+                            <div className="col-6">
+                                <div className="card mb-3">
+                                    <CarEventCardSkeleton />
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {data && data?.map((event: any, idx) => (
+                        <div className="col-6">
+                            <div className="card mb-3">
+                                <CarEventCard event={event} onClick={(id) => setActiveEvent(id)} key={idx} />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </>
+    );
+};

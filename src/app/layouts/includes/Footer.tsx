@@ -4,7 +4,7 @@ import { CreatePostProvider, CreatePostSteps } from "@/app/context/CreatePostCon
 import { CreateActionSheet } from "@/components/ActionSheets/Create";
 import SlideInPanel from "@/shared/CreatePostSlideIn";
 import { IonIcon } from "@ionic/react";
-import { homeOutline, searchOutline, idCardOutline, addOutline } from "ionicons/icons";
+import { homeOutline, searchOutline, idCardOutline, addOutline, cartOutline } from "ionicons/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -75,10 +75,10 @@ export const Footer: React.FC = () => {
                     <CreateActionSheet onAddPost={onAddPost} />
                 </div>
 
-                <Link href="/posts" className={`item ${pathname.includes('/posts') ? 'active' : ''}`}>
+                <Link href="/store" className={`item ${pathname.includes('/store') ? 'active' : ''}`}>
                     <div className="col">
-                        <IonIcon icon={idCardOutline} />
-                        <strong>Social</strong>
+                        <IonIcon icon={cartOutline} />
+                        <strong>Store</strong>
                     </div>
                 </Link>
 

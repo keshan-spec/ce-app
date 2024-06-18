@@ -33,7 +33,7 @@ export const useTopNav = ({
     const router = useRouter();
 
     const showMenuIcon = () => {
-        if (pathname.includes('/profile') || pathname.includes('/posts/')) {
+        if (pathname.includes('/profile') || pathname.includes('/posts/') || pathname.includes('/store/product/')) {
             return false;
         }
 

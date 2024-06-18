@@ -282,7 +282,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                                                     height: maxHeight || 400
                                                 }}
                                                 style={{
-                                                    height: maxHeight || 400
+                                                    // height: maxHeight || 400
                                                 }}
                                             />
                                         )}

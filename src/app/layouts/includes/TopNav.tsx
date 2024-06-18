@@ -66,7 +66,7 @@ export const TopNav: React.FC = () => {
                 )}
             </div>
 
-            {pathname === '/posts' && (
+            {pathname === '/' && (
                 <div className="social-tabs">
                     <ul className="nav nav-tabs capsuled" role="tablist">
                         <li className="nav-item">
@@ -81,29 +81,45 @@ export const TopNav: React.FC = () => {
                 </div>
             )}
 
-            {pathname == '/' && (
-                <div className="header-row-wrapper2">
-                    <ul className="nav nav-tabs capsuled" role="tablist">
-                        <li className="nav-item">
-                            <Link className="nav-link active" data-bs-toggle="tab" href="#panels-tab1" role="tab">
-                                Events
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" data-bs-toggle="tab" href="#panels-tab2" role="tab">
-                                Venues
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" data-bs-toggle="tab" href="#panels-tab4" role="tab">
-                                Saved
-                            </Link>
-                        </li>
-                    </ul>
-                </div>
+            {pathname == '/discover' && (
+                <DiscoverTabs />
+            )}
+
+            {pathname == '/store' && (
+                <StoreTabs />
             )}
 
             <SidePanel />
+        </div>
+    );
+};
+
+const DiscoverTabs = () => {
+    return (
+        <div className="social-tabs">
+            <ul className="nav nav-tabs capsuled" role="tablist">
+                <li className="nav-item"> <a className="nav-link active" data-bs-toggle="tab" href="#panels-tab1" role="tab" aria-selected="true">
+                    Events</a> </li>
+                <li className="nav-item"> <a className="nav-link" data-bs-toggle="tab" href="#panels-tab2" role="tab" aria-selected="false">
+                    Venues</a> </li>
+                <li className="nav-item"> <a className="nav-link" data-bs-toggle="tab" href="#panels-tab2" role="tab" aria-selected="false">
+                    Garages</a> </li>
+                <li className="nav-item"> <a className="nav-link" data-bs-toggle="tab" href="#panels-tab3" role="tab" aria-selected="false">
+                    Map</a> </li>
+            </ul>
+        </div>
+    );
+};
+
+const StoreTabs = () => {
+    return (
+        <div className="social-tabs">
+            <ul className="nav nav-tabs capsuled" role="tablist">
+                <li className="nav-item"> <a className="nav-link active" data-bs-toggle="tab" href="#panels-tab1" role="tab">
+                    Products</a> </li>
+                <li className="nav-item"> <a className="nav-link" data-bs-toggle="tab" href="#panels-tab2" role="tab">
+                    My Orders</a> </li>
+            </ul>
         </div>
     );
 };

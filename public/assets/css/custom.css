@@ -541,12 +541,11 @@ a.badge-danger {
 	padding-top: 95px !important;
 }
 
-#appCapsule.social {
+#appCapsule.social,
+#appCapsule.discover,
+#appCapsule.store {
 	padding-top: 120px !important;
 }
-
-
-
 
 
 
@@ -1128,4 +1127,17 @@ h2 span {
 	color: #333333;
 	font-size: 13px;
 	line-height: 26px;
+}
+
+/* STORE */
+
+.card-img-box {
+	width: 100%;
+	padding-top: 75%;
+	background: no-repeat center center / cover;
+	position: relative;
+}
+
+.profile-link.dark-bg {
+	background-color: #1D1D1B;
 }

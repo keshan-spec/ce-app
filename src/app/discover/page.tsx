@@ -1,9 +1,10 @@
-const Page: React.FC = () => {
-    return (
-        <div>
-            <h1>Discover</h1>
-        </div>
-    );
-};
+import { HomePage } from "@/components/Home/Home";
+import ProtectedLayout from "../(protected)/layout";
 
-export default Page;
+export default function Home() {
+    return (
+        <ProtectedLayout>
+            <HomePage />
+        </ProtectedLayout>
+    );
+}

@@ -163,12 +163,16 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                     {profileId && renderFollowBtn()}
 
                     {(isLoggedIn && canEditProfile) && (
-                        <button className="profile-link"
-                            onClick={() => {
-                                alert('Edit Profile');
-                            }}>
-                            Edit Profile
-                        </button>
+                        <div className='flex gap-2'>
+                            <button className="profile-link"
+                                onClick={() => {
+                                    alert('Edit Profile');
+                                }}>
+                                Edit Profile
+                            </button>
+
+                            <button className="profile-link dark-bg" data-location="profile-edit.php">Edit Garage</button>
+                        </div>
                     )}
 
                     <ProfileLinksExternal profileLinks={user.profile_links} isOwner={canEditProfile} />

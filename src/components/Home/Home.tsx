@@ -1,6 +1,6 @@
 import { BiCaretRight } from "react-icons/bi";
 import { Carousel } from "../Posts/Posts";
-import { NearYouEvents, TrendingEvents } from "./Events";
+import { Events, NearYouEvents, TrendingEvents } from "./Events";
 import Link from "next/link";
 import { API_URL } from "@/actions/api";
 
@@ -50,14 +50,14 @@ const Banner = () => {
 
 export const HomePage: React.FC = async () => {
     return (
-        <div className="home mt-5">
+        <div className="home">
             <div className="section full">
                 <div className="home-tabs-wrapper">
                     <div className="tab-content">
                         <div className="tab-pane fade show active" id="panels-tab1" role="tabpanel">
-                            <Banner />
-                            <TrendingEvents />
-                            <NearYouEvents />
+                            {/* <Banner /> */}
+                            <Events />
+                            {/* <NearYouEvents /> */}
                         </div>
 
                         <div className="tab-pane fade" id="panels-tab2" role="tabpanel">
