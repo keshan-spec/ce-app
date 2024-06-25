@@ -2,6 +2,7 @@
 
 import { CreatePostProvider, CreatePostSteps } from "@/app/context/CreatePostContext";
 import { CreateActionSheet } from "@/components/ActionSheets/Create";
+import { useUser } from "@/hooks/useUser";
 import SlideInPanel from "@/shared/CreatePostSlideIn";
 import { IonIcon } from "@ionic/react";
 import { homeOutline, searchOutline, idCardOutline, addOutline, cartOutline } from "ionicons/icons";
@@ -19,12 +20,11 @@ declare global {
 
 export const Footer: React.FC = () => {
     const pathname = usePathname();
+
+    const { user } = useUser();
     const [isOpen, setOpen] = useState<boolean>(false);
 
     const onAddPost = () => {
-        // setOpen(true);
-        // return;
-
         if (typeof window.ReactNativeWebView === 'undefined') {
             console.log('window.ReactNativeWebView:', window.ReactNativeWebView);
             throw new Error('This is not a react native webview');
@@ -35,6 +35,7 @@ export const Footer: React.FC = () => {
                 window.ReactNativeWebView.postMessage(JSON.stringify({
                     type: 'createPost',
                     page: pathname,
+                    user_id: user?.id,
                 }));
             }
         } catch (e) {
