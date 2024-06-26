@@ -37,7 +37,7 @@ export default auth((req) => {
         return null;
     }
 
-    if (!isLoggedIn && !isPublicRoute && !publicDynamicRoute) {
+    if (!isLoggedIn /*&& !isPublicRoute && !publicDynamicRoute*/) {
         let callbackUrl = nextUrl.pathname;
         if (nextUrl.search) {
             callbackUrl += nextUrl.search;
