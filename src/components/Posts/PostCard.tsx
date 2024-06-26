@@ -281,9 +281,6 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                                                     width: parseInt(item.media_width) || 400,
                                                     height: maxHeight || 400
                                                 }}
-                                                style={{
-                                                    // height: maxHeight || 400
-                                                }}
                                             />
                                         )}
 
@@ -294,23 +291,24 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                                                 <div
                                                     className={`w-full h-full flex items-center justify-center`}
                                                     style={{ width: item.media_width, height: maxHeight }}
+                                                    id={`video-${item.id}`}
+                                                    onClick={() => videoRef.current?.paused ? videoRef.current?.play() : videoRef.current?.pause()}
                                                 >
                                                     <video
+                                                        playsInline
                                                         loop
                                                         muted={muted}
-                                                        id={`video-${item.id}`}
                                                         className="object-contain w-full cursor-pointer"
                                                         ref={videoRef}
-                                                        style={{
-                                                            width: parseInt(item.media_width) || 400,
-                                                            height: maxHeight || 400
-                                                        }}
-                                                        width={parseInt(item.media_width) || 400}
-                                                        height={maxHeight || 400}
-                                                        onClick={() => videoRef.current?.paused ? videoRef.current?.play() : videoRef.current?.pause()}
-                                                    >
-                                                        <source src={item.media_url} type={item.media_mime_type} />
-                                                    </video>
+                                                        // style={{
+                                                        //     width: parseInt(item.media_width) || 400,
+                                                        //     height: maxHeight || 400
+                                                        // }}
+                                                        // src={item.media_url}
+                                                        // width={parseInt(item.media_width) || 400}
+                                                        // height={maxHeight || 400}
+                                                        src={item.media_url}
+                                                    />
                                                     <button className="absolute bottom-3 left-3 text-white hidden group-hover:block p-2 bg-black/40 rounded-full" onClick={() => setMuted(prevMuted => !prevMuted)}>
                                                         {muted ? <BiVolumeMute /> : <BiVolumeFull />}
                                                     </button>
