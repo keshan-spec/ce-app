@@ -4,7 +4,7 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import { TopNav } from "@/app/layouts/includes/TopNav";
 import { Footer } from "./includes/Footer";
-import clsx from "clsx";
+import PullToRefresh from 'react-simple-pull-to-refresh';
 
 export default function MainLayout({ children }: { children: React.ReactNode; }) {
     const pathname = usePathname();
@@ -30,17 +30,23 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
         }
     };
 
+    const handleRefresh = async () => {
+        window.location.reload();
+    };
+
     return (
         <>
-            <div className={`flex justify-between mx-auto w-full lg:px-2.5 px-0 ${pathname == '/' ? 'max-w-[1140px]' : ''}`}>
-                <TopNav />
-                <div id="appCapsule" className={getAppCapsuleClass()}>
-                    {children}
+            <PullToRefresh onRefresh={handleRefresh}>
+                <div className={`flex justify-between mx-auto w-full lg:px-2.5 px-0 ${pathname == '/' ? 'max-w-[1140px]' : ''}`}>
+                    <TopNav />
+                    <div id="appCapsule" className={getAppCapsuleClass()}>
+                        {children}
+                    </div>
+                    {showMenuIcon() && (
+                        <Footer />
+                    )}
                 </div>
-                {showMenuIcon() && (
-                    <Footer />
-                )}
-            </div>
+            </PullToRefresh>
         </>
     );
 }
