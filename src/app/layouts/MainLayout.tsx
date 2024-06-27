@@ -1,10 +1,16 @@
 'use client';
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { TopNav } from "@/app/layouts/includes/TopNav";
 import { Footer } from "./includes/Footer";
 import PullToRefresh from 'react-simple-pull-to-refresh';
+import { IonIcon } from "@ionic/react";
+import { refreshCircleOutline } from "ionicons/icons";
+import { getQueryClient } from "../context/QueryClientProvider";
+import { BiLoader } from "react-icons/bi";
+
+const queryClient = getQueryClient();
 
 export default function MainLayout({ children }: { children: React.ReactNode; }) {
     const pathname = usePathname();
@@ -31,18 +37,33 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
     };
 
     const handleRefresh = async () => {
-        window.location.reload();
+        // window.location.reload();
+        await queryClient.resetQueries();
     };
 
     return (
         <>
             <div className={`flex justify-between mx-auto w-full lg:px-2.5 px-0 ${pathname == '/' ? 'max-w-[1140px]' : ''}`}>
                 <TopNav />
-                <PullToRefresh onRefresh={handleRefresh}>
-                    <div id="appCapsule" className={getAppCapsuleClass()}>
-                        {children}
-                    </div>
-                </PullToRefresh>
+                <div id="appCapsule" className={getAppCapsuleClass()}>
+                    <PullToRefresh
+                        onRefresh={handleRefresh}
+                        resistance={5}
+                        pullDownThreshold={100}
+                        maxPullDownDistance={120}
+                        className="w-full"
+                        pullingContent={<div className="text-center flex items-center text-black w-full mt-2">
+                            <BiLoader className="text-3xl w-full" />
+                        </div>}
+                        refreshingContent={<div className="text-center flex items-center text-black w-full mt-2">
+                            <BiLoader className="text-3xl animate-spin w-full" />
+                        </div>}
+                    >
+                        <>
+                            {children}
+                        </>
+                    </PullToRefresh>
+                </div>
                 {showMenuIcon() && (
                     <Footer />
                 )}

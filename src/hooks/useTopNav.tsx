@@ -33,7 +33,7 @@ export const useTopNav = ({
     const router = useRouter();
 
     const showMenuIcon = () => {
-        if (pathname.includes('/profile') || pathname.includes('/posts/') || pathname.includes('/store/product/')) {
+        if (pathname.includes('/profile') || pathname.includes('/post/') || pathname.includes('/store/product/')) {
             return false;
         }
 
@@ -79,7 +79,7 @@ export const useTopNav = ({
     }, [isGarageViewPage, isPostViewPage, param]);
 
     return {
-        returnTo: () => router.back(),
+        returnTo: () => window.history.length > 1 ? router.back() : router.push('/'),
         title: getHeaderTitle(),
         subtitle: getSubtitle(),
         mode: isGarageViewPage || isPostViewPage ? 'view-page' : 'default',
@@ -94,7 +94,7 @@ function getReturnTo(pathname: string): string {
         return '/profile';
     }
 
-    if (pathname.includes('/posts/')) {
+    if (pathname.includes('/post/')) {
         return '/profile';
     }
 
