@@ -1854,6 +1854,7 @@ a.badge-dark {
 .listview.flush {
   border-top: 0;
   border-bottom: 0;
+  overflow-y: scroll;
 }
 
 .listview.transparent {

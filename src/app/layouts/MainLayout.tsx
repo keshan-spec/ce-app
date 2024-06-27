@@ -16,7 +16,6 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
 
     useEffect(() => {
         const handleScroll = () => {
-            console.log('scrollY:', window.scrollY);
             if (window.scrollY === 0) {
                 setPullEnabled(true);
             } else {
@@ -67,7 +66,7 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
                         resistance={pullEnabled ? 5 : 1}
                         pullDownThreshold={100}
                         maxPullDownDistance={110}
-                        className="w-full h-full"
+                        className="w-full h-full overflow-auto"
                         isPullable={pullEnabled}
                         pullingContent={
                             <div className="text-center flex items-center text-black w-full mt-2">
