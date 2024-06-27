@@ -1,4 +1,4 @@
-import { closeCircleOutline, createOutline, ellipsisVerticalOutline, settingsOutline, trashBinOutline, warningOutline } from "ionicons/icons";
+import { closeCircleOutline, createOutline, settingsOutline } from "ionicons/icons";
 import { IonIcon } from "@ionic/react";
 import { deletePost } from "@/actions/post-actions";
 
@@ -6,61 +6,14 @@ interface PostActionsProps {
     postId: number;
     isOwner: boolean;
     onDeleted?: () => void;
+    onDeleteStart?: () => void;
 }
-
-export const PostActions: React.FC<PostActionsProps> = ({
-    isOwner,
-    postId,
-    onDeleted
-}) => {
-    const handleReport = () => { };
-
-    const handleDelete = async () => {
-        if (!isOwner) return;
-        try {
-            if (confirm("Are you sure you want to delete this post?")) {
-                const response = await deletePost(postId);
-
-                if (response) {
-                    onDeleted && onDeleted();
-                } else {
-                    throw new Error("Failed to delete post");
-                }
-            }
-        } catch (error) {
-            alert("Failed to delete post");
-            console.log(error);
-        }
-    };
-
-    return (
-        <div className="dropdown">
-            <button type="button" data-bs-toggle="dropdown" aria-expanded="true">
-                <IonIcon icon={ellipsisVerticalOutline} />
-            </button>
-            <div className="dropdown-menu dropdown-menu-end px-3" style={{
-                position: 'absolute',
-                inset: '0px 0px auto auto',
-                margin: '0px',
-                transform: 'translate3d(-230px, 42px, 0px)',
-                minWidth: 'unset'
-            }} data-popper-placement="bottom-end">
-                <button className="text-red-600 text-xs flex items-center justify-center" onClick={handleReport}>
-                    <IonIcon icon={warningOutline} className="!w-4" /> Report
-                </button>
-                <div className="dropdown-divider"></div>
-                <button className="text-red-600 text-xs flex items-center justify-center" onClick={handleDelete}>
-                    <IonIcon icon={trashBinOutline} className="!w-4" /> Delete
-                </button>
-            </div>
-        </div>
-    );
-};
 
 export const PostActionsSheet: React.FC<PostActionsProps> = ({
     isOwner,
     postId,
-    onDeleted
+    onDeleted,
+    onDeleteStart
 }) => {
     const handleReport = () => { };
 
@@ -68,6 +21,8 @@ export const PostActionsSheet: React.FC<PostActionsProps> = ({
         if (!isOwner) return;
         try {
             if (confirm("Are you sure you want to delete this post?")) {
+                onDeleteStart?.();
+
                 const response = await deletePost(postId);
 
                 if (response) {

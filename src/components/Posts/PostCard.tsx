@@ -265,7 +265,9 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                             const maxHeight = calculatedHeight > 600 ? 600 : calculatedHeight;
 
                             return (
-                                <div key={item.id}
+                                <div
+                                    key={item.id}
+                                    id={`media-${item.id}`}
                                     onClick={() => setShowTags(prev => !prev)}
                                     className={clsx(
                                         "embla__slide h-full group bg-black flex flex-col",
@@ -396,6 +398,10 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                             isOwner={post.user_id === user?.id}
                             onDeleted={() => {
                                 refetch();
+                            }}
+                            onDeleteStart={() => {
+                                const elem = document.getElementById(`PostMain-${post.id}`);
+                                elem?.classList.add('opacity-50', 'pointer-events-none');
                             }}
                         />
                     </div>
