@@ -5,8 +5,6 @@ import { usePathname } from "next/navigation";
 import { TopNav } from "@/app/layouts/includes/TopNav";
 import { Footer } from "./includes/Footer";
 import PullToRefresh from 'react-simple-pull-to-refresh';
-import { IonIcon } from "@ionic/react";
-import { refreshCircleOutline } from "ionicons/icons";
 import { getQueryClient } from "../context/QueryClientProvider";
 import { BiLoader } from "react-icons/bi";
 
@@ -14,6 +12,25 @@ const queryClient = getQueryClient();
 
 export default function MainLayout({ children }: { children: React.ReactNode; }) {
     const pathname = usePathname();
+    const [pullEnabled, setPullEnabled] = useState(true);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            console.log('scrollY:', window.scrollY);
+            if (window.scrollY === 0) {
+                setPullEnabled(true);
+            } else {
+                setPullEnabled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        // Clean up event listener on component unmount
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
 
     const showMenuIcon = () => {
         if (pathname.includes('/profile') || pathname.includes('/post/')) {
@@ -37,7 +54,6 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
     };
 
     const handleRefresh = async () => {
-        // window.location.reload();
         await queryClient.resetQueries();
     };
 
@@ -48,16 +64,21 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
                 <div id="appCapsule" className={getAppCapsuleClass()}>
                     <PullToRefresh
                         onRefresh={handleRefresh}
-                        resistance={5}
+                        resistance={pullEnabled ? 5 : 1}
                         pullDownThreshold={100}
-                        maxPullDownDistance={120}
-                        className="w-full"
-                        pullingContent={<div className="text-center flex items-center text-black w-full mt-2">
-                            <BiLoader className="text-3xl w-full" />
-                        </div>}
-                        refreshingContent={<div className="text-center flex items-center text-black w-full mt-2">
-                            <BiLoader className="text-3xl animate-spin w-full" />
-                        </div>}
+                        maxPullDownDistance={110}
+                        className="w-full h-full"
+                        isPullable={pullEnabled}
+                        pullingContent={
+                            <div className="text-center flex items-center text-black w-full mt-2">
+                                <BiLoader className="text-3xl w-full" />
+                            </div>
+                        }
+                        refreshingContent={
+                            <div className="text-center flex items-center text-black w-full mt-2">
+                                <BiLoader className="text-3xl animate-spin w-full" />
+                            </div>
+                        }
                     >
                         <>
                             {children}
