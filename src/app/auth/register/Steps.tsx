@@ -2,18 +2,15 @@
 
 import { Options } from "@splidejs/splide";
 import { Splide, SplideSlide } from '@splidejs/react-splide';
-import Link from "next/link";
 import '@splidejs/react-splide/css';
-import { IonIcon } from "@ionic/react";
-import { closeCircle } from "ionicons/icons";
 import React, { useCallback, useEffect, useState } from "react";
 import { Wrapper } from "../Wrapper";
 import { handleSignIn, handleSignUp, updateUsername } from "@/actions/auth-actions";
 import { ErrorMessage } from "@/shared/ErrorMessage";
 import { Button } from "@/shared/Button";
 import { useSignUp } from "@/app/context/SignUpProvider";
-import clsx from "clsx";
 import { InputField } from "@/shared/Input";
+import { sendRNMessage } from "@/utils/nativeFeel";
 
 const carouselOptions: Options = {
     perPage: 1,
@@ -43,16 +40,6 @@ const getStartedData = [
     }
 ];
 
-const generateUsername = (full_name: string) => {
-    const first = full_name.split(" ")[0].toLowerCase();
-    const last_char = full_name.split(" ")[1].charAt(0).toLowerCase();
-
-    const randomNum = Math.floor(Math.random() * 10000);
-
-    return `${first}.${last_char}${randomNum}`;
-};
-
-
 export const UserNameSection = () => {
     const {
         setStep,
@@ -62,8 +49,6 @@ export const UserNameSection = () => {
     } = useSignUp();
 
     const handleSubmit = async (formData: FormData) => {
-        console.log("User", user);
-
         try {
             if (!user?.user_id) {
                 setError("User ID is missing, please try the process again.");
@@ -144,6 +129,11 @@ export const RegisterCompleteSection = () => {
     useEffect(() => {
         if (step === 3) {
             if (user?.user_id) {
+                sendRNMessage({
+                    type: "authData",
+                    user_id: user.user_id,
+                });
+
                 handleSignIn({
                     email: user.email,
                     password: user.password,

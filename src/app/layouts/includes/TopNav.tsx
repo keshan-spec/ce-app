@@ -1,14 +1,27 @@
 import { SidePanel } from '@/components/SidePanel';
 import { useTopNav, TopNavMode } from '@/hooks/useTopNav';
+import { useUser } from '@/hooks/useUser';
+import { sendRNMessage } from '@/utils/nativeFeel';
 import { IonIcon } from '@ionic/react';
 import clsx from 'clsx';
 import { menuOutline, notifications, searchOutline, chevronBackOutline } from 'ionicons/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 
 export const TopNav: React.FC = () => {
     const pathname = usePathname();
+    const { user } = useUser();
+
+    useEffect(() => {
+        // send user data to react native every time the app loads
+        sendRNMessage({
+            type: "authData",
+            user_id: user.id,
+        });
+    }, []);
+
     const {
         mode,
         returnTo,
