@@ -36,17 +36,17 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
 
     return (
         <>
-            <PullToRefresh onRefresh={handleRefresh}>
-                <div className={`flex justify-between mx-auto w-full lg:px-2.5 px-0 ${pathname == '/' ? 'max-w-[1140px]' : ''}`}>
-                    <TopNav />
+            <div className={`flex justify-between mx-auto w-full lg:px-2.5 px-0 ${pathname == '/' ? 'max-w-[1140px]' : ''}`}>
+                <TopNav />
+                <PullToRefresh onRefresh={handleRefresh}>
                     <div id="appCapsule" className={getAppCapsuleClass()}>
                         {children}
                     </div>
-                    {showMenuIcon() && (
-                        <Footer />
-                    )}
-                </div>
-            </PullToRefresh>
+                </PullToRefresh>
+                {showMenuIcon() && (
+                    <Footer />
+                )}
+            </div>
         </>
     );
 }
