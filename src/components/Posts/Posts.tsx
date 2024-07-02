@@ -18,6 +18,8 @@ import clsx from "clsx";
 
 import { PostCard } from "./PostCard";
 import { CommentsSlider } from "./CommentsSlider";
+import { ComentsSection } from "./ComentSection";
+import SlideInFromBottomToTop from "@/shared/SlideIn";
 
 type DotButtonPropType = PropsWithChildren<
     React.DetailedHTMLProps<
@@ -74,13 +76,22 @@ export const Posts: React.FC = () => {
         setActiveSection(postId);
     }, [activeSection]);
 
-    const getCommentCount = (): number => {
+    const getCommentCount = useCallback((): number => {
         const postId = activeSection;
         const post = data?.pages.find((page: any) => page.data.find((post: Post) => post.id === postId));
 
         if (!post) return 0;
 
         return post.data.find((post: Post) => post.id === postId)?.comments_count ?? 0;
+    }, [activeSection, data]);
+
+    const incrementCommentCount = () => {
+        const postId = activeSection;
+        const post = data?.pages.find((page: any) => page.data.find((post: Post) => post.id === postId));
+
+        if (!post) return;
+
+        post.data.find((post: Post) => post.id === postId).comments_count++;
     };
 
     const memoizedSkeleton = useMemo(() => {
@@ -92,7 +103,7 @@ export const Posts: React.FC = () => {
 
     return (
         <div className="w-full h-full bg-white">
-            {/* <SlideInFromBottomToTop
+            <SlideInFromBottomToTop
                 titleClassName="comments-container-header"
                 isOpen={activeSection ? true : false}
                 onClose={() => setActiveSection(undefined)}
@@ -101,9 +112,12 @@ export const Posts: React.FC = () => {
                 stickyScroll={true}
                 className="offcanvas-large"
             >
-                {activeSection && <ComentsSection postId={activeSection} />}
-            </SlideInFromBottomToTop> */}
-            <CommentsSlider postId={activeSection!} commentCount={getCommentCount()} />
+                {activeSection && <ComentsSection
+                    postId={activeSection}
+                    onNewComment={incrementCommentCount}
+                />}
+            </SlideInFromBottomToTop>
+            {/* <CommentsSlider postId={activeSection!} commentCount={getCommentCount()} /> */}
 
             <ul className={clsx(
                 "listview flush transparent no-line image-listview max-w-md mx-auto",

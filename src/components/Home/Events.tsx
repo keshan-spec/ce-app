@@ -86,6 +86,7 @@ export const CarEventCard = ({ event, onClick }: { event: any; onClick: (id: str
         <>
             <div className="news-list-home-slider-img-row relative">
                 <div className="news-list-home-slider-img"
+                    onClick={() => onClick(event.id)}
                     style={{
                         backgroundImage: `url(${event.thumbnail ?? "https://via.placeholder.com/300"})`
                     }}> </div>
@@ -115,7 +116,6 @@ export const CarEventCard = ({ event, onClick }: { event: any; onClick: (id: str
                 </div>
             </div>
 
-            {/* <Link href={`/events/${event.id}`} passHref className="cursor-pointer"> */}
             <div className="card-body pt-2 cursor-pointer" onClick={() => onClick(event.id)}>
                 <div className="news-list-slider-info flex flex-col justify-start h-full">
                     <div className="flex flex-col">
@@ -127,7 +127,6 @@ export const CarEventCard = ({ event, onClick }: { event: any; onClick: (id: str
                     <p>{event.location}</p>
                 </div>
             </div>
-            {/* </Link> */}
         </>
     );
 };
@@ -200,7 +199,7 @@ export const TrendingEvents: React.FC<EventProps> = ({ }) => {
                         </SplideSlide>
                     )}
 
-                    {data && data?.map((event: any, idx) => (
+                    {data && data?.map((event: any, idx: number) => (
                         <SplideSlide className="card" key={idx}>
                             <CarEventCard event={event} onClick={(id) => setActiveEvent(id)} />
                         </SplideSlide>
@@ -243,7 +242,7 @@ export const NearYouEvents: React.FC<EventProps> = ({ }) => {
                         </SplideSlide>
                     )}
 
-                    {data && data?.map((event: any, idx) => (
+                    {data && data?.map((event: any, idx: number) => (
                         <SplideSlide className="card" key={idx}>
                             <CarEventCard event={event} onClick={
                                 (id) => setActiveEvent(id)
@@ -306,7 +305,7 @@ export const Events: React.FC<EventProps> = ({ }) => {
                         </>
                     )}
 
-                    {data && data?.map((event: any, idx) => (
+                    {data && data?.map((event: any, idx: number) => (
                         <div className="col-6">
                             <div className="card mb-3">
                                 <CarEventCard event={event} onClick={(id) => setActiveEvent(id)} key={idx} />

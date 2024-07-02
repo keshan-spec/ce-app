@@ -1,7 +1,8 @@
 'use client';
 import { Transition } from '@headlessui/react';
 import clsx from 'clsx';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useSwipeable } from 'react-swipeable';
 
 interface SlideInFromBottomToTopProps {
     isOpen: boolean;
@@ -36,10 +37,28 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
     className = '',
     titleClassName = '',
 }) => {
-    const ref = useRef<HTMLDivElement>(null);
+    const modalRef = useRef<HTMLDivElement>(null);
+
+    const handlers = useSwipeable({
+        onSwipedDown: (eventData) => {
+            const { velocity, deltaY } = eventData;
+
+            // Adjusting the deltaY and velocity thresholds
+            if (velocity > 1.5 && deltaY > 50) {
+                onClose();
+            }
+        },
+        delta: 50, // Minimum distance to trigger swipe
+        trackMouse: true,
+        trackTouch: true,
+    });
 
     useEffect(() => {
         if (isOpen) {
+            if (window.scrollY === 0) {
+                window.scrollTo(0, 10);
+            }
+
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'auto';
@@ -48,7 +67,7 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
 
     return (
         <Transition
-            ref={ref}
+            // ref={ref}
             show={isOpen}
             className={clsx(
                 "z-10 w-full fixed bottom-0 inset-x-0 bg-white h-full rounded-t-lg slide-in",
@@ -64,6 +83,7 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
             leaveTo={transitionClasses.leaveTo}
         >
             <div
+                {...handlers}
                 className={clsx(
                     "w-full my-2 pb-1 px-3",
                     fullScreen ? 'absolute top-0 z-50' : 'flex justify-between items-center border-b',
@@ -81,10 +101,12 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
                 {title && <span className="text-sm font-semibold">{title}</span>}
                 <span></span>
             </div>
-            <div className={clsx(
-                "flex flex-col items-center w-full",
-                stickyScroll && 'overflow-scroll h-inherit'
-            )}>
+            <div
+                ref={modalRef}
+                className={clsx(
+                    "flex flex-col items-center w-full",
+                    stickyScroll && 'overflow-scroll h-inherit'
+                )}>
                 {children}
             </div>
         </Transition>

@@ -13,10 +13,12 @@ import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 
 interface ComentsSectionProps {
     postId: number;
+    onNewComment?: () => void;
 }
 
 export const ComentsSection: React.FC<ComentsSectionProps> = ({
-    postId
+    postId,
+    onNewComment,
 }) => {
     const { data, error, isFetching, isLoading, refetch } = useQuery<any[], Error>({
         queryKey: ["post-comments", postId],
@@ -29,8 +31,9 @@ export const ComentsSection: React.FC<ComentsSectionProps> = ({
         // keepPreviousData: true,
     });
 
-    const onNewComment = () => {
+    const onCommentAdded = () => {
         refetch();
+        onNewComment && onNewComment();
     };
 
     const minHeight = useMemo(() => {
@@ -42,7 +45,7 @@ export const ComentsSection: React.FC<ComentsSectionProps> = ({
     }, [data]);
 
     return (
-        <div className={clsx("w-full overflow-scroll h-full", minHeight)}>
+        <div className={clsx("w-full overflow-scroll h-full px-4", minHeight)}>
             <div className="section full mb-3 w-full">
                 {(isLoading || isFetching) && <CommentLoadingSkeleton />}
 
@@ -54,13 +57,13 @@ export const ComentsSection: React.FC<ComentsSectionProps> = ({
 
                 {data && data.length > 0 && (
                     <div className="comment-block mt-1">
-                        {data.map((comment) => (
+                        {data.map((comment: any) => (
                             <Comment key={comment.id} comment={comment} />
                         ))}
                     </div>
                 )}
             </div>
-            <CommentForm postId={postId} onCommentAdded={onNewComment} />
+            <CommentForm postId={postId} onCommentAdded={onCommentAdded} />
         </div>
     );
 };
@@ -87,13 +90,15 @@ const CommentForm: React.FC<{ postId: number; onCommentAdded: () => void; }> = (
         e.preventDefault();
 
         if (loading || comment.length === 0) return;
+        const trimmedComment = comment.trim();
+        setComment("");
 
         setLoading(true);
         setError(null);
 
         try {
             // Add comment
-            const response = await addComment(postId, comment);
+            const response = await addComment(postId, trimmedComment);
             if (response) {
                 setComment("");
                 onCommentAdded();

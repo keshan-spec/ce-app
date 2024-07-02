@@ -63,7 +63,7 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
                 <div id="appCapsule" className={getAppCapsuleClass()}>
                     <PullToRefresh
                         onRefresh={handleRefresh}
-                        resistance={pullEnabled ? 5 : 1}
+                        resistance={pullEnabled ? 3 : 1}
                         pullDownThreshold={100}
                         maxPullDownDistance={110}
                         className="w-full h-full overflow-auto"

@@ -374,7 +374,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                 <div
                     className="media-post-comment"
                     onClick={() => openComments(post.id)}
-                    data-bs-toggle="offcanvas" data-bs-target="#postComments"
+                // data-bs-toggle="offcanvas" data-bs-target="#postComments"
                 >
                     <IonIcon icon={chatboxOutline} role="img" className="md hydrated" aria-label="chatbox outline" />
                 </div>
@@ -417,7 +417,8 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
             <MediaPostDescription {...post} />
 
             {post.comments_count ? (
-                <div className="media-post-commentcount opacity-60 !text-xm" data-bs-toggle="offcanvas" data-bs-target="#postComments"
+                <div className="media-post-commentcount opacity-60 !text-xm"
+                    // data-bs-toggle="offcanvas" data-bs-target="#postComments"
                     onClick={() => openComments(post.id)}> View  {post.comments_count > 1 ? `all ${post.comments_count} comments` : `comment`}
                 </div>
             ) : null}
