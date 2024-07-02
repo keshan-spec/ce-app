@@ -262,7 +262,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                     <div className="embla__container !items-center">
                         {media.map((item, index) => {
                             const calculatedHeight = parseInt(item.media_height) ? parseInt(item.media_height) : 500;
-                            const maxHeight = calculatedHeight > 600 ? 600 : calculatedHeight;
+                            const maxHeight = calculatedHeight > 600 ? 400 : calculatedHeight;
 
                             return (
                                 <div
@@ -292,7 +292,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                                             <>
                                                 <div
                                                     className={`w-full h-full flex items-center justify-center`}
-                                                    style={{ width: item.media_width, height: maxHeight }}
+                                                    style={{ width: item.media_width, height: 'auto' }}
                                                     id={`video-${item.id}`}
                                                     onClick={() => videoRef.current?.paused ? videoRef.current?.play() : videoRef.current?.pause()}
                                                 >
@@ -302,14 +302,13 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                                                         muted={muted}
                                                         className="object-contain w-full cursor-pointer"
                                                         ref={videoRef}
-                                                        // style={{
-                                                        //     width: parseInt(item.media_width) || 400,
-                                                        //     height: maxHeight || 400
-                                                        // }}
-                                                        // src={item.media_url}
-                                                        // width={parseInt(item.media_width) || 400}
-                                                        // height={maxHeight || 400}
+                                                        style={{
+                                                            width: parseInt(item.media_width) || 400,
+                                                            height: maxHeight || 400
+                                                        }}
                                                         src={item.media_url}
+                                                        width={parseInt(item.media_width) || 400}
+                                                        height={'auto'}
                                                     />
                                                     <button className="absolute bottom-3 left-3 text-white hidden group-hover:block p-2 bg-black/40 rounded-full" onClick={() => setMuted(prevMuted => !prevMuted)}>
                                                         {muted ? <BiVolumeMute /> : <BiVolumeFull />}
