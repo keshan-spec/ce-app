@@ -1,12 +1,13 @@
 'use client';
 import { getStoreProduct } from '@/actions/store-actions';
+import { useCartStore } from '@/hooks/useCartStore';
 import { ProductVariationTypes } from '@/types/store';
 import { IonIcon } from '@ionic/react';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import { Options } from '@splidejs/splide';
 import { useQuery } from '@tanstack/react-query';
-import { cartOutline } from 'ionicons/icons';
-import React, { useEffect, useRef, useState } from 'react';
+import { bagRemoveOutline, cartOutline } from 'ionicons/icons';
+import React, { use, useCallback, useEffect, useRef, useState } from 'react';
 
 const carouselOptions: Options = {
     perPage: 1,
@@ -38,10 +39,11 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
     const [variation, setVariation] = useState<ProductVariationTypes | null>(null);
     const [variationId, setVariationId] = useState<number | null>(null);
 
+    const { addToCart, cart, removeFromCart } = useCartStore();
+
     const handleQtyChange = (type: 'up' | 'down') => {
         if (qtyRef.current) {
             const qty = parseInt(qtyRef.current.value);
-
             if (type === 'up') {
                 qtyRef.current.value = (qty + 1).toString();
             } else {
@@ -99,6 +101,30 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
         }
     };
 
+    const handleAddToCart = () => {
+        if (variationId && data?.data && priceRef.current && qtyRef.current) {
+            const variationThumbnail = data?.data?.variations?.attribute_price_combos.find((combo) => combo.id === variationId)?.thumbnail;
+
+            addToCart({
+                id: data?.data?.id,
+                title: data?.data?.title,
+                price: parseFloat(priceRef.current!.innerText.replace('£', '')),
+                qty: parseInt(qtyRef.current!.value),
+                variation: variation,
+                variationId: variationId,
+                thumbnail: variationThumbnail || data?.data?.thumb,
+            });
+        }
+    };
+
+    const itemInCart = useCallback(() => {
+        if (cart) {
+            return cart.find((i) => i.id === id);
+        }
+
+        return null;
+    }, [cart]);
+
     useEffect(() => {
         if (variation) {
             if (variation['pa_item-size']) {
@@ -115,8 +141,6 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
             }
         }
     }, [variation]);
-
-    console.log(variationId);
 
     return (
         <>
@@ -152,12 +176,23 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
                                 </div>
                             </div>
 
-                            {/* variations */}
                             {renderVariation()}
 
-                            <div className="btn btn-primary btn-lg btn-block" data-location="store-checkout.php">
-                                <IonIcon icon={cartOutline} role="img" className="md hydrated" aria-label="cart outline" />
-                                Buy Now
+                            <div className="flex gap-1 items-center">
+                                {itemInCart() && (
+                                    <button className="btn btn-secondary btn-lg"
+                                        onClick={() => {
+                                            removeFromCart(data?.data?.id);
+                                        }}
+                                    >
+                                        <IonIcon icon={bagRemoveOutline} role="img" className="md hydrated text-center !m-0" aria-label="cart outline" />
+                                    </button>
+                                )}
+
+                                <button className="btn btn-primary btn-lg btn-block" onClick={handleAddToCart}>
+                                    <IonIcon icon={cartOutline} role="img" className="md hydrated" aria-label="cart outline" />
+                                    Buy Now
+                                </button>
                             </div>
                         </div>
                     </div>

@@ -13,6 +13,16 @@ export interface StoreProduct {
     variations?: ProductVariations;
 }
 
+export interface StoreProductCart {
+    id: number;
+    title: string;
+    price: number;
+    qty: number;
+    variation?: ProductVariationTypes | null;
+    variationId?: number | null;
+    thumbnail: string;
+}
+
 interface ProductVariations {
     attribute_price_combos: {
         id: number;
@@ -21,6 +31,7 @@ interface ProductVariations {
             'pa_colour'?: string;
             'pa_item-size'?: string;
         };
+        thumbnail: string;
     }[];
     attributes: {
         [key: string]: {

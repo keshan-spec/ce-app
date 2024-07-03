@@ -4,7 +4,7 @@ import { useUser } from '@/hooks/useUser';
 import { sendRNMessage } from '@/utils/nativeFeel';
 import { IonIcon } from '@ionic/react';
 import clsx from 'clsx';
-import { menuOutline, notifications, searchOutline, chevronBackOutline } from 'ionicons/icons';
+import { menuOutline, notifications, chevronBackOutline, qrCode, cartOutline } from 'ionicons/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
@@ -69,12 +69,19 @@ export const TopNav: React.FC = () => {
 
                 {showHeaderIcons && (
                     <div className="right">
-                        <Link href="/" className="headerButton">
+                        {pathname.includes('/store') ? (
+                            <Link href="/cart" className="headerButton">
+                                <IonIcon icon={cartOutline} />
+                            </Link>
+                        ) : (
+                            <Link href="/" className="headerButton">
+                                <IonIcon icon={qrCode} />
+                            </Link>
+                        )}
+                        <Link href="/search" className="headerButton">
                             <IonIcon icon={notifications} />
                         </Link>
-                        <Link href="/search" className="headerButton">
-                            <IonIcon icon={searchOutline} />
-                        </Link>
+
                     </div>
                 )}
             </div>
