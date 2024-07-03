@@ -18,7 +18,7 @@ export const Feed: React.FC<FeedProps> = ({
 
     const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
         queryKey: [key, profileId],
-        queryFn: ({ pageParam }: { pageParam: number; }) => {
+        queryFn: ({ pageParam }) => {
             if (tagged) return getUserPosts(profileId, pageParam || 1, true);
             return getUserPosts(profileId, pageParam || 1);
         },
