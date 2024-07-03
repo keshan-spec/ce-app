@@ -67,3 +67,37 @@ export const addUserProfileLinks = async ({
 
     return data;
 };
+
+export const updateProfileImage = async (image: string) => {
+    const user = await getSessionUser();
+    if (!user) return;
+
+    const response = await fetch(`${API_URL}/wp-json/app/v1/update-profile-image`, {
+        cache: "no-cache",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: user.id, image }),
+    });
+
+    const data = await response.json();
+    return data;
+};
+
+export const removeProfileImage = async () => {
+    const user = await getSessionUser();
+    if (!user) return;
+
+    const response = await fetch(`${API_URL}/wp-json/app/v1/remove-profile-image`, {
+        cache: "no-cache",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: user.id }),
+    });
+
+    const data = await response.json();
+    return data;
+};

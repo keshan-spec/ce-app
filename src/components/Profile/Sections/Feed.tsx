@@ -18,7 +18,7 @@ export const Feed: React.FC<FeedProps> = ({
 
     const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
         queryKey: [key, profileId],
-        queryFn: ({ pageParam }) => {
+        queryFn: ({ pageParam }: { pageParam: number; }) => {
             if (tagged) return getUserPosts(profileId, pageParam || 1, true);
             return getUserPosts(profileId, pageParam || 1);
         },
@@ -76,7 +76,7 @@ export const Feed: React.FC<FeedProps> = ({
         const isMultiple = post.media.length > 1;
 
         return (
-            <div className="relative w-full overflow-hidden max-h-32">
+            <div className="relative w-full overflow-hidden max-h-32 bg-theme-dark/70">
                 {isVideo ? (
                     <video
                         className="w-full h-32 object-cover"
@@ -89,8 +89,12 @@ export const Feed: React.FC<FeedProps> = ({
                         src={post.media[0].media_url}
                         alt="image"
                         className="w-full object-cover h-32"
-                        width={parseFloat(post.media[0].media_width) || 320}
-                        height={parseFloat(post.media[0].media_height) || 320}
+                        width={320}
+                        height={320}
+                        imageDimension={{
+                            height: 128,
+                            width: 128
+                        }}
                     />
                 )}
 

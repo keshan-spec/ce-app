@@ -1138,6 +1138,196 @@ h2 span {
 	position: relative;
 }
 
-.profile-link.dark-bg {
-	background-color: #1D1D1B;
+
+
+
+
+
+/******* Event Listing Page CSS *******/
+.event-venue-listing {
+	float: left;
+	width: 100%;
+}
+
+.event-venue-listing .listing-details-title {
+	text-align: center;
+	font-size: 24px;
+	color: #333333;
+	font-family: 'LeagueSpartan-Medium';
+	line-height: 34px;
+}
+
+.listing-details-info-row {
+	text-align: center;
+	padding: 0px 15px;
+	margin-top: 24px;
+	margin-bottom: 31px;
+	float: left;
+	width: 100%;
+}
+
+.event-venue-listing .listing-ul {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.event-venue-listing .listing-ul ul {
+	padding: 0px;
+	margin: 0px;
+}
+
+.event-venue-listing .listing-ul ul li {
+	margin-bottom: 11px;
+	font-size: 14px;
+	color: #333333;
+	list-style: none;
+	line-height: 25px;
+}
+
+.listing-ul ul li ion-icon {
+	color: #b89855;
+	margin-right: 8px;
+	font-size: 22px;
+	vertical-align: middle;
+}
+
+.listing-share-btn {
+	float: left;
+	width: 100%;
+	text-align: center;
+}
+
+.listing-share-btn a {
+	background: #f1f1f1;
+	padding: 5px 10px;
+	color: #333333;
+	display: inline-block;
+	font-size: 12px;
+	text-transform: uppercase;
+}
+
+.listing-share-btn a ion-icon {
+	margin-right: 8px;
+	vertical-align: middle;
+}
+
+.listing-details-btn-row {
+	float: left;
+	width: 100%;
+	margin-top: 26px;
+	display: flex;
+	border-top: solid 1px #e3e3e3;
+	padding-top: 20px;
+}
+
+.listing-details-btn-row .listing-btn {
+	margin-right: 3px;
+	width: 50%;
+}
+
+.listing-btn button.listing-button {
+	padding: 6px 4px;
+	width: 100%;
+	float: left;
+	font-size: 13px;
+	border: none;
+	color: #fff;
+	background: #b89855;
+	border-radius: 5px;
+}
+
+.listing-btn button.listing-button ion-icon {
+	margin-right: 3px;
+	vertical-align: middle;
+}
+
+.listing-btn button.listing-button.buy-tickets {
+	background: #2e2e2e;
+}
+
+.listing-tab-section {
+	float: left;
+	width: 100%;
+}
+
+.listing-tab-section .listing-tab-wrapper {
+	padding: 0px 15px;
+}
+
+.listing-tab-wrapper ul.nav {
+	background: none;
+}
+
+.listing-tab-section .listing-tab-wrapper ul.nav li a {
+	background: #ebebeb !important;
+	color: #131313 !important;
+	font-size: 12px !important;
+	padding: 6px 2px !important;
+	margin: 0px !important;
+	font-family: 'LeagueSpartan-Medium';
+	height: auto !important;
+	border-radius: 100px !important;
+	box-shadow: none !important;
+}
+
+.listing-tab-section .listing-tab-wrapper ul.nav li a.active {
+	background: #ae9159 !important;
+	color: #fff !important;
+}
+
+.listing-tab-content p {
+	color: #333333;
+	font-size: 13px;
+	line-height: 26px;
+}
+
+
+
+
+
+
+/* Add Posts */
+
+.media-post-write-caption {
+	display: block;
+	width: 100%;
+	padding: 5px 15px;
+	border-top: #e9e9e9 1px solid;
+}
+
+.media-post-write-caption textarea {
+	border: 0;
+	background-color: transparent;
+	display: block;
+	width: 100%;
+	font-size: 13px;
+}
+
+
+.badge-primary-zero {
+	background-color: #d3d3d3;
+}
+
+ion[name="close-circle-outline"] {
+	color: #a90000;
+}
+
+a.form-group {
+	color: inherit;
+	font-size: 13px;
+	color: #2c2c2c;
+}
+
+.change-pass-toggle {
+	color: #ae9159;
+	text-transform: uppercase;
+	margin: 15px 0;
+}
+
+/* .collapse-password-form {
+	display: none;
+} */
+
+.appHeader .right .headerButton.headerSave {
+	color: #ae9159 !important;
 }

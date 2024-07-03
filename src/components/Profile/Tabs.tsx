@@ -3,6 +3,9 @@ import { Feed } from './Sections/Feed';
 import { Bookmarks } from './Sections/Bookmarks';
 import { useCallback, useState } from 'react';
 import { Garage } from './Garage/Garage';
+import { Settings } from './Sections/Settings';
+import { IonIcon } from '@ionic/react';
+import { settingsOutline } from 'ionicons/icons';
 
 interface TabsProps {
     profileId: string;
@@ -24,7 +27,7 @@ export const Tabs: React.FC<TabsProps> = ({
             case 'bookmarks':
                 return <Bookmarks />;
             case 'settings':
-                return <div>Settings</div>;
+                return <Settings />;
             default:
                 return <Garage profileId={profileId} />;
         }
@@ -54,16 +57,15 @@ export const Tabs: React.FC<TabsProps> = ({
                             <a className="nav-link" data-bs-toggle="tab" href="#bookmarks" role="tab">
                                 Bookmarks
                             </a>
-                        </li> 
+                        </li>  */}
                         <li className="nav-item">
-                            <a className="nav-link" data-bs-toggle="tab" href="#settings" role="tab">
-                                <ion-icon name="settings-outline" role="img" className="md hydrated" aria-label="settings outline"></ion-icon>
+                            <a className="nav-link" data-bs-toggle="tab" href="#settings" role="tab" onClick={() => setActiveTab('settings')}>
+                                <IonIcon icon={settingsOutline} role="img" className="md hydrated" aria-label="settings outline" />
                             </a>
-                        </li> */}
+                        </li>
                     </ul>
                 </div>
             </div>
-
 
             <div className="section full mb-2">
                 <div className="tab-content">

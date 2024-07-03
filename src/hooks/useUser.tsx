@@ -18,7 +18,8 @@ const guestUser = {
         facebook: '',
         email: '',
         links: []
-    }
+    },
+    email: "",
 };
 
 type UseUser = {

@@ -2,7 +2,7 @@ import React from 'react';
 
 export const Settings: React.FC = () => {
     return (
-        <div className="tab-pane fade" id="settings" role="tabpanel">
+        <div className="fade show" id="settings" role="tabpanel">
             <ul className="listview image-listview text flush transparent pt-1">
                 <li>
                     <div className="item">

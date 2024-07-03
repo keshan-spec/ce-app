@@ -7,11 +7,14 @@ import { getUserDetails } from '@/actions/auth-actions';
 import { UserNotFound } from './UserNotFound';
 import { UserProfileSkeleton } from './UserProfileSkeleton';
 import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
-import { maybeFollowUser } from '@/actions/profile-actions';
+import { maybeFollowUser, removeProfileImage, updateProfileImage } from '@/actions/profile-actions';
 import { redirect } from 'next/navigation';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ProfileLinksExternal } from './ProfileLinks';
+import { EditProfilePicture } from '../ActionSheets/ProfilePicture';
+import { EditProfile } from './Settings/EditProfile';
+import Link from 'next/link';
 
 interface ProfileLayoutProps {
     profileId?: string;
@@ -108,6 +111,37 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
         );
     }, [user]);
 
+    const onRemoveImage = async () => {
+        try {
+            const response = await removeProfileImage();
+            if (response.error) {
+                throw new Error(response.error);
+            }
+
+            refetch?.();
+        } catch (error: any) {
+            alert(`Error: ${error.message}`);
+        }
+    };
+
+    const onUploadImage = async (image: File) => {
+        try {
+            // convert image to base64
+            let base64: string = '';
+            const reader = new FileReader();
+            reader.readAsDataURL(image);
+            reader.onload = async () => {
+                base64 = reader.result as string;
+
+                // upload image
+                await updateProfileImage(base64);
+                refetch?.();
+            };
+        } catch (error: any) {
+            alert(`Error: ${error.message}`);
+        }
+    };
+
     if (!isLoggedIn && currentUser) {
         return <NoAuthWall redirectTo="/profile" />;
     }
@@ -135,7 +169,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                 <div className="profile-head">
                     <div>
                         <img src={user.profile_image || PLACEHOLDER_PFP}
-                            alt="avatar" className="profile-image" />
+                            alt="avatar" className="profile-image object-cover" />
                     </div>
                     <div className="in">
                         <h3 className="name profile-username">@{user.username}</h3>
@@ -164,12 +198,11 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
 
                     {(isLoggedIn && canEditProfile) && (
                         <div className='flex gap-2'>
-                            <button className="profile-link"
-                                onClick={() => {
-                                    alert('Edit Profile');
-                                }}>
+                            <Link className="profile-link"
+                                href='/profile/edit'
+                            >
                                 Edit Profile
-                            </button>
+                            </Link>
 
                             <button className="profile-link dark-bg" data-location="profile-edit.php">Edit Garage</button>
                         </div>
