@@ -29,7 +29,10 @@ export const CheckoutForm = ({ amount }: { amount: number; }) => {
             name: user.first_name + " " + user.last_name,
             email: user.email,
         }).then((clientSecret) => {
+            console.log("clientSecret", clientSecret);
             if (clientSecret) setClientSecret(clientSecret);
+        }).catch((error) => {
+            console.error(error);
         });
     }, [amount]);
 
