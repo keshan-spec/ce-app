@@ -4,6 +4,8 @@ import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
+
+
 interface RequestData {
     amount: number;
     cart: StoreProductCart[];
@@ -13,8 +15,9 @@ interface RequestData {
     };
 }
 
-
 export async function POST(req: NextRequest) {
+    console.log("STRIPE_SECRET_KEY", process.env.STRIPE_SECRET_KEY);
+
     try {
         const { amount, cart, customer } = await req.json() as RequestData;
 
