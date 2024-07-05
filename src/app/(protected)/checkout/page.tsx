@@ -11,6 +11,8 @@ if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
+console.log(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+
 const Page = () => {
     const { totalPrice } = useCartStore();
 
