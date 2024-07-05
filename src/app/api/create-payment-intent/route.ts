@@ -16,8 +16,6 @@ interface RequestData {
 }
 
 export async function POST(req: NextRequest) {
-    console.log("STRIPE_SECRET_KEY", process.env.STRIPE_SECRET_KEY);
-
     try {
         const { amount, cart, customer } = await req.json() as RequestData;
 
@@ -54,7 +52,7 @@ export async function POST(req: NextRequest) {
                 enabled: true,
             },
             customer: stripeCustomer.id,
-            metadata: metadata,
+            // metadata: metadata,
         });
 
         return NextResponse.json({
