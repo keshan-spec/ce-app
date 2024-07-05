@@ -12,6 +12,7 @@ import { useUser } from "@/hooks/useUser";
 import { BASE_URL } from "@/actions/api";
 import { IonIcon } from "@ionic/react";
 import { closeCircle } from "ionicons/icons";
+import { convertToSubcurrency } from "@/utils/utils";
 
 export const CheckoutForm = ({ amount }: { amount: number; }) => {
     const { cart, totalPrice, clearCart } = useCartStore();
@@ -125,7 +126,7 @@ export const CheckoutForm = ({ amount }: { amount: number; }) => {
                 </div>
             </div>
 
-            {(!clientSecret || !stripe || !elements) && (
+            {(!clientSecret || !stripe || !elements) ? (
                 <div className="flex items-center justify-center h-full">
                     <div
                         className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] text-theme-primary"
@@ -136,19 +137,31 @@ export const CheckoutForm = ({ amount }: { amount: number; }) => {
                         </span>
                     </div>
                 </div>
+            ) : (
+                <div className="section mb-2">
+                    {clientSecret && <PaymentElement />}
+                    {stripe.paymentRequest && (
+                        <button type="button" onClick={() => stripe.paymentRequest({
+                            country: "GB",
+                            currency: "gbp",
+                            total: {
+                                label: "Total",
+                                amount: convertToSubcurrency(totalPrice),
+                            },
+                        })} className="btn btn-primary btn-block mt-3">
+                            Pay with Apple Pay / Google Pay
+                        </button>
+                    )}
+
+                    {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+                    <button
+                        disabled={!stripe || loading}
+                        className="btn btn-primary btn-block disabled:opacity-50 disabled:animate-pulse mt-3"
+                    >
+                        {!loading ? `Place Order` : "Processing..."}
+                    </button>
+                </div>
             )}
-
-            <div className="section mb-2">
-                {clientSecret && <PaymentElement />}
-
-                {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
-                <button
-                    disabled={!stripe || loading}
-                    className="btn btn-primary btn-block disabled:opacity-50 disabled:animate-pulse mt-3"
-                >
-                    {!loading ? `Place Order` : "Processing..."}
-                </button>
-            </div>
         </form>
     );
 };
