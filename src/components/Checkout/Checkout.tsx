@@ -14,7 +14,7 @@ import { IonIcon } from "@ionic/react";
 import { closeCircle } from "ionicons/icons";
 
 export const CheckoutForm = ({ amount }: { amount: number; }) => {
-    const { cart, totalPrice } = useCartStore();
+    const { cart, totalPrice, clearCart } = useCartStore();
     const { user } = useUser();
     const stripe = useStripe();
     const elements = useElements();
@@ -63,6 +63,8 @@ export const CheckoutForm = ({ amount }: { amount: number; }) => {
             setErrorMessage(error.message);
         } else {
             // The payment UI automatically closes with a success animation.
+            // This point is reached if the payment is successful.
+            clearCart();
             // Your customer is redirected to your `return_url`.
         }
 

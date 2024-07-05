@@ -4,3 +4,4 @@ export const STORE_API_URL = process.env.STORE_API_URL ?? "https://www.mydriveli
 const LIVE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://phpstack-889362-4370795.cloudwaysapps.com";
 
 export const BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : LIVE_URL;
+console.log("LIVE_URL", LIVE_URL, "BASE_URL", BASE_URL);

@@ -14,6 +14,7 @@ interface Actions {
     addToCart: (Item: StoreProductCart) => void;
     removeFromCart: (Id: string) => void;
     updateQty: (Id: string, qty: number) => void;
+    clearCart: () => void;
 }
 
 const INITIAL_STATE: State = {
@@ -73,6 +74,9 @@ export const useCartStore = create(persist<State & Actions>(
                     return acc + (item.price * item.qty);
                 }, 0),
             }));
+        },
+        clearCart: () => {
+            set(INITIAL_STATE);
         },
     }),
     {
