@@ -1,4 +1,5 @@
 "use client";
+import { FIXED_SHIPPING_COST } from "@/actions/api";
 import { CheckoutForm } from "@/components/Checkout/Checkout";
 import { useCartStore } from "@/hooks/useCartStore";
 import { convertToSubcurrency } from "@/utils/utils";
@@ -9,7 +10,7 @@ import { redirect } from "next/navigation";
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
     throw new Error("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set");
 }
-export const FIXED_SHIPPING_COST = 3.95;
+
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 

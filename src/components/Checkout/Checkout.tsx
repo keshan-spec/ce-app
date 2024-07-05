@@ -9,12 +9,11 @@ import {
 import { useCartStore } from "@/hooks/useCartStore";
 import { createOrder, createStripeSecret } from "@/actions/store-actions";
 import { useUser } from "@/hooks/useUser";
-import { BASE_URL } from "@/actions/api";
+import { BASE_URL, FIXED_SHIPPING_COST } from "@/actions/api";
 import { IonIcon } from "@ionic/react";
 import { closeCircle } from "ionicons/icons";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
-import { FIXED_SHIPPING_COST } from "@/app/(protected)/checkout/page";
 
 export const CheckoutForm = () => {
     const { cart, totalPrice, totalItems, clearCart } = useCartStore();

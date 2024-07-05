@@ -1,5 +1,5 @@
 'use client';
-import { FIXED_SHIPPING_COST } from '@/app/(protected)/checkout/page';
+import { FIXED_SHIPPING_COST } from '@/actions/api';
 import { useCartStore } from '@/hooks/useCartStore';
 import { StoreQtyButton } from '@/shared/StoreQtyButton';
 import { IonIcon } from '@ionic/react';
