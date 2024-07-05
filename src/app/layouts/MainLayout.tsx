@@ -7,6 +7,7 @@ import { Footer } from "./includes/Footer";
 import PullToRefresh from 'react-simple-pull-to-refresh';
 import { getQueryClient } from "../context/QueryClientProvider";
 import { BiLoader } from "react-icons/bi";
+import { menuIconLessPaths } from "@/hooks/useTopNav";
 
 const queryClient = getQueryClient();
 
@@ -31,8 +32,16 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
         };
     }, []);
 
+    const allowPullToRefresh = () => {
+        if (pathname.includes('/checkout') || pathname.includes('/checkout/payment-success')) {
+            return false;
+        }
+
+        return true;
+    };
+
     const showMenuIcon = () => {
-        if (pathname.includes('/profile') || pathname.includes('/post/')) {
+        if (menuIconLessPaths.some((path) => pathname.includes(path))) {
             return false;
         }
 
@@ -67,7 +76,7 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
                         pullDownThreshold={100}
                         maxPullDownDistance={110}
                         className="w-full h-full overflow-auto"
-                        isPullable={pullEnabled}
+                        isPullable={pullEnabled && allowPullToRefresh()}
                         pullingContent={
                             <div className="text-center flex items-center text-black w-full mt-2">
                                 <BiLoader className="text-3xl w-full" />

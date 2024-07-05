@@ -1,7 +1,8 @@
 "use server";
 
-import { StoreProduct } from "@/types/store";
-import { STORE_API_URL } from "./api";
+import { StoreProduct, StoreProductCart } from "@/types/store";
+import { BASE_URL, STORE_API_URL } from "./api";
+import { convertToSubcurrency } from "@/utils/utils";
 
 
 export const getStoreProducts = async (page: number, limit = 10) => {
@@ -46,4 +47,43 @@ export const getStoreProduct = async (id: number): Promise<StoreProductResponse 
     }
 
     return data;
+};
+
+export const createStripeSecret = async (amount: number, cart: StoreProductCart[], customer: {
+    name: string;
+    email: string;
+}) => {
+    try {
+        const response = await fetch(`${BASE_URL}/api/create-payment-intent`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ amount: convertToSubcurrency(amount), cart, customer }),
+        });
+
+        const data = await response.json();
+        return data.clientSecret;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
+export const getPaymentIntent = async (payment_intent: string) => {
+    try {
+        const response = await fetch(`${BASE_URL}/api/get-payment-intent`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ payment_intent }),
+        });
+
+        const data = await response.json();
+        return data.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
 };

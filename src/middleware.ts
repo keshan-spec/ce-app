@@ -4,6 +4,7 @@ import { auth } from "./auth";
 import {
     DEFAULT_LOGIN_REDIRECT,
     apiAuthPrefix,
+    apiRoutes,
     authRoutes,
     publcDynamicRoutes,
     publicRoutes,
@@ -16,6 +17,7 @@ export default auth((req) => {
     const isLoggedIn = !!req.auth;
 
     const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
+    const isApiWebhookRoute = apiRoutes.includes(nextUrl.pathname);
     const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
     const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
@@ -26,7 +28,7 @@ export default auth((req) => {
     });
 
 
-    if (isApiAuthRoute) {
+    if (isApiAuthRoute || isApiWebhookRoute) {
         return null;
     }
 

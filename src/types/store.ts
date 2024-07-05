@@ -14,13 +14,14 @@ export interface StoreProduct {
 }
 
 export interface StoreProductCart {
-    id: number;
+    id: string;
     title: string;
     price: number;
     qty: number;
     variation?: ProductVariationTypes | null;
     variationId?: number | null;
     thumbnail: string;
+    variationLabel?: string;
 }
 
 interface ProductVariations {

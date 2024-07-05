@@ -1,3 +1,4 @@
+//https://hackernoon.com/how-to-build-a-shopping-cart-with-nextjs-and-zustand-state-management-with-typescript
 import { StoreProductCart } from "@/types/store";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -11,7 +12,8 @@ interface State {
 // Define the interface of the actions that can be performed in the Cart
 interface Actions {
     addToCart: (Item: StoreProductCart) => void;
-    removeFromCart: (Id: number) => void;
+    removeFromCart: (Id: string) => void;
+    updateQty: (Id: string, qty: number) => void;
 }
 
 const INITIAL_STATE: State = {
@@ -39,17 +41,38 @@ export const useCartStore = create(persist<State & Actions>(
                 }));
             }
         },
-        removeFromCart: (Id: number) => {
+        removeFromCart: (Id: string) => {
             const { cart } = get();
 
-            const item = cart.find((i) => i.id === Id);
-            if (item) {
+            const items = cart.filter((i) => i.id === Id);
+            const itemCount = cart.filter((i) => i.id === Id).length;
+            const totalPrice = items.reduce((acc, item) => {
+                return acc + (item.price * item.qty);
+            }, 0);
+
+            console.log("item", items, "totalPrice", totalPrice);
+
+            if (items.length > 0) {
                 set((state) => ({
                     cart: state.cart.filter((i) => i.id !== Id),
-                    totalItems: state.totalItems - item.qty,
-                    totalPrice: state.totalPrice - (item.price * item.qty),
+                    totalItems: state.totalItems - itemCount,
+                    totalPrice: state.totalPrice - totalPrice,
                 }));
             }
+        },
+        updateQty: (Id: string, qty: number) => {
+            set((state) => ({
+                cart: state.cart.map((i) => {
+                    if (i.id === Id) {
+                        i.qty = qty;
+                    }
+
+                    return i;
+                }),
+                totalPrice: state.cart.reduce((acc, item) => {
+                    return acc + (item.price * item.qty);
+                }, 0),
+            }));
         },
     }),
     {

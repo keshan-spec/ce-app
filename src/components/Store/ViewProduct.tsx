@@ -1,6 +1,7 @@
 'use client';
 import { getStoreProduct } from '@/actions/store-actions';
 import { useCartStore } from '@/hooks/useCartStore';
+import { StoreQtyButton } from '@/shared/StoreQtyButton';
 import { ProductVariationTypes } from '@/types/store';
 import { IonIcon } from '@ionic/react';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
@@ -34,25 +35,12 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
         staleTime: 60 * 1000,
     });
 
-    const qtyRef = useRef<HTMLInputElement>(null);
+    const [qty, setQty] = useState<number>(1);
     const priceRef = useRef<HTMLDivElement>(null);
     const [variation, setVariation] = useState<ProductVariationTypes | null>(null);
     const [variationId, setVariationId] = useState<number | null>(null);
 
-    const { addToCart, cart, removeFromCart } = useCartStore();
-
-    const handleQtyChange = (type: 'up' | 'down') => {
-        if (qtyRef.current) {
-            const qty = parseInt(qtyRef.current.value);
-            if (type === 'up') {
-                qtyRef.current.value = (qty + 1).toString();
-            } else {
-                if (qty > 1) {
-                    qtyRef.current.value = (qty - 1).toString();
-                }
-            }
-        }
-    };
+    const { addToCart } = useCartStore();
 
     const renderImages = () => {
         if (data?.data?.images && data.data.images.length > 0) {
@@ -102,28 +90,25 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
     };
 
     const handleAddToCart = () => {
-        if (variationId && data?.data && priceRef.current && qtyRef.current) {
+        if (variationId && data?.data && priceRef.current) {
             const variationThumbnail = data?.data?.variations?.attribute_price_combos.find((combo) => combo.id === variationId)?.thumbnail;
+            const variations = data?.data?.variations?.attributes;
+
+            const variationColor = variations?.pa_colour?.values.find((v) => v.value === variation?.pa_colour);
+            const variationSize = variations?.['pa_item-size']?.values.find((v) => v.value === variation?.['pa_item-size']);
 
             addToCart({
-                id: data?.data?.id,
+                id: `${data?.data?.id}-${variationId}`,
                 title: data?.data?.title,
                 price: parseFloat(priceRef.current!.innerText.replace('£', '')),
-                qty: parseInt(qtyRef.current!.value),
+                qty: qty,
                 variation: variation,
                 variationId: variationId,
                 thumbnail: variationThumbnail || data?.data?.thumb,
+                variationLabel: `${variationColor?.label} - ${variationSize?.label}` || 'No variation',
             });
         }
     };
-
-    const itemInCart = useCallback(() => {
-        if (cart) {
-            return cart.find((i) => i.id === id);
-        }
-
-        return null;
-    }, [cart]);
 
     useEffect(() => {
         if (variation) {
@@ -162,7 +147,8 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
                                     <div className="current-price" ref={priceRef}>£{data?.data?.price}</div>
                                 </div>
                                 <div className="amount">
-                                    <div className="stepper">
+                                    <StoreQtyButton onQtyChange={(qty) => setQty(qty)} maxQty={data?.data?.stock} />
+                                    {/* <div className="stepper">
                                         <button className="stepper-button stepper-down"
                                             onClick={() => {
                                                 handleQtyChange('down');
@@ -172,14 +158,14 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
                                             onClick={() => {
                                                 handleQtyChange('up');
                                             }}>+</button>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
 
                             {renderVariation()}
 
                             <div className="flex gap-1 items-center">
-                                {itemInCart() && (
+                                {/* {itemInCart() && (
                                     <button className="btn btn-secondary btn-lg"
                                         onClick={() => {
                                             removeFromCart(data?.data?.id);
@@ -187,7 +173,7 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
                                     >
                                         <IonIcon icon={bagRemoveOutline} role="img" className="md hydrated text-center !m-0" aria-label="cart outline" />
                                     </button>
-                                )}
+                                )} */}
 
                                 <button className="btn btn-primary btn-lg btn-block" onClick={handleAddToCart}>
                                     <IonIcon icon={cartOutline} role="img" className="md hydrated" aria-label="cart outline" />

@@ -1,12 +1,12 @@
 'use client';
 import { useCartStore } from '@/hooks/useCartStore';
+import { StoreQtyButton } from '@/shared/StoreQtyButton';
 import { IonIcon } from '@ionic/react';
 import { closeCircle } from 'ionicons/icons';
 import Link from 'next/link';
-import React from 'react';
 
 export const Cart: React.FC = () => {
-    const { cart, removeFromCart, totalItems, totalPrice } = useCartStore();
+    const { cart, removeFromCart, totalItems, totalPrice, updateQty } = useCartStore();
 
     if (totalItems === 0) {
         return (
@@ -33,23 +33,28 @@ export const Cart: React.FC = () => {
                             <div className="in">
                                 <img src={item.thumbnail} alt="product" className="imaged" />
                                 <div className="text">
-                                    <h3 className="title">{item.title}</h3>
-                                    <p className="detail">{item.variationId}</p>
+                                    <Link href={`/store/product/${item.id.split('-')[0]}`}>
+                                        <h3 className="title">{item.title}</h3>
+                                    </Link>
+                                    <p className="detail">{item.variationLabel}</p>
                                     <strong className="price">
-                                        £{item.price} x {item.qty}
+                                        £{item.price * item.qty}
                                     </strong>
                                 </div>
                             </div>
                             <div className="cart-item-footer">
-                                <div className="stepper stepper-sm">
-                                    <a href="#" className="stepper-button stepper-down">-</a>
-                                    <input type="text" className="form-control" value={item.qty} readOnly />
-                                    <a href="#" className="stepper-button stepper-up">+</a>
-                                </div>
+                                <StoreQtyButton
+                                    defaultQty={item.qty}
+                                    size='sm'
+                                    onQtyChange={(qty) => {
+                                        updateQty(item.id, qty);
+                                    }}
+                                />
+
                                 <button onClick={() => {
                                     removeFromCart(item.id);
                                 }}
-                                    className="btn btn-outline-secondary btn-sm">
+                                    className="btn btn-outline-primary btn-sm">
                                     Delete
                                 </button>
                             </div>
@@ -101,9 +106,8 @@ export const Cart: React.FC = () => {
             </div>
 
             <div className="section mb-2">
-                <div className="btn btn-primary btn-block" data-location="store-checkout-success.php">Order Now</div>
+                <Link href="/checkout" className="btn btn-primary btn-block">Order Now</Link>
             </div>
-
         </>
     );
 };

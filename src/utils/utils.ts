@@ -5,3 +5,8 @@ export function debounce<T extends (...args: any[]) => void>(func: T, wait: numb
         timeout = setTimeout(() => func(...args), wait);
     };
 }
+
+
+export function convertToSubcurrency(amount: number) {
+    return amount * 100;
+}

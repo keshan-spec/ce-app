@@ -1,4 +1,5 @@
 import { SidePanel } from '@/components/SidePanel';
+import { useCartStore } from '@/hooks/useCartStore';
 import { useTopNav, TopNavMode } from '@/hooks/useTopNav';
 import { useUser } from '@/hooks/useUser';
 import { sendRNMessage } from '@/utils/nativeFeel';
@@ -13,6 +14,7 @@ import { useEffect } from 'react';
 export const TopNav: React.FC = () => {
     const pathname = usePathname();
     const { user } = useUser();
+    const { totalItems } = useCartStore();
 
     useEffect(() => {
         // send user data to react native every time the app loads
@@ -69,9 +71,14 @@ export const TopNav: React.FC = () => {
 
                 {showHeaderIcons && (
                     <div className="right">
-                        {pathname.includes('/store') ? (
-                            <Link href="/cart" className="headerButton">
+                        {pathname.includes('/store') || pathname.includes('/cart') ? (
+                            <Link href="/cart" className="headerButton mr-1">
                                 <IonIcon icon={cartOutline} />
+                                {totalItems > 0 && (
+                                    <span className="badge badge-primary absolute !top-0 !-right-1">
+                                        {totalItems}
+                                    </span>
+                                )}
                             </Link>
                         ) : (
                             <Link href="/" className="headerButton">

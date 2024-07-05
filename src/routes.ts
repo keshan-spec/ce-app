@@ -37,6 +37,12 @@ export const authRoutes = [
  */
 export const apiAuthPrefix = "/api/auth";
 
+export const apiRoutes = [
+    "/api/create-payment-intent",
+    "/api/get-payment-intent",
+    "/api/webhook",
+];
+
 /**
  * The default redirect path after logging in
  * @type {string}

@@ -24,6 +24,15 @@ interface TopNavType {
 
 const queryClient = getQueryClient();
 
+export const menuIconLessPaths = [
+    '/profile',
+    '/store/product/',
+    '/post/',
+    '/cart',
+    '/checkout',
+    '/checkout/payment-success',
+];
+
 export const useTopNav = ({
     pathname
 }: TopNavProps): TopNavType => {
@@ -33,7 +42,7 @@ export const useTopNav = ({
     const router = useRouter();
 
     const showMenuIcon = () => {
-        if (pathname.includes('/profile') || pathname.includes('/post/') || pathname.includes('/store/product/')) {
+        if (menuIconLessPaths.some((path) => pathname.includes(path))) {
             return false;
         }
 
