@@ -171,7 +171,7 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
                                     </button>
                                 )} */}
 
-                                <button className="btn btn-primary btn-lg btn-block" onClick={handleAddToCart} disabled={loading}>
+                                <button className="btn btn-primary btn-lg btn-block" onClick={handleAddToCart} disabled={loading || !variationId}>
                                     {loading && <BiLoader className="md hydrated animate-spin mr-2" />}
                                     {!loading && <IonIcon icon={cartOutline} role="img" className="md hydrated" aria-label="cart outline" />}
                                     {buttonText}

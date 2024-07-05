@@ -87,8 +87,16 @@ export const useTopNav = ({
         return '';
     }, [isGarageViewPage, isPostViewPage, param]);
 
+    const returnTo = () => {
+        if (pathname.includes('checkout/payment-success')) {
+            return router.push('/store');
+        } else {
+            return window.history.length > 1 ? router.back() : router.push('/');
+        }
+    };
+
     return {
-        returnTo: () => window.history.length > 1 ? router.back() : router.push('/'),
+        returnTo: () => returnTo(),
         title: getHeaderTitle(),
         subtitle: getSubtitle(),
         mode: isGarageViewPage || isPostViewPage ? 'view-page' : 'default',
@@ -97,15 +105,3 @@ export const useTopNav = ({
         showLogo: !isGarageViewPage && !isPostViewPage,
     };
 };
-
-function getReturnTo(pathname: string): string {
-    if (pathname.includes('/profile/garage/')) {
-        return '/profile';
-    }
-
-    if (pathname.includes('/post/')) {
-        return '/profile';
-    }
-
-    return '/';
-}

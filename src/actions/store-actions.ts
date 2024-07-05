@@ -87,3 +87,62 @@ export const getPaymentIntent = async (payment_intent: string) => {
         return null;
     }
 };
+
+interface CreateOrderData {
+    cart: StoreProductCart[];
+    customer: {
+        first_name: string;
+        last_name: string;
+        email: string;
+        phone?: string;
+    };
+    shipping: {
+        address_1: string;
+        address_2?: string;
+        city: string;
+        country: string;
+        postcode: string;
+    };
+    payment_intent: string;
+}
+
+interface CreateOrderResponse {
+    success: boolean;
+    message?: string;
+    order_id?: number;
+}
+
+export const createOrder = async ({
+    cart,
+    customer,
+    payment_intent,
+    shipping,
+}: CreateOrderData): Promise<CreateOrderResponse | null> => {
+    const product_data = cart.map((item) => ({
+        id: item.id.split("-")[0],
+        quantity: item.qty,
+        variation_id: item.id.split("-")[1] || null,
+        variations: item.variation,
+    }));
+
+    try {
+        const response = await fetch(`${STORE_API_URL}/wp-json/app/v1/create-order`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                products: product_data,
+                customer,
+                payment_intent,
+                shipping,
+            }),
+        });
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};

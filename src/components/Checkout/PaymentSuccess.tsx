@@ -1,6 +1,7 @@
 "use client";
 
 import { getPaymentIntent } from "@/actions/store-actions";
+import { useCartStore } from "@/hooks/useCartStore";
 import { IonIcon } from "@ionic/react";
 import { refreshCircle, reload } from "ionicons/icons";
 import { useEffect, useState } from "react";
@@ -13,13 +14,18 @@ interface PaymentSuccessProps {
 export const PaymentSuccess: React.FC<PaymentSuccessProps> = ({
     payment_intent
 }) => {
+    const { clearCart } = useCartStore();
+
     const [data, setData] = useState<Stripe.PaymentIntent | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!payment_intent) return;
+        if (!payment_intent) {
+            return;
+        }
 
+        clearCart();
         setLoading(true);
         getPaymentIntent(payment_intent)
             .then((data) => {

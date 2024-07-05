@@ -1,4 +1,5 @@
 'use client';
+import { FIXED_SHIPPING_COST } from '@/app/(protected)/checkout/page';
 import { useCartStore } from '@/hooks/useCartStore';
 import { StoreQtyButton } from '@/shared/StoreQtyButton';
 import { IonIcon } from '@ionic/react';
@@ -7,6 +8,15 @@ import Link from 'next/link';
 
 export const Cart: React.FC = () => {
     const { cart, removeFromCart, totalItems, totalPrice, updateQty } = useCartStore();
+    const isHydrated = useCartStore.persist.hasHydrated();
+
+    if (!isHydrated) {
+        return (
+            <main className="max-w-6xl mx-auto p-10 text-white text-center border m-10 rounded-md bg-gradient-to-tr from-blue-500 to-purple-500">
+                <h1 className="text-4xl font-extrabold mb-2">Loading...</h1>
+            </main>
+        );
+    }
 
     if (totalItems === 0) {
         return (
@@ -99,8 +109,8 @@ export const Cart: React.FC = () => {
                 <div className="card">
                     <ul className="listview flush transparent simple-listview">
                         <li>Subtotal <span className="text-muted">£{totalPrice}</span></li>
-                        <li>Shipping <span className="text-muted">Free</span></li>
-                        <li>Total<span className="text-primary font-weight-bold">£{totalPrice}</span></li>
+                        <li>Shipping <span className="text-muted">£{FIXED_SHIPPING_COST}</span></li>
+                        <li>Total<span className="text-primary font-weight-bold">£{totalPrice + FIXED_SHIPPING_COST}</span></li>
                     </ul>
                 </div>
             </div>
