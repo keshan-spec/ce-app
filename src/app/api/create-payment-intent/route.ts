@@ -16,17 +16,17 @@ interface RequestData {
 }
 
 export async function POST(req: NextRequest) {
-    try {
-        const { amount, cart, customer } = await req.json() as RequestData;
+    const { amount, cart, customer } = await req.json() as RequestData;
 
-        const metadata: Stripe.MetadataParam = {
-            products: JSON.stringify(cart.map((item) => ({
-                id: item.id,
-                name: item.title,
-                price: item.price,
-                qty: item.qty,
-            })))
-        };
+    try {
+        // const metadata: Stripe.MetadataParam = {
+        //     products: JSON.stringify(cart.map((item) => ({
+        //         id: item.id,
+        //         name: item.title,
+        //         price: item.price,
+        //         qty: item.qty,
+        //     })))
+        // };
 
         // Search for an existing customer by email
         const existingCustomers = await stripe.customers.list({
@@ -59,6 +59,11 @@ export async function POST(req: NextRequest) {
             clientSecret: paymentIntent.client_secret,
         });
     } catch (error) {
-        return NextResponse.json({ error: error }, { status: 500 });
+        return NextResponse.json({
+            error: error,
+            amount,
+            customer,
+            cart
+        }, { status: 500 });
     }
 }
