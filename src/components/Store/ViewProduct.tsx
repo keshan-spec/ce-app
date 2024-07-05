@@ -7,8 +7,9 @@ import { IonIcon } from '@ionic/react';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import { Options } from '@splidejs/splide';
 import { useQuery } from '@tanstack/react-query';
-import { bagRemoveOutline, cartOutline } from 'ionicons/icons';
+import { bagRemoveOutline, cartOutline, reload, reloadCircle, reloadOutline } from 'ionicons/icons';
 import React, { use, useCallback, useEffect, useRef, useState } from 'react';
+import { BiLoader } from 'react-icons/bi';
 
 const carouselOptions: Options = {
     perPage: 1,
@@ -35,12 +36,15 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
         staleTime: 60 * 1000,
     });
 
-    const [qty, setQty] = useState<number>(1);
+
     const priceRef = useRef<HTMLDivElement>(null);
+
+    const [qty, setQty] = useState<number>(1);
     const [variation, setVariation] = useState<ProductVariationTypes | null>(null);
     const [variationId, setVariationId] = useState<number | null>(null);
+    const [buttonText, setButtonText] = useState<string>('Buy Now');
 
-    const { addToCart } = useCartStore();
+    const { addToCart, loading } = useCartStore();
 
     const renderImages = () => {
         if (data?.data?.images && data.data.images.length > 0) {
@@ -89,7 +93,7 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
         }
     };
 
-    const handleAddToCart = () => {
+    const handleAddToCart = async () => {
         if (variationId && data?.data && priceRef.current) {
             const variationThumbnail = data?.data?.variations?.attribute_price_combos.find((combo) => combo.id === variationId)?.thumbnail;
             const variations = data?.data?.variations?.attributes;
@@ -97,7 +101,7 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
             const variationColor = variations?.pa_colour?.values.find((v) => v.value === variation?.pa_colour);
             const variationSize = variations?.['pa_item-size']?.values.find((v) => v.value === variation?.['pa_item-size']);
 
-            addToCart({
+            await addToCart({
                 id: `${data?.data?.id}-${variationId}`,
                 title: data?.data?.title,
                 price: parseFloat(priceRef.current!.innerText.replace('£', '')),
@@ -107,6 +111,8 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
                 thumbnail: variationThumbnail || data?.data?.thumb,
                 variationLabel: `${variationColor?.label} - ${variationSize?.label}` || 'No variation',
             });
+
+            setButtonText('Added to cart');
         }
     };
 
@@ -148,17 +154,7 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
                                 </div>
                                 <div className="amount">
                                     <StoreQtyButton onQtyChange={(qty) => setQty(qty)} maxQty={data?.data?.stock} />
-                                    {/* <div className="stepper">
-                                        <button className="stepper-button stepper-down"
-                                            onClick={() => {
-                                                handleQtyChange('down');
-                                            }}>-</button>
-                                        <input type="text" className="form-control" value="1" disabled ref={qtyRef} min={1} max={data?.data?.stock} />
-                                        <button className="stepper-button stepper-up"
-                                            onClick={() => {
-                                                handleQtyChange('up');
-                                            }}>+</button>
-                                    </div> */}
+
                                 </div>
                             </div>
 
@@ -175,9 +171,10 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
                                     </button>
                                 )} */}
 
-                                <button className="btn btn-primary btn-lg btn-block" onClick={handleAddToCart}>
-                                    <IonIcon icon={cartOutline} role="img" className="md hydrated" aria-label="cart outline" />
-                                    Buy Now
+                                <button className="btn btn-primary btn-lg btn-block" onClick={handleAddToCart} disabled={loading}>
+                                    {loading && <BiLoader className="md hydrated animate-spin mr-2" />}
+                                    {!loading && <IonIcon icon={cartOutline} role="img" className="md hydrated" aria-label="cart outline" />}
+                                    {buttonText}
                                 </button>
                             </div>
                         </div>

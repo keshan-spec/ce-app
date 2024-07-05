@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { memo, useCallback, useRef, useState } from "react";
 
 interface StoreQtyButtonProps {
     onQtyChange: (qty: number) => void;
@@ -7,34 +7,61 @@ interface StoreQtyButtonProps {
     size?: 'sm' | 'md' | 'lg';
 }
 
-export const StoreQtyButton: React.FC<StoreQtyButtonProps> = ({ onQtyChange, maxQty, defaultQty = 1, size }) => {
-    const qtyRef = useRef<HTMLInputElement>(null);
+export const StoreQtyButton: React.FC<StoreQtyButtonProps> = memo(({
+    onQtyChange,
+    maxQty,
+    defaultQty = 1,
+    size,
+}) => {
+    const [qty, setQty] = useState(defaultQty);
 
-    const handleQtyChange = (type: 'up' | 'down') => {
-        if (qtyRef.current) {
-            const qty = parseInt(qtyRef.current.value);
-            const newValue = type === 'up' ? (qty + 1).toString() : (qty - 1).toString();
-            if (parseInt(newValue) < 1) {
-                return;
+    const handleQtyChange = useCallback(
+        (type: "up" | "down") => {
+            let newValue;
+            if (type === "up") {
+                newValue = qty + 1;
+            } else {
+                newValue = qty - 1;
             }
 
-            qtyRef.current.value = newValue;
+            if (newValue < 1) {
+                newValue = 1; // Ensure quantity doesn't go below 1
+            } else {
+                if (maxQty && newValue > maxQty) {
+                    newValue = maxQty; // Ensure quantity doesn't exceed maxQty
+                }
+            }
 
-            onQtyChange(parseInt(newValue));
-        }
-    };
+            setQty(newValue);
+            onQtyChange(newValue);
+        },
+        [qty, maxQty, onQtyChange]
+    );
 
     return (
         <div className={`stepper stepper-${size}`}>
-            <button className="stepper-button stepper-down"
-                onClick={() => {
-                    handleQtyChange('down');
-                }}>-</button>
-            <input type="text" className="form-control" value={defaultQty} disabled ref={qtyRef} min={1} max={maxQty} />
-            <button className="stepper-button stepper-up"
-                onClick={() => {
-                    handleQtyChange('up');
-                }}>+</button>
+            <button
+                className="stepper-button stepper-down"
+                onClick={() => handleQtyChange("down")}
+                disabled={qty <= 1}
+            >
+                -
+            </button>
+            <input
+                type="number"
+                className="form-control"
+                value={qty}
+                readOnly
+                min={1}
+                max={maxQty}
+            />
+            <button
+                className="stepper-button stepper-up"
+                onClick={() => handleQtyChange("up")}
+                disabled={maxQty ? qty >= maxQty : false}
+            >
+                +
+            </button>
         </div>
     );
-};
+});

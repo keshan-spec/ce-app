@@ -7,11 +7,12 @@ interface State {
     cart: StoreProductCart[];
     totalItems: number;
     totalPrice: number;
+    loading: boolean;
 }
 
 // Define the interface of the actions that can be performed in the Cart
 interface Actions {
-    addToCart: (Item: StoreProductCart) => void;
+    addToCart: (Item: StoreProductCart) => Promise<boolean>;
     removeFromCart: (Id: string) => void;
     updateQty: (Id: string, qty: number) => void;
     clearCart: () => void;
@@ -21,16 +22,17 @@ const INITIAL_STATE: State = {
     cart: [],
     totalItems: 0,
     totalPrice: 0,
+    loading: false,
 };
 
 export const useCartStore = create(persist<State & Actions>(
     (set, get) => ({
         ...INITIAL_STATE,
-        addToCart: (Item: StoreProductCart) => {
+        addToCart: async (Item: StoreProductCart) => {
+            set({ loading: true });
+
             const { cart } = get();
             const existingItem = cart.find((i) => i.id === Item.id && i.variationId === Item.variationId);
-
-            console.log("existingItem", Item);
 
             if (existingItem) {
                 existingItem.qty += Item.qty;
@@ -41,6 +43,12 @@ export const useCartStore = create(persist<State & Actions>(
                     totalPrice: state.totalPrice + (Item.price * Item.qty),
                 }));
             }
+
+            // Wait for 1 second to simulate a network request
+            await wait(1000);
+
+            set({ loading: false });
+            return true;
         },
         removeFromCart: (Id: string) => {
             const { cart } = get();
@@ -83,3 +91,5 @@ export const useCartStore = create(persist<State & Actions>(
         name: "cart-storage",
     }
 ));
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

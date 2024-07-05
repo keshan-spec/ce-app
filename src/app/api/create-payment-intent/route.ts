@@ -16,17 +16,15 @@ interface RequestData {
 export async function POST(req: NextRequest) {
     const { amount, cart, customer } = await req.json() as RequestData;
 
-    console.log(process.env.STRIPE_SECRET_KEY!);
-
     try {
-        // const metadata: Stripe.MetadataParam = {
-        //     products: JSON.stringify(cart.map((item) => ({
-        //         id: item.id,
-        //         name: item.title,
-        //         price: item.price,
-        //         qty: item.qty,
-        //     })))
-        // };
+        const metadata: Stripe.MetadataParam = {
+            products: JSON.stringify(cart.map((item) => ({
+                id: item.id,
+                name: item.title,
+                price: item.price,
+                qty: item.qty,
+            })))
+        };
 
         // Search for an existing customer by email
         const existingCustomers = await stripe.customers.list({
@@ -52,7 +50,7 @@ export async function POST(req: NextRequest) {
                 enabled: true,
             },
             customer: stripeCustomer.id,
-            // metadata: metadata,
+            metadata: metadata,
         });
 
         return NextResponse.json({
