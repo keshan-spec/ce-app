@@ -6,7 +6,6 @@ import { IonIcon } from '@ionic/react';
 import { close, cubeOutline, homeOutline } from "ionicons/icons";
 import { useState } from "react";
 import { Loader } from "./Loader";
-import { useSession } from "next-auth/react";
 import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 
 export const SidePanel: React.FC = () => {
@@ -58,6 +57,9 @@ export const SidePanel: React.FC = () => {
                     </li>
                 </ul>
 
+                <div className="text-center mt-2 w-full">
+                    <a href="#" onClick={() => window.location.reload()} className="btn btn-primary w-3/4">Reload App</a>
+                </div>
             </div>
             <div className="sidebar-buttons">
                 {isLoggedIn && (
