@@ -47,7 +47,7 @@ export const createStripeSecret = async (amount: number, cart: StoreProductCart[
     email: string;
 }, existing_intent: string | null = null): Promise<StripeSecretResponse> => {
     try {
-        const response = await fetch(`${BASE_URL}/api/create-payment-intent`, {
+        const response = await fetch(`${BASE_URL}/api/stripe/create-payment-intent`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -67,7 +67,7 @@ export const createStripeSecret = async (amount: number, cart: StoreProductCart[
 
 export const getPaymentIntent = async (payment_intent: string) => {
     try {
-        const response = await fetch(`${BASE_URL}/api/get-payment-intent`, {
+        const response = await fetch(`${BASE_URL}/api/stripe/get-payment-intent`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -85,12 +85,48 @@ export const getPaymentIntent = async (payment_intent: string) => {
 
 export const cancelPaymentIntent = async (payment_intent: string) => {
     try {
-        const response = await fetch(`${BASE_URL}/api/cancel-payment-intent`, {
+        const response = await fetch(`${BASE_URL}/api/stripe/cancel-payment-intent`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({ payment_intent }),
+        });
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
+export const createSetupIntent = async (email: string, name: string) => {
+    try {
+        const response = await fetch(`${BASE_URL}/api/stripe/create-setup-intent`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, name }),
+        });
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
+export const deleteSavedPaymentMethod = async (paymentMethodID: string) => {
+    try {
+        const response = await fetch(`${BASE_URL}/api/stripe/delete-payment-method`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ paymentMethodID }),
         });
 
         const data = await response.json();

@@ -4,6 +4,7 @@ import { FIXED_SHIPPING_COST } from '@/actions/api';
 import { useCheckout } from '@/app/context/CheckoutContext';
 import { PaymentForm } from './sections/PaymentForm';
 import { ShippingForm } from './sections/ShippingDetailsForm';
+import SlideInFromBottomToTop from '@/shared/SlideIn';
 
 
 const OrderTotals = () => {
@@ -26,10 +27,14 @@ const OrderTotals = () => {
 };
 
 const SelectedShippingDetails = () => {
-    const { shippingInfo, setEditShippingInfo } = useCheckout();
+    const { shippingInfo, editShippingInfo, setEditShippingInfo } = useCheckout();
 
     return (
         <div className="flex flex-col">
+            <SlideInFromBottomToTop isOpen={editShippingInfo} onClose={() => setEditShippingInfo(false)} stickyScroll height={'90%'} title="Shipping Details">
+                <ShippingForm />
+            </SlideInFromBottomToTop>
+
             <div className="wide-block pb-1 pt-1">
                 <div className="section-title mb-1">Shipping Address</div>
                 <div className="card my-2">
@@ -73,7 +78,9 @@ export const CheckoutForm = () => {
 
     return (
         <div className="flex flex-col">
-            {renderView()}
+            <SelectedShippingDetails />
+            <OrderTotals />
+            <PaymentForm />
         </div>
     );
 };

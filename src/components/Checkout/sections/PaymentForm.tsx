@@ -1,14 +1,19 @@
 'use client';
 import { BASE_URL, FIXED_SHIPPING_COST } from "@/actions/api";
-import { createOrder, createStripeSecret } from "@/actions/store-actions";
+import { createOrder, createStripeSecret, deleteSavedPaymentMethod } from "@/actions/store-actions";
 import { useCheckout } from "@/app/context/CheckoutContext";
 import { useCartStore } from "@/hooks/useCartStore";
 import { useUser } from "@/hooks/useUser";
+import { capitalize } from "@/utils/utils";
+import { IonIcon } from "@ionic/react";
 import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import clsx from "clsx";
+import { cardOutline, trashBinOutline } from "ionicons/icons";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { BiCard, BiLoader, BiLogoMastercard, BiLogoVisa } from "react-icons/bi";
 import Stripe from "stripe";
+import { SetupCardForm } from "./SetupCardForm";
 
 export const PaymentForm: React.FC = () => {
     const { cart, totalPrice, stripeIntent, setStripeIntent } = useCartStore();
@@ -24,7 +29,8 @@ export const PaymentForm: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [clientSecretError, setClientSecretError] = useState<string | null>(null);
     const [savedPaymentMethods, setSavedPaymentMethods] = useState<Stripe.PaymentMethod[]>([]);
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("");
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null);
+    const [paymentType, setPaymentType] = useState<"new" | "saved">("saved");
 
     const createPaymentIntent = async () => {
         setLoading(true);
@@ -66,8 +72,17 @@ export const PaymentForm: React.FC = () => {
             return;
         }
 
+        if (paymentType === "new" && !clientSecret) {
+            setErrorMessage("Failed to create payment intent. Please try again later.");
+            setLoading(false);
+            return;
+        } else if (paymentType === "saved" && !selectedPaymentMethod) {
+            setErrorMessage("Please select a payment method or add a new card.");
+            setLoading(false);
+            return;
+        }
+
         let intent: any | null = null;
-        console.log("Selected payment method", selectedPaymentMethod);
 
         if (selectedPaymentMethod) {
             // Handle payment with saved payment method
@@ -90,7 +105,6 @@ export const PaymentForm: React.FC = () => {
                 setLoading(false);
                 return;
             }
-
 
             const { paymentIntent, error } = await stripe.confirmPayment({
                 elements,
@@ -161,45 +175,82 @@ export const PaymentForm: React.FC = () => {
         </div>
     );
 
-    const handlePaymentMethodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedPaymentMethod(event.target.value);
+    const renderSavedCards = () => {
+        if (paymentType === "new") return null;
+
+        if (!savedPaymentMethods.length) {
+            return (
+                <SetupCardForm onComplete={createPaymentIntent} />
+            );
+        }
+
+        return (
+            <div className="grid grid-cols-1 gap-2">
+                {savedPaymentMethods.map((method, index) => (
+                    <SavedCard
+                        key={index}
+                        method={method}
+                        onClick={(id) => setSelectedPaymentMethod(id)}
+                        selectedCard={selectedPaymentMethod}
+                        onDeleted={() => {
+                            createPaymentIntent();
+                        }}
+                    />
+                ))}
+
+                <SetupCardForm onComplete={createPaymentIntent} />
+            </div>
+        );
     };
 
     return (
         <div className="flex flex-col">
             <div className="wide-block pb-1 pt-1">
-                <div className="section-title mb-1">Payment Details</div>
-                <form onSubmit={handleSubmit}>
-                    {((!clientSecret || !stripe || !elements) && !clientSecretError) ? renderLoading() : (
-                        <div className="my-3">
-                            {savedPaymentMethods.length > 0 && (
-                                <div className="my-3">
-                                    <div className="section-title mb-1">Saved Cards</div>
-                                    <div className="grid grid-cols-1 gap-2">
-                                        {savedPaymentMethods.map((method, index) => (
-                                            <div key={index} className="card py-1.5 px-3">
-                                                <div className="flex justify-between items-center">
-                                                    <div>
-                                                        <span>{method.card?.brand} ending in {method.card?.last4}</span>
-                                                    </div>
-                                                    <div>
-                                                        <input type="radio" name="payment_method" value={method.id} onChange={handlePaymentMethodChange} />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                <div className="section-title">Payment Details</div>
 
-                            {clientSecret && (
+                {((!clientSecret || !stripe || !elements) && !clientSecretError) ? renderLoading() : (
+                    <div className="">
+                        {/* tab options for using saved cards or stripe element */}
+                        <div className="flex justify-between items-center mb-1">
+                            <div className="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    className={clsx(
+                                        "text-sm mb-1 mr-3",
+                                        paymentType === "saved" ? "text-primary underline font-semibold" : "text-on-primary"
+                                    )}
+                                    onClick={() => setPaymentType("saved")}
+                                >
+                                    Saved Cards
+                                </button>
+                                <button
+                                    type="button"
+                                    className={clsx(
+                                        "text-sm mb-1 mr-3",
+                                        paymentType === "new" ? "text-primary underline font-semibold" : "text-on-primary"
+                                    )}
+                                    onClick={() => {
+                                        setPaymentType("new");
+                                        setSelectedPaymentMethod(null);
+                                    }}
+                                >
+                                    New Card
+                                </button>
+                            </div>
+                        </div>
+
+                        {renderSavedCards()}
+
+                        <form onSubmit={handleSubmit}>
+                            {(clientSecret && paymentType === "new") && (
                                 <PaymentElement
                                     options={{
-                                        layout: 'accordion',
+                                        layout: 'tabs',
                                         fields: {
                                             billingDetails: {
                                                 address: {
                                                     postalCode: "never",
+                                                    country: "never",
                                                 }
                                             }
                                         }
@@ -234,10 +285,67 @@ export const PaymentForm: React.FC = () => {
                                     {!loading ? `Place Order` : "Processing..."}
                                 </button>
                             )}
-                        </div>
-                    )}
-                </form>
+                        </form>
+                    </div>
+                )}
             </div>
+        </div>
+    );
+};
+
+const renderCardLogo = (brand: string) => {
+    switch (brand) {
+        case "visa":
+            return <BiLogoVisa size={44} />;
+        case "mastercard":
+            return <BiLogoMastercard size={44} />;
+        case "amex":
+            return <i className="fab fa-cc-amex text-3xl mx-1"></i>;
+        default:
+            return <IonIcon icon={cardOutline} className="text-4xl mx-1" />;
+    }
+};
+
+const SavedCard: React.FC<{ method: Stripe.PaymentMethod, onClick: (id: string) => void; selectedCard?: string | null; onDeleted: () => void; }> = (
+    { method,
+        onClick,
+        selectedCard,
+        onDeleted
+    }
+) => {
+    const [deleting, setDeleting] = useState(false);
+
+    const onDelete = async () => {
+        if (confirm("Are you sure you want to delete this card?") === false) return;
+
+        setDeleting(true);
+
+        try {
+            await deleteSavedPaymentMethod(method.id);
+            setDeleting(false);
+            onDeleted();
+        } catch (error) {
+            setDeleting(false);
+            console.error(error);
+        }
+    };
+
+    return (
+        <div className={clsx(
+            "rounded-md py-1.5 px-3 cursor-pointer border border-solid flex justify-between items-center transition-all duration-300",
+            selectedCard === method.id ? "bg-primary text-white" : "bg-surface text-on-surface",
+            "hover:scale-105",
+            deleting && "opacity-50"
+        )}>
+            <div className="flex items-center gap-2 w-full" onClick={() => onClick(method.id)}>
+                {renderCardLogo(method.card?.brand || "")}
+                <div className="flex flex-col">
+                    <span>{capitalize(method.card?.brand || "")} xxxx {method.card?.last4}</span>
+                    <span className="text-xs text-on-surface opacity-50">Expires {method.card?.exp_month}/{method.card?.exp_year}</span>
+                </div>
+            </div>
+
+            {deleting ? <BiLoader className="animate-spin text-lg" /> : <IonIcon icon={trashBinOutline} className="text-lg" onClick={onDelete} />}
         </div>
     );
 };

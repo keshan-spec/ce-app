@@ -1,7 +1,8 @@
 'use client';
+import { addBackgroundOverlay, removeBackgroundOverlay } from '@/utils/utils';
 import { Transition } from '@headlessui/react';
 import clsx from 'clsx';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSwipeable } from 'react-swipeable';
 
 interface SlideInFromBottomToTopProps {
@@ -44,7 +45,7 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
             const { velocity, deltaY } = eventData;
 
             // Adjusting the deltaY and velocity thresholds
-            if (velocity > 1.5 && deltaY > 50) {
+            if (velocity > .5) {
                 onClose();
             }
         },
@@ -60,7 +61,9 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
             }
 
             document.body.style.overflow = 'hidden';
+            addBackgroundOverlay();
         } else {
+            removeBackgroundOverlay();
             document.body.style.overflow = 'auto';
         }
     }, [isOpen]);

@@ -58,9 +58,8 @@ export const ShippingForm: React.FC = () => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col items-center w-full'>
-            <div className="section full mt-2 mb-2 w-full">
-                <div className="section-title">Shipping Details</div>
-                <div className="wide-block pb-1 pt-1">
+            <div className="section full mb-2 w-full">
+                <div className="px-3 pb-1 pt-1">
                     {fields.map((field, idx) => (
                         <div className="form-group basic" key={idx}>
                             <div className="input-wrapper">
@@ -104,7 +103,7 @@ export const ShippingForm: React.FC = () => {
                     ))}
                 </div>
             </div>
-            <div className="flex items-center justify-between w-full gap-2 px-3">
+            <div className="fixed bottom-1 bg-white flex items-center justify-between w-full gap-2 px-3">
                 <button
                     type="button"
                     className="btn btn-danger w-full"

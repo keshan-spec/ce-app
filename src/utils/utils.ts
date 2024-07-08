@@ -10,3 +10,25 @@ export function debounce<T extends (...args: any[]) => void>(func: T, wait: numb
 export function convertToSubcurrency(amount: number) {
     return Math.round(amount * 100);
 }
+
+export const capitalize = (s: string) => {
+    if (typeof s !== 'string') return '';
+    return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
+export const removeBackgroundOverlay = () => {
+    const overlay = document.getElementById('overlay');
+    if (overlay) {
+        overlay.classList.add('hidden');
+    }
+};
+
+export const addBackgroundOverlay = () => {
+    const overlay = document.getElementById('overlay');
+    if (overlay) {
+        overlay.classList.remove('hidden');
+    } else {
+        // add overlay
+        document.body.insertAdjacentHTML('beforeend', '<div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden"></div>');
+    }
+};

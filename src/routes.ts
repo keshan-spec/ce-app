@@ -38,9 +38,11 @@ export const authRoutes = [
 export const apiAuthPrefix = "/api/auth";
 
 export const apiRoutes = [
-    "/api/cancel-payment-intent",
-    "/api/create-payment-intent",
-    "/api/get-payment-intent",
+    "/api/stripe/get-payment-intent",
+    "/api/stripe/create-payment-intent",
+    "/api/stripe/cancel-payment-intent",
+    "/api/stripe/create-setup-intent",
+    "/api/stripe/delete-payment-method",
     "/api/webhook",
 ];
 
