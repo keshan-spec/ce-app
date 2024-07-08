@@ -15,7 +15,7 @@ if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const Page = () => {
-    const isHydrated = useCartStore.persist.hasHydrated();
+    const isHydrated = useCartStore.persist?.hasHydrated();
 
     const { totalPrice, totalItems } = useCartStore();
 

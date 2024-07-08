@@ -30,7 +30,7 @@ export const CheckoutForm = () => {
 
     useEffect(() => {
         if (totalPrice <= 0 || totalItems <= 0 || cart.length === 0) {
-            console.log("No items in cart or total price is 0");
+            alert("No items in cart or total price is 0");
             return;
         }
 
