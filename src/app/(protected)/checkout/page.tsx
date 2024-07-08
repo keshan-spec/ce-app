@@ -30,6 +30,7 @@ const Page = () => {
                     amount: convertToSubcurrency(totalPrice + FIXED_SHIPPING_COST),
                     currency: 'gbp',
                     mode: 'payment',
+                    setup_future_usage: 'off_session',
                 }}>
                     <CheckoutProvider>
                         <CheckoutForm />

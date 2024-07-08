@@ -18,13 +18,13 @@ export async function POST(req: NextRequest) {
     const { amount, cart, customer, existing_intent } = await req.json() as RequestData;
 
     try {
+        const product_data = cart.map((item) => (
+            `${item.title} (${item.variationId}) x${item.qty}`
+        )).join(",\n");
+
+
         const metadata: Stripe.MetadataParam = {
-            products: JSON.stringify(cart.map((item) => ({
-                id: item.id,
-                name: item.title,
-                price: item.price,
-                qty: item.qty,
-            })))
+            Products: product_data,
         };
 
         // Search for an existing customer by email
@@ -43,6 +43,11 @@ export async function POST(req: NextRequest) {
                 name: customer.name,
             });
         }
+
+        const savedPaymentMethods = await stripe.paymentMethods.list({
+            customer: stripeCustomer.id,
+            type: "card",
+        });
 
         // Check if an existing intent is provided
         if (existing_intent) {
@@ -66,6 +71,7 @@ export async function POST(req: NextRequest) {
                 return NextResponse.json({
                     clientSecret: returnIntent.client_secret,
                     intentId: returnIntent.id,
+                    savedPaymentMethods: savedPaymentMethods.data,
                     isNew: false,
                 });
             }
@@ -80,12 +86,16 @@ export async function POST(req: NextRequest) {
             },
             customer: stripeCustomer.id,
             metadata: metadata,
+            // save the payment method for future use
+            setup_future_usage: "off_session",
+
         });
 
         return NextResponse.json({
             clientSecret: paymentIntent.client_secret,
             intentId: paymentIntent.id,
             isNew: true,
+            savedPaymentMethods: savedPaymentMethods.data,
         });
     } catch (error) {
         return NextResponse.json({

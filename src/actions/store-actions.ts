@@ -1,6 +1,5 @@
 "use server";
-
-import { StoreProduct, StoreProductCart } from "@/types/store";
+import { CreateOrderData, CreateOrderResponse, StoreProductCart, StoreProductResponse, StripeSecretResponse } from "@/types/store";
 import { BASE_URL, STORE_API_URL } from "./api";
 import { convertToSubcurrency } from "@/utils/utils";
 
@@ -24,12 +23,6 @@ export const getStoreProducts = async (page: number, limit = 10) => {
     return data;
 };
 
-interface StoreProductResponse {
-    data: StoreProduct;
-    success: boolean;
-}
-
-
 export const getStoreProduct = async (id: number): Promise<StoreProductResponse | null> => {
     const response = await fetch(`${STORE_API_URL}/wp-json/app/v1/get-product`, {
         cache: "no-cache",
@@ -52,7 +45,7 @@ export const getStoreProduct = async (id: number): Promise<StoreProductResponse 
 export const createStripeSecret = async (amount: number, cart: StoreProductCart[], customer: {
     name: string;
     email: string;
-}, existing_intent?: string) => {
+}, existing_intent: string | null = null): Promise<StripeSecretResponse> => {
     try {
         const response = await fetch(`${BASE_URL}/api/create-payment-intent`, {
             method: "POST",
@@ -90,29 +83,23 @@ export const getPaymentIntent = async (payment_intent: string) => {
     }
 };
 
-interface CreateOrderData {
-    cart: StoreProductCart[];
-    customer: {
-        first_name: string;
-        last_name: string;
-        email: string;
-        phone?: string;
-    };
-    shipping: {
-        address_1: string;
-        address_2?: string;
-        city: string;
-        country: string;
-        postcode: string;
-    };
-    payment_intent: string;
-}
+export const cancelPaymentIntent = async (payment_intent: string) => {
+    try {
+        const response = await fetch(`${BASE_URL}/api/cancel-payment-intent`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ payment_intent }),
+        });
 
-interface CreateOrderResponse {
-    success: boolean;
-    message?: string;
-    order_id?: number;
-}
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
 
 export const createOrder = async ({
     cart,

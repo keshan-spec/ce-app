@@ -1,3 +1,5 @@
+import Stripe from "stripe";
+
 export interface StoreProduct {
     id: number;
     title: string;
@@ -62,3 +64,40 @@ export type BillingFieldType = {
         value: string;
     }[];
 };
+
+export interface StoreProductResponse {
+    data: StoreProduct;
+    success: boolean;
+}
+
+export interface StripeSecretResponse {
+    clientSecret?: string;
+    intentId?: string;
+    isNew?: boolean;
+    error?: string;
+    savedPaymentMethods?: Stripe.PaymentMethod[];
+}
+
+export interface CreateOrderData {
+    cart: StoreProductCart[];
+    customer: {
+        first_name: string;
+        last_name: string;
+        email: string;
+        phone?: string;
+    };
+    shipping: {
+        address_1: string;
+        address_2?: string;
+        city: string;
+        country: string;
+        postcode: string;
+    };
+    payment_intent: string;
+}
+
+export interface CreateOrderResponse {
+    success: boolean;
+    message?: string;
+    order_id?: number;
+}
