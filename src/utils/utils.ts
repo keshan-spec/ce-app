@@ -8,5 +8,5 @@ export function debounce<T extends (...args: any[]) => void>(func: T, wait: numb
 
 
 export function convertToSubcurrency(amount: number) {
-    return amount * 100;
+    return Math.round(amount * 100);
 }

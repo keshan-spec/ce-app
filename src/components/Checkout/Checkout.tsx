@@ -38,8 +38,14 @@ export const CheckoutForm = () => {
             name: user.first_name + " " + user.last_name,
             email: user.email,
         })
-            .then((clientSecret) => {
-                if (clientSecret) setClientSecret(clientSecret);
+            .then((data) => {
+                const clientSecret = data?.clientSecret;
+
+                if (clientSecret) {
+                    setClientSecret(clientSecret);
+                } else {
+                    setClientSecretError(data.error || "Failed to create payment intent");
+                }
             })
             .catch((error) => {
                 console.error(error);
@@ -157,7 +163,7 @@ export const CheckoutForm = () => {
                 </div>
             </div>
 
-            {(!clientSecret || !stripe || !elements) ? (
+            {((!clientSecret || !stripe || !elements) && !clientSecretError) ? (
                 <div className="flex items-center justify-center h-full min-h-12">
                     <div
                         className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] text-theme-primary"
@@ -185,12 +191,20 @@ export const CheckoutForm = () => {
                             onClick={() => setErrorMessage("")} className="btn btn-sm btn-text-light close-button">OK</button>
                     </div>
 
-                    <button
-                        disabled={!stripe || loading}
-                        className="btn btn-primary btn-block disabled:opacity-50 disabled:animate-pulse mt-3"
-                    >
-                        {!loading ? `Place Order` : "Processing..."}
-                    </button>
+                    {clientSecretError ? (
+                        <div className="toast-box toast-bottom bg-danger text-center show !bottom-0">
+                            <div className="text text-center w-full">
+                                {clientSecretError}
+                            </div>
+                        </div>
+                    ) : (
+                        <button
+                            disabled={!stripe || loading}
+                            className="btn btn-primary btn-block disabled:opacity-50 disabled:animate-pulse mt-3"
+                        >
+                            {!loading ? `Place Order` : "Processing..."}
+                        </button>
+                    )}
                 </div>
             )}
         </form>

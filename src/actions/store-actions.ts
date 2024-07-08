@@ -63,10 +63,12 @@ export const createStripeSecret = async (amount: number, cart: StoreProductCart[
         });
 
         const data = await response.json();
-        return data.clientSecret;
-    } catch (error) {
+        return data;
+    } catch (error: any) {
         console.error(error);
-        return null;
+        return {
+            error: error.message || "Failed to create payment intent",
+        };
     }
 };
 
