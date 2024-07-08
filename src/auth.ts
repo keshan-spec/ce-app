@@ -26,6 +26,15 @@ export type AuthUser = {
     posts_count: number;
     profile_links: ProfileLinks;
     email: string;
+    billing_info?: {
+        phone?: string;
+        address_1: string;
+        address_2: string;
+        city: string;
+        country: string;
+        postcode: string;
+        state: string;
+    };
 };
 
 declare module "next-auth" {
@@ -61,6 +70,10 @@ export const {
                     session.user.posts_count = data.user.posts_count;
                     session.user.profile_links = data.user.profile_links;
                     session.user.email = data.user.email;
+
+                    if (data.user.billing_info) {
+                        session.user.billing_info = data.user.billing_info;
+                    }
                 }
             }
 

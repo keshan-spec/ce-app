@@ -50,3 +50,15 @@ export type ProductVariationTypes = {
     pa_colour?: string;
     'pa_item-size'?: string;
 };
+
+export type BillingFieldType = {
+    label: string;
+    name: string;
+    type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'country';
+    required?: boolean;
+    placeholder?: string;
+    options?: {
+        label: string;
+        value: string;
+    }[];
+};

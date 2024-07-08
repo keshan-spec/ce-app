@@ -1,5 +1,6 @@
 "use client";
 import { FIXED_SHIPPING_COST } from "@/actions/api";
+import { CheckoutProvider } from "@/app/context/CheckoutContext";
 import { CheckoutForm } from "@/components/Checkout/Checkout";
 import { useCartStore } from "@/hooks/useCartStore";
 import { convertToSubcurrency } from "@/utils/utils";
@@ -11,7 +12,6 @@ if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
     throw new Error("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set");
 }
 
-
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const Page = () => {
@@ -19,26 +19,24 @@ const Page = () => {
 
     const { totalPrice, totalItems } = useCartStore();
 
-    if (!isHydrated) {
-        return (
-            <main className="max-w-6xl mx-auto p-10 text-white text-center border m-10 rounded-md bg-gradient-to-tr from-blue-500 to-purple-500">
-                <h1 className="text-4xl font-extrabold mb-2">No items in cart</h1>
-            </main>
-        );
-    }
-
-    if (totalItems === 0) {
+    if (totalItems === 0 && isHydrated) {
         redirect("/store");
     }
 
     return (
-        <Elements stripe={stripePromise} options={{
-            amount: convertToSubcurrency(totalPrice + FIXED_SHIPPING_COST),
-            currency: 'gbp',
-            mode: 'payment',
-        }}>
-            <CheckoutForm />
-        </Elements>
+        <div suppressHydrationWarning>
+            {!isHydrated ? <p>Loading...</p> : (
+                <Elements stripe={stripePromise} options={{
+                    amount: convertToSubcurrency(totalPrice + FIXED_SHIPPING_COST),
+                    currency: 'gbp',
+                    mode: 'payment',
+                }}>
+                    <CheckoutProvider>
+                        <CheckoutForm />
+                    </CheckoutProvider>
+                </Elements>
+            )}
+        </div>
     );
 };
 

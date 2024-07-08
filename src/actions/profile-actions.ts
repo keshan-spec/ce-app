@@ -1,6 +1,7 @@
 "use server";
 import { API_URL } from "./api";
 import { getSessionUser } from "./auth-actions";
+import { UserSchema } from "@/zod-schemas/billing-form";
 
 export const getUserPosts = async (profileId: string, page: number, tagged = false, limit = 10) => {
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-user-posts`, {
@@ -96,6 +97,27 @@ export const removeProfileImage = async () => {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({ user_id: user.id }),
+    });
+
+    const data = await response.json();
+    return data;
+};
+
+export const updateBillingInfo = async (info: UserSchema) => {
+    const user = await getSessionUser();
+    if (!user) return;
+
+    if (!info) {
+        return;
+    }
+
+    const response = await fetch(`${API_URL}/wp-json/app/v1/update-billing-info`, {
+        cache: "no-cache",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: user.id, info }),
     });
 
     const data = await response.json();

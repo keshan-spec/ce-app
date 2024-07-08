@@ -8,6 +8,8 @@ interface State {
     totalItems: number;
     totalPrice: number;
     loading: boolean;
+    stripeIntent: string;
+    setStripeIntent: (intent: string) => void;
 }
 
 // Define the interface of the actions that can be performed in the Cart
@@ -16,6 +18,7 @@ interface Actions {
     removeFromCart: (Id: string) => void;
     updateQty: (Id: string, qty: number) => void;
     clearCart: () => void;
+    setStripeIntent: (intent: string) => void;
 }
 
 const INITIAL_STATE: State = {
@@ -23,6 +26,8 @@ const INITIAL_STATE: State = {
     totalItems: 0,
     totalPrice: 0,
     loading: false,
+    stripeIntent: "",
+    setStripeIntent: () => { },
 };
 
 export const useCartStore = create(persist<State & Actions>(
@@ -85,6 +90,9 @@ export const useCartStore = create(persist<State & Actions>(
         },
         clearCart: () => {
             set(INITIAL_STATE);
+        },
+        setStripeIntent: (intent: string) => {
+            set({ stripeIntent: intent });
         },
     }),
     {

@@ -52,14 +52,14 @@ export const getStoreProduct = async (id: number): Promise<StoreProductResponse 
 export const createStripeSecret = async (amount: number, cart: StoreProductCart[], customer: {
     name: string;
     email: string;
-}) => {
+}, existing_intent?: string) => {
     try {
         const response = await fetch(`${BASE_URL}/api/create-payment-intent`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ amount: convertToSubcurrency(amount), cart, customer }),
+            body: JSON.stringify({ amount: convertToSubcurrency(amount), cart, customer, existing_intent }),
         });
 
         const data = await response.json();
