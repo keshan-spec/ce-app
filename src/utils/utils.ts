@@ -29,6 +29,6 @@ export const addBackgroundOverlay = () => {
         overlay.classList.remove('hidden');
     } else {
         // add overlay
-        document.body.insertAdjacentHTML('beforeend', '<div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden"></div>');
+        document.body.insertAdjacentHTML('beforeend', '<div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50"></div>');
     }
 };

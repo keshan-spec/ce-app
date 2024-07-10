@@ -27,11 +27,13 @@ const OrderTotals = () => {
 };
 
 const SelectedShippingDetails = () => {
-    const { shippingInfo, editShippingInfo, setEditShippingInfo } = useCheckout();
+    const { shippingInfo, editShippingInfo, setEditShippingInfo, isShippingInfoValid } = useCheckout();
 
     return (
         <div className="flex flex-col">
-            <SlideInFromBottomToTop isOpen={editShippingInfo} onClose={() => setEditShippingInfo(false)} stickyScroll height={'90%'} title="Shipping Details">
+            <SlideInFromBottomToTop isOpen={editShippingInfo} onClose={() => {
+                isShippingInfoValid() && setEditShippingInfo(false);
+            }} title="Shipping Details">
                 <ShippingForm />
             </SlideInFromBottomToTop>
 
@@ -60,22 +62,6 @@ const SelectedShippingDetails = () => {
 };
 
 export const CheckoutForm = () => {
-    const { editShippingInfo } = useCheckout();
-
-    const renderView = () => {
-        if (editShippingInfo) {
-            return <ShippingForm />;
-        } else {
-            return (
-                <>
-                    <SelectedShippingDetails />
-                    <OrderTotals />
-                    <PaymentForm />
-                </>
-            );
-        }
-    };
-
     return (
         <div className="flex flex-col">
             <SelectedShippingDetails />

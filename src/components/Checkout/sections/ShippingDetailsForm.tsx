@@ -10,7 +10,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 const fields: BillingFieldType[] = [
     { label: "First Name", type: "text", name: "first_name", placeholder: "Enter your first name", required: true },
     { label: "Last Name", type: "text", name: "last_name", placeholder: "Enter your last name", required: true },
-    { label: "Email", type: "email", name: "email", placeholder: "Enter your email", required: true },
+    // { label: "Email", type: "email", name: "email", placeholder: "Enter your email", required: true },
     { label: "Phone", type: "tel", name: "phone", placeholder: "Enter your phone number", required: true },
     { label: "Address Line 1", type: "text", name: "address_1", placeholder: "Enter your address", required: true },
     { label: "Address Line 2", type: "text", name: "address_2", placeholder: "Enter your address" },
@@ -28,14 +28,14 @@ const fields: BillingFieldType[] = [
 ];
 
 export const ShippingForm: React.FC = () => {
-    const { shippingInfo, setShippingInfo, setEditShippingInfo } = useCheckout();
+    const { shippingInfo, setShippingInfo, setEditShippingInfo, isShippingInfoValid } = useCheckout();
 
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<UserSchema>({
         resolver: zodResolver(userSchema),
         defaultValues: {
             first_name: shippingInfo.first_name,
             last_name: shippingInfo.last_name,
-            email: shippingInfo.email,
+            // email: shippingInfo.email,
             phone: shippingInfo?.phone,
             address_1: shippingInfo?.address_1,
             address_2: shippingInfo?.address_2,
@@ -108,7 +108,7 @@ export const ShippingForm: React.FC = () => {
                     type="button"
                     className="btn btn-danger w-full"
                     onClick={() => setEditShippingInfo(false)}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !isShippingInfoValid()}
                 >
                     Cancel
                 </button>

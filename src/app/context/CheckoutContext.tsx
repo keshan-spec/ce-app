@@ -7,6 +7,7 @@ interface CheckoutContextProps {
     setShippingInfo: React.Dispatch<React.SetStateAction<UserSchema>>;
     editShippingInfo: boolean;
     setEditShippingInfo: React.Dispatch<React.SetStateAction<boolean>>;
+    isShippingInfoValid: () => boolean;
 }
 
 const CheckoutContext = createContext<CheckoutContextProps | undefined>(undefined);
@@ -25,7 +26,7 @@ export const CheckoutProvider: React.FC<{ children: ReactNode; }> = ({ children 
     const [shippingInfo, setShippingInfo] = useState<UserSchema>({
         first_name: user.first_name,
         last_name: user.last_name,
-        email: user.email,
+        // email: user.email,
         phone: user.billing_info?.phone || '',
         address_1: user.billing_info?.address_1 || '',
         address_2: user.billing_info?.address_2,
@@ -35,9 +36,22 @@ export const CheckoutProvider: React.FC<{ children: ReactNode; }> = ({ children 
         country: user.billing_info?.country || '',
     });
 
+    const isShippingInfoValid = (): boolean => {
+        // check if the required fields are filled
+        const requiredFields = ['first_name', 'last_name', 'phone', 'address_1', 'city', 'postcode', 'country'];
+
+        for (const field of requiredFields) {
+            if (!shippingInfo[field as keyof UserSchema]) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+
     const hasDefaultShippingInfo = (): boolean => {
         // check if the required fields are filled
-        const requiredFields = ['first_name', 'last_name', 'email', 'phone', 'address_1', 'city', 'postcode', 'country'];
+        const requiredFields = ['first_name', 'last_name', 'phone', 'address_1', 'city', 'postcode', 'country'];
 
         for (const field of requiredFields) {
             if (!shippingInfo[field as keyof UserSchema]) {
@@ -56,6 +70,7 @@ export const CheckoutProvider: React.FC<{ children: ReactNode; }> = ({ children 
             setShippingInfo,
             editShippingInfo,
             setEditShippingInfo,
+            isShippingInfoValid
         }}>
             {children}
         </CheckoutContext.Provider>

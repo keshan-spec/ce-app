@@ -11,7 +11,7 @@ import clsx from "clsx";
 import { cardOutline, trashBinOutline } from "ionicons/icons";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { BiCard, BiLoader, BiLogoMastercard, BiLogoVisa } from "react-icons/bi";
+import { BiLoader, BiLogoMastercard, BiLogoVisa } from "react-icons/bi";
 import Stripe from "stripe";
 import { SetupCardForm } from "./SetupCardForm";
 
@@ -46,6 +46,10 @@ export const PaymentForm: React.FC = () => {
             if (response?.isNew || !stripeIntent) {
                 console.log("Payment intent created", response);
                 setStripeIntent(response?.intentId);
+            }
+
+            if (!response.savedPaymentMethods || response.savedPaymentMethods.length === 0) {
+                setPaymentType("new");
             }
 
             if (response.savedPaymentMethods) {
@@ -122,7 +126,7 @@ export const PaymentForm: React.FC = () => {
                                 postal_code: shippingInfo.postcode,
                                 state: shippingInfo.state,
                             },
-                            email: shippingInfo.email,
+                            email: user.email,
                             name: `${shippingInfo.first_name} ${shippingInfo.last_name}`,
                             phone: shippingInfo.phone,
                         }
@@ -145,7 +149,6 @@ export const PaymentForm: React.FC = () => {
             customer: {
                 first_name: shippingInfo.first_name,
                 last_name: shippingInfo.last_name,
-                email: shippingInfo.email,
                 phone: shippingInfo.phone,
             },
             shipping: shippingInfo,
