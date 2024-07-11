@@ -5,6 +5,7 @@ import { Post } from "@/types/posts";
 import { useRouter } from "next/navigation";
 
 import { useCallback } from "react";
+import { useUser } from "./useUser";
 
 interface TopNavProps {
     pathname: string;
@@ -31,6 +32,7 @@ export const menuIconLessPaths = [
     '/cart',
     '/checkout',
     '/checkout/payment-success',
+    '/profile/edit/'
 ];
 
 export const useTopNav = ({
@@ -38,8 +40,10 @@ export const useTopNav = ({
 }: TopNavProps): TopNavType => {
     const isGarageViewPage = pathname.includes('/profile/garage/');
     const isPostViewPage = pathname.includes('/posts/');
+    const isProfileEditView = pathname.includes('/profile/edit/');
     const param = pathname.split('/').pop();
     const router = useRouter();
+    const { user } = useUser();
 
     const showMenuIcon = () => {
         if (menuIconLessPaths.some((path) => pathname.includes(path))) {
@@ -56,6 +60,10 @@ export const useTopNav = ({
 
         if (isPostViewPage) {
             return 'Posts';
+        }
+
+        if (isProfileEditView) {
+            return `@${user?.username}`;
         }
 
         return '';
@@ -84,6 +92,10 @@ export const useTopNav = ({
             return 'User Posts';
         }
 
+        if (isProfileEditView) {
+            return 'Edit Profile';
+        }
+
         return '';
     }, [isGarageViewPage, isPostViewPage, param]);
 
@@ -99,9 +111,9 @@ export const useTopNav = ({
         returnTo: () => returnTo(),
         title: getHeaderTitle(),
         subtitle: getSubtitle(),
-        mode: isGarageViewPage || isPostViewPage ? 'view-page' : 'default',
+        mode: isGarageViewPage || isPostViewPage || isProfileEditView ? 'view-page' : 'default',
         showMenuIcon: showMenuIcon(),
-        showHeaderIcons: !isGarageViewPage && !isPostViewPage,
-        showLogo: !isGarageViewPage && !isPostViewPage,
+        showHeaderIcons: !isGarageViewPage && !isPostViewPage && !isProfileEditView,
+        showLogo: !isGarageViewPage && !isPostViewPage && !isProfileEditView,
     };
 };

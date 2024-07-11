@@ -48,18 +48,20 @@ export const EditProfilePicture: React.FC<EditProfilePictureProps> = ({
                             </button>
                         </li>
 
-                        <li>
-                            <button className="btn btn-list" data-bs-dismiss="offcanvas" onClick={() => {
-                                if (confirm("Are you sure you want to remove your profile picture?")) {
-                                    onRemoveImage();
-                                }
-                            }}>
-                                <span>
-                                    <IonIcon icon={removeCircle} role="img" className="md hydrated" aria-label="remove circle" />
-                                    Remove Image
-                                </span>
-                            </button>
-                        </li>
+                        {profile_image && (
+                            <li>
+                                <button className="btn btn-list" data-bs-dismiss="offcanvas" onClick={() => {
+                                    if (confirm("Are you sure you want to remove your profile picture?")) {
+                                        onRemoveImage();
+                                    }
+                                }}>
+                                    <span>
+                                        <IonIcon icon={removeCircle} role="img" className="md hydrated" aria-label="remove circle" />
+                                        Remove Image
+                                    </span>
+                                </button>
+                            </li>
+                        )}
 
                         <li className="action-divider"></li>
                         <li>

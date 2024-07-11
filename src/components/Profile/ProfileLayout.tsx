@@ -15,6 +15,7 @@ import { ProfileLinksExternal } from './ProfileLinks';
 import { EditProfilePicture } from '../ActionSheets/ProfilePicture';
 import { EditProfile } from './Settings/EditProfile';
 import Link from 'next/link';
+import { ProfileEditPanel } from './Settings/ProfileEditPanel';
 
 interface ProfileLayoutProps {
     profileId?: string;
@@ -198,12 +199,10 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
 
                     {(isLoggedIn && canEditProfile) && (
                         <div className='flex gap-2'>
-                            <Link className="profile-link"
-                                href='/profile/edit'
-                            >
-                                Edit Profile
-                            </Link>
+                            <div className="profile-link" data-bs-toggle="offcanvas" data-bs-target="#profileActions">Edit Profile</div>
 
+
+                            <ProfileEditPanel />
                             <button className="profile-link dark-bg" data-location="profile-edit.php">Edit Garage</button>
                         </div>
                     )}

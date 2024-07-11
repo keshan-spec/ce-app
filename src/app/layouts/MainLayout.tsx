@@ -33,7 +33,7 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
     }, []);
 
     const allowPullToRefresh = () => {
-        if (pathname.includes('/checkout') || pathname.includes('/checkout/payment-success')) {
+        if (pathname.includes('/checkout') || pathname.includes('/checkout/payment-success') || pathname.includes('/profile/edit/')) {
             return false;
         }
 

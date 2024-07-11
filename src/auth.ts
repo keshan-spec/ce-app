@@ -8,6 +8,9 @@ export type ProfileLinks = {
     tiktok: string;
     facebook: string;
     email: string;
+    youtube: string;
+    custodian: string;
+    mivia: string;
     links: {
         label: string;
         url: string;
