@@ -3,8 +3,7 @@ import { ProfileLinks } from "@/auth";
 import { Button } from "@/shared/Button";
 import { IonIcon } from "@ionic/react";
 import clsx from "clsx";
-import { closeOutline, linkOutline, logoFacebook, logoInstagram, logoTiktok, mailOutline } from "ionicons/icons";
-import Link from "next/link";
+import { closeOutline, linkOutline, logoFacebook, logoInstagram, logoTiktok, logoYoutube, mailOutline } from "ionicons/icons";
 import { useState } from "react";
 
 interface ProfileLinksProps {
@@ -14,21 +13,22 @@ interface ProfileLinksProps {
 
 const socialLinks = {
     instagram: 'https://www.instagram.com/',
-    tiktok: 'https://www.tiktok.com/',
+    tiktok: 'https://www.tiktok.com/@',
     facebook: 'https://www.facebook.com/',
-    email: 'mailto:'
+    youtube: 'https://www.youtube.com/',
 };
 
 export const ProfileLinksExternal: React.FC<ProfileLinksProps> = ({
     profileLinks,
     isOwner
 }) => {
-    const [externalLinks, setExternalLinks] = useState(profileLinks.links || []);
+    const [externalLinks, setExternalLinks] = useState(profileLinks.external_links || []);
 
-    const handleSocialLinkClick = (type: 'instagram' | 'tiktok' | 'facebook' | 'email') => {
+    const handleSocialLinkClick = (type: 'instagram' | 'tiktok' | 'facebook' | 'youtube') => {
         if (!profileLinks[type]) return;
 
         const url = socialLinks[type] + profileLinks[type];
+
         if (url) {
             window.open(url, '_blank');
         }
@@ -36,14 +36,20 @@ export const ProfileLinksExternal: React.FC<ProfileLinksProps> = ({
 
     return (
         <div className="profile-links-external flex">
-            <div className="profile-link social-link" data-location="https://www.instagram.com/" data-external="1"
+            <div className={clsx(
+                "profile-link social-link",
+                !profileLinks.instagram && 'opacity-70'
+            )}
                 onClick={() => {
                     handleSocialLinkClick('instagram');
                 }}>
                 <IonIcon icon={logoInstagram} className="profile-icon md hydrated" role="img" aria-label="logo instagram" />
                 <span>Instagram</span>
             </div>
-            <div className="profile-link social-link" data-location="https://www.facebook.com/" data-external="1"
+            <div className={clsx(
+                "profile-link social-link",
+                !profileLinks.facebook && 'opacity-70'
+            )}
                 onClick={() => {
                     handleSocialLinkClick('facebook');
                 }}>
@@ -51,7 +57,10 @@ export const ProfileLinksExternal: React.FC<ProfileLinksProps> = ({
 
                 <span>Facebook</span>
             </div>
-            <div className="profile-link social-link" data-location="https://www.tiktok.com/" data-external="1"
+            <div className={clsx(
+                "profile-link social-link",
+                !profileLinks.tiktok && 'opacity-70'
+            )}
                 onClick={() => {
                     handleSocialLinkClick('tiktok');
                 }}>
@@ -59,15 +68,21 @@ export const ProfileLinksExternal: React.FC<ProfileLinksProps> = ({
 
                 <span>Tiktok</span>
             </div>
-            <div className="profile-link social-link" data-location="mailto:" data-external="1"
+            <div className={clsx(
+                "profile-link social-link",
+                !profileLinks.youtube && 'opacity-70'
+            )}
                 onClick={() => {
-                    handleSocialLinkClick('email');
+                    handleSocialLinkClick('youtube');
                 }}>
-                <IonIcon icon={mailOutline} className="profile-icon md hydrated" role="img" aria-label="mail outline" />
-                <span>Email</span>
+                <IonIcon icon={logoYoutube} className="profile-icon md hydrated" role="img" aria-label="mail outline" />
+                <span>Youtube</span>
             </div>
 
-            <div className="profile-link social-link" data-bs-toggle="offcanvas" data-bs-target="#moreLinks">
+            <div className={clsx(
+                "profile-link social-link",
+                externalLinks.length === 0 && 'opacity-70'
+            )} data-bs-toggle="offcanvas" data-bs-target="#moreLinks">
                 <IonIcon icon={linkOutline} className="profile-icon md hydrated" role="img" aria-label="link outline" />
                 <span>Links</span>
             </div>
@@ -80,26 +95,21 @@ export const ProfileLinksExternal: React.FC<ProfileLinksProps> = ({
                             <span>More Links</span>
                         </div>
 
-                        {externalLinks.length > 0 ? (
-                            <ul className="listview image-listview text">
-                                {externalLinks.map((link, index) => (
-                                    <li key={index}>
-                                        <a href={link.url} data-external="1" className="item" target="_blank" rel="noreferrer">
-                                            <div className="in">
-                                                <div>{link.label}</div>
-                                            </div>
+                        {externalLinks?.length > 0 ? (
+                            <ul className="listview simple-listview mb-2 border-top-0">
+                                {externalLinks?.map(({
+                                    id, link
+                                }, i) => (
+                                    <li className="pl-0 flex items-center" key={i}>
+                                        <span className='font-medium'>{link.label}</span>
+                                        <a href={link.url} target='_'>
+                                            <IonIcon icon={linkOutline} role="img" className="text-lg" aria-label="link outline" />
                                         </a>
                                     </li>
                                 ))}
                             </ul>
                         ) : (
-                            <div className="flex w-full">
-                                <AddLinkForm
-                                    onLinkAdd={({ label, url }) => {
-                                        setExternalLinks([...externalLinks, { label, url }]);
-                                    }}
-                                />
-                            </div>
+                            <div className="text-center py-4">No custom links added</div>
                         )}
                     </div>
 

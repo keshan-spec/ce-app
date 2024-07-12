@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { BiLoader, BiLogoMastercard, BiLogoVisa } from "react-icons/bi";
 import Stripe from "stripe";
 import { SetupCardForm } from "./SetupCardForm";
+import { Loader } from "@/components/Loader";
 
 export const PaymentForm: React.FC = () => {
     const { cart, totalPrice, stripeIntent, setStripeIntent } = useCartStore();
@@ -156,7 +157,7 @@ export const PaymentForm: React.FC = () => {
         });
 
         if (!response?.success) {
-            setErrorMessage(response?.message);
+            setErrorMessage(`Failed to create order. ${response?.message}`);
             setLoading(false);
             return;
         }
@@ -208,6 +209,8 @@ export const PaymentForm: React.FC = () => {
 
     return (
         <div className="flex flex-col">
+            {loading && <Loader transulcent />}
+
             <div className="wide-block pb-1 pt-1">
                 <div className="section-title">Payment Details</div>
 

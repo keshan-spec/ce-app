@@ -1,59 +1,88 @@
 'use client';
-import { removeProfileImage, updateProfileImage } from "@/actions/profile-actions";
+import { removeProfileImage, updateCoverImage, updateProfileImage } from "@/actions/profile-actions";
 import { EditProfilePicture } from "@/components/ActionSheets/ProfilePicture";
+import { Loader } from "@/components/Loader";
 import { useUser } from "@/hooks/useUser";
-import { useEffect, useRef, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useRef, useState } from "react";
+
+interface ImageUploadResponse {
+    success: boolean;
+    image_url?: string;
+    error?: string;
+}
 
 export const EditImages: React.FC = () => {
     const { user, isLoggedIn } = useUser();
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const msgRef = useRef<HTMLDivElement>(null);
 
-    const onRemoveImage = async () => {
-        try {
-            const response = await removeProfileImage();
+    const removeImageMutation = useMutation({
+        mutationFn: async (type: 'profile' | 'cover') => {
+            const apiFunc = type === 'profile' ? removeProfileImage : removeProfileImage;
+            const response = await apiFunc();
             if (response.error) {
                 throw new Error(response.error);
             }
-        } catch (error: any) {
-            setErrorMessage(error.message || 'An error occurred while removing your profile image');
+            return response;
+        },
+        onError: (error: any, variables, context) => {
+            setErrorMessage(error.message || `An error occurred while removing your ${variables} image`);
         }
-    };
+    });
 
-    const onUploadImage = async (image: File) => {
-        try {
-            // convert image to base64
+    const uploadImageMutation = useMutation({
+        mutationFn: async ({ image, type }: { image: File, type: 'profile' | 'cover'; }) => {
+            const apiFunc = type === 'profile' ? updateProfileImage : updateCoverImage;
+
             let base64: string = '';
             const reader = new FileReader();
             reader.readAsDataURL(image);
-            reader.onload = async () => {
-                base64 = reader.result as string;
 
-                // upload image
-                await updateProfileImage(base64);
-            };
-        } catch (error: any) {
-            setErrorMessage(error.message || 'An error occurred while uploading your profile image');
+            return new Promise<ImageUploadResponse>((resolve, reject) => {
+                reader.onload = async () => {
+                    base64 = reader.result as string;
+                    try {
+                        const response = await apiFunc(base64);
+                        resolve(response);
+                    } catch (error) {
+                        reject(error);
+                    }
+                };
+                reader.onerror = () => {
+                    reject(new Error('Failed to read file'));
+                };
+            });
+        },
+        onError: (error: any, variables, context) => {
+            setErrorMessage(error.message || `An error occurred while uploading your ${variables.type} image`);
+        },
+        onSuccess: (data, variables, context) => {
+            console.log(data, variables, context);
+            if (!data.image_url) return;
+
+            if (variables.type === 'profile') {
+                user.profile_image = data.image_url;
+            } else {
+                user.cover_image = data.image_url;
+            }
         }
+    });
+
+    const onRemoveImage = (type: 'profile' | 'cover') => {
+        removeImageMutation.mutate(type);
     };
 
-    useEffect(() => {
-        if (errorMessage) {
-            msgRef.current?.classList.add('show');
-            setTimeout(() => {
-                setErrorMessage(null);
-            }, 15000);
-        } else {
-            msgRef.current?.classList.remove('show');
-        }
-    }, [errorMessage]);
+    const onUploadImage = (image: File, type: 'profile' | 'cover') => {
+        uploadImageMutation.mutate({ image, type });
+    };
 
     if (!isLoggedIn || !user) return null;
 
     return (
         <>
+            {removeImageMutation.isPending || uploadImageMutation.isPending && <Loader transulcent />}
             <div id="toast-16" ref={msgRef} className="toast-box toast-top bg-danger">
                 <div className="in">
                     <div className="text">
@@ -70,36 +99,37 @@ export const EditImages: React.FC = () => {
                 <div className="wide-block pb-1 pt-1">
                     <ul className="listview image-listview no-line no-space flush">
                         <li>
-                            <div className="item">
+                            <div className="item w-full">
                                 <EditProfilePicture
+                                    type="profile"
                                     user_id={user.id}
                                     profile_image={user.profile_image}
                                     onRemoveImage={onRemoveImage}
                                     onUploadImage={onUploadImage}
+                                // isLoading={removeImageMutation.isPending || uploadImageMutation.isPending}
                                 />
                             </div>
                         </li>
-
                     </ul>
                 </div>
             </div>
             <div className="section full mt-1 mb-2">
                 <div className="section-title">Cover Image</div>
                 <div className="wide-block pb-1 pt-1">
-
                     <ul className="listview image-listview no-line no-space flush">
                         <li>
                             <div className="item">
-                                <img src="assets/img/sample/avatar/avatar1.jpg" alt="image" className="image" />
-                                <div className="in">
-                                    <a className="form-group basic">
-                                        <span>Cover image</span>
-                                    </a>
-                                </div>
+                                <EditProfilePicture
+                                    type="cover"
+                                    user_id={user.id}
+                                    profile_image={user.cover_image}
+                                    onRemoveImage={onRemoveImage}
+                                    onUploadImage={onUploadImage}
+                                // isLoading={removeImageMutation.isPending || uploadImageMutation.isPending}
+                                />
                             </div>
                         </li>
                     </ul>
-
                 </div>
             </div>
         </>

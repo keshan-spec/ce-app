@@ -9,10 +9,12 @@ import { settingsOutline } from 'ionicons/icons';
 
 interface TabsProps {
     profileId: string;
+    thirdPersionView: boolean;
 }
 
 export const Tabs: React.FC<TabsProps> = ({
-    profileId
+    profileId,
+    thirdPersionView = false
 }) => {
     const [activeTab, setActiveTab] = useState<'garage' | 'feed' | 'tagged-posts' | 'bookmarks' | 'settings'>('garage');
 
@@ -58,11 +60,13 @@ export const Tabs: React.FC<TabsProps> = ({
                                 Bookmarks
                             </a>
                         </li>  */}
-                        <li className="nav-item">
-                            <a className="nav-link" data-bs-toggle="tab" href="#settings" role="tab" onClick={() => setActiveTab('settings')}>
-                                <IonIcon icon={settingsOutline} role="img" className="md hydrated" aria-label="settings outline" />
-                            </a>
-                        </li>
+                        {thirdPersionView && (
+                            <li className="nav-item">
+                                <a className="nav-link" data-bs-toggle="tab" href="#settings" role="tab" onClick={() => setActiveTab('settings')}>
+                                    <IonIcon icon={settingsOutline} role="img" className="md hydrated" aria-label="settings outline" />
+                                </a>
+                            </li>
+                        )}
                     </ul>
                 </div>
             </div>

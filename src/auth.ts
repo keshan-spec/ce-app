@@ -3,6 +3,14 @@ import NextAuth, { DefaultSession } from "next-auth";
 import authConfig from "@/auth.config";
 import { getUserDetails } from "@/actions/auth-actions";
 
+export type ExternalLinkType = {
+    id: string;
+    link: {
+        label: string;
+        url: string;
+    };
+};
+
 export type ProfileLinks = {
     instagram: string;
     tiktok: string;
@@ -11,10 +19,7 @@ export type ProfileLinks = {
     youtube: string;
     custodian: string;
     mivia: string;
-    links: {
-        label: string;
-        url: string;
-    }[];
+    external_links: ExternalLinkType[];
 };
 
 export type AuthUser = {
@@ -22,8 +27,11 @@ export type AuthUser = {
     first_name: string;
     last_name: string;
     username: string;
+    can_update_username?: boolean;
+    next_update_username?: string;
     roles: string[];
     profile_image: string;
+    cover_image: string;
     followers: string[];
     following: string[];
     posts_count: number;
@@ -73,6 +81,9 @@ export const {
                     session.user.posts_count = data.user.posts_count;
                     session.user.profile_links = data.user.profile_links;
                     session.user.email = data.user.email;
+                    session.user.cover_image = data.user.cover_image;
+                    session.user.can_update_username = data.user.can_update_username;
+                    session.user.next_update_username = data.user.next_update_username;
 
                     if (data.user.billing_info) {
                         session.user.billing_info = data.user.billing_info;

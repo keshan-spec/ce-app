@@ -50,7 +50,7 @@ const Modal: React.FC<ModalProps> = ({
                                     {title}
                                 </Dialog.Title>
                             )}
-                            <div className="relative w-full">
+                            <div className="relative w-fit">
                                 {children}
                             </div>
                             {actions && (

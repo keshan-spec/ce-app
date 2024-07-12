@@ -8,6 +8,7 @@ const API_URL = process.env.HEADLESS_CMS_API_URL ?? "https://www.carevents.com";
 
 import { auth } from "@/auth";
 import { NewUser } from "@/app/context/SignUpProvider";
+import { UserDetailsForm } from "@/zod-schemas/profile";
 
 export const getSessionUser = async () => {
     const session = await auth();
@@ -127,24 +128,49 @@ export const handleSignUp = async (user: NewUser): Promise<SignUpResponse | null
     }
 };
 
-export const updateUsername = async (user: { user_id: number; username: string; }) => {
-    try {
-        const response = await fetch(`${API_URL}/wp-json/app/v1/update-username`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(user),
-        });
+export const updateUsername = async (user: { user_id: number | string; username: string; }) => {
+    const response = await fetch(`${API_URL}/wp-json/app/v1/update-username`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+    });
 
-        const data = await response.json();
+    const data = await response.json();
+    return data;
+};
 
-        if (response.status !== 200) {
-            throw new Error(data.message);
-        }
+export const updatePassword = async (new_password: string, old_password: string) => {
+    const user = await getSessionUser();
+    if (!user) return;
 
-        return data;
-    } catch (error) {
-        return error;
-    }
+    const response = await fetch(`${API_URL}/wp-json/app/v1/update-password`, {
+        cache: "no-cache",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: user.id, new_password, old_password }),
+    });
+
+    const data = await response.json();
+    return data;
+};
+
+
+export const updateUserDetails = async (details: UserDetailsForm, email_changed: boolean) => {
+    const user = await getSessionUser();
+    if (!user) return;
+
+    const response = await fetch(`${API_URL}/wp-json/app/v1/update-user-details`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: user.id, ...details, email_changed }),
+    });
+
+    const data = await response.json();
+    return data;
 };

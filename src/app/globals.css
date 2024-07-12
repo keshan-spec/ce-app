@@ -17,6 +17,14 @@ body {
     line-height: 1.65;
 }
 
+.error-message {
+    @apply text-red-500 text-xs mt-1;
+}
+
+.invalid-field-border {
+    border-bottom: 1px solid red !important;
+}
+
 .animate__fadeOut {
     animation: fadeOut 0.5s;
 }

@@ -1,4 +1,5 @@
 "use server";
+import { SocialMediaLinks } from "@/zod-schemas/profile";
 import { API_URL } from "./api";
 import { getSessionUser } from "./auth-actions";
 import { UserSchema } from "@/zod-schemas/billing-form";
@@ -41,16 +42,20 @@ export const maybeFollowUser = async (profileId: string) => {
 };
 
 export type ProfileLinks = {
-    type: 'instagram' | 'tiktok' | 'facebook' | 'email';
-    link: string;
+    type: 'instagram' | 'tiktok' | 'facebook' | 'email' | 'youtube' | 'custodian' | 'mivia' | 'external_links';
+    link: string | { label: string; url: string; };
 };
 
 export const addUserProfileLinks = async ({
     link,
     type,
-}: ProfileLinks) => {
+}: ProfileLinks): Promise<{
+    success: boolean;
+    message: string;
+    id?: string;
+} | null> => {
     const user = await getSessionUser();
-    if (!user) return;
+    if (!user) return null;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/add-profile-links`, {
         cache: "no-cache",
@@ -59,6 +64,40 @@ export const addUserProfileLinks = async ({
             "Content-Type": "application/json",
         },
         body: JSON.stringify({ user_id: user.id, link, type }),
+    });
+
+    const data = await response.json();
+    return data;
+};
+
+export const updateSocialLinks = async (links: SocialMediaLinks) => {
+    const user = await getSessionUser();
+    if (!user) return;
+
+    const response = await fetch(`${API_URL}/wp-json/app/v1/update-social-links`, {
+        cache: "no-cache",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: user.id, links }),
+    });
+
+    const data = await response.json();
+    return data;
+};
+
+export const removeProfileLink = async (linkId: string) => {
+    const user = await getSessionUser();
+    if (!user) return;
+
+    const response = await fetch(`${API_URL}/wp-json/app/v1/remove-profile-link`, {
+        cache: "no-cache",
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: user.id, link_id: linkId }),
     });
 
     const data = await response.json();
@@ -74,6 +113,23 @@ export const updateProfileImage = async (image: string) => {
     if (!user) return;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/update-profile-image`, {
+        cache: "no-cache",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: user.id, image }),
+    });
+
+    const data = await response.json();
+    return data;
+};
+
+export const updateCoverImage = async (image: string) => {
+    const user = await getSessionUser();
+    if (!user) return;
+
+    const response = await fetch(`${API_URL}/wp-json/app/v1/update-cover-image`, {
         cache: "no-cache",
         method: "POST",
         headers: {

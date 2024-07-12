@@ -16,6 +16,7 @@ import { EditProfilePicture } from '../ActionSheets/ProfilePicture';
 import { EditProfile } from './Settings/EditProfile';
 import Link from 'next/link';
 import { ProfileEditPanel } from './Settings/ProfileEditPanel';
+import { PopUpProfilePicture } from './PopUpProfilePicture';
 
 interface ProfileLayoutProps {
     profileId?: string;
@@ -163,15 +164,12 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
         <>
             <div className="profile-background"
                 style={{
-                    backgroundImage: "url(https://www.motortrend.com/uploads/2023/08/008-2024-Ford-Mustang-GT-Premium-Performance-pack-front-three-quarters.jpg)",
+                    backgroundImage: `url(${user.cover_image || "https://www.motortrend.com/uploads/2023/08/008-2024-Ford-Mustang-GT-Premium-Performance-pack-front-three-quarters.jpg"})`
                 }}
             />
             <div className="section mt-3">
                 <div className="profile-head">
-                    <div>
-                        <img src={user.profile_image || PLACEHOLDER_PFP}
-                            alt="avatar" className="profile-image object-cover" />
-                    </div>
+                    <PopUpProfilePicture image={user.profile_image || PLACEHOLDER_PFP} />
                     <div className="in">
                         <h3 className="name profile-username">@{user.username}</h3>
                         <h5 className="subtext profile-name">{user.first_name} {user.last_name}</h5>
@@ -200,8 +198,6 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                     {(isLoggedIn && canEditProfile) && (
                         <div className='flex gap-2'>
                             <div className="profile-link" data-bs-toggle="offcanvas" data-bs-target="#profileActions">Edit Profile</div>
-
-
                             <ProfileEditPanel />
                             <button className="profile-link dark-bg" data-location="profile-edit.php">Edit Garage</button>
                         </div>
@@ -216,7 +212,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                 </div>
             </div>
 
-            <Tabs profileId={profileId || user.id} />
+            <Tabs profileId={profileId || user.id} thirdPersionView={!currentUser} />
         </>
     );
 };

@@ -1,20 +1,24 @@
+'use client';
+import QRScanner from '@/components/Scanner/Scanner';
 import { SidePanel } from '@/components/SidePanel';
 import { useCartStore } from '@/hooks/useCartStore';
 import { useTopNav, TopNavMode } from '@/hooks/useTopNav';
 import { useUser } from '@/hooks/useUser';
+import PopUp from '@/shared/Dialog';
 import { sendRNMessage } from '@/utils/nativeFeel';
 import { IonIcon } from '@ionic/react';
 import clsx from 'clsx';
 import { menuOutline, notifications, chevronBackOutline, qrCode, cartOutline } from 'ionicons/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 
 export const TopNav: React.FC = () => {
     const pathname = usePathname();
     const { user } = useUser();
     const { totalItems } = useCartStore();
+    const [isScanning, setIsScanning] = useState(false);
 
     useEffect(() => {
         // send user data to react native every time the app loads
@@ -39,6 +43,11 @@ export const TopNav: React.FC = () => {
             "appHeader scrolled header-div-wrapper",
             mode === 'view-page' ? 'bg-white min-h-14' : 'bg-primary',
         )}>
+            <PopUp
+                isOpen={isScanning} onClose={() => setIsScanning(false)}>
+                <QRScanner />
+            </PopUp>
+
             <div className="header-row-wrapper-top">
                 <div className="left">
                     {showMenuIcon ? (
@@ -81,9 +90,9 @@ export const TopNav: React.FC = () => {
                                 )}
                             </Link>
                         ) : (
-                            <Link href="/" className="headerButton">
+                            <button className="headerButton" onClick={() => setIsScanning(true)}>
                                 <IonIcon icon={qrCode} />
-                            </Link>
+                            </button>
                         )}
                         <Link href="/search" className="headerButton">
                             <IonIcon icon={notifications} />
@@ -92,13 +101,13 @@ export const TopNav: React.FC = () => {
                     </div>
                 )}
 
-                {pathname.includes('/profile/edit/') && (
+                {/* {pathname.includes('/profile/edit/') && (
                     <div className="right">
                         <button className='headerButton headerSave'>
                             Save
                         </button>
                     </div>
-                )}
+                )} */}
             </div>
 
             {pathname === '/' && (
