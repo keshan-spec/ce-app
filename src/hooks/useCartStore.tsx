@@ -48,7 +48,7 @@ export const useCartStore = create(persist<State & Actions>(
             }
 
             // Wait for 1 second to simulate a network request
-            await wait(1000);
+            await wait(500);
 
             set({ loading: false });
             return true;

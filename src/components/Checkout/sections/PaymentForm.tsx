@@ -151,6 +151,8 @@ export const PaymentForm: React.FC = () => {
                 first_name: shippingInfo.first_name,
                 last_name: shippingInfo.last_name,
                 phone: shippingInfo.phone,
+                email: user.email,
+                id: user.id,
             },
             shipping: shippingInfo,
             payment_intent: intent.id,
@@ -213,87 +215,92 @@ export const PaymentForm: React.FC = () => {
 
             <div className="wide-block pb-1 pt-1">
                 <div className="section-title">Payment Details</div>
-
-                {((!clientSecret || !stripe || !elements) && !clientSecretError) ? renderLoading() : (
-                    <div className="">
-                        {/* tab options for using saved cards or stripe element */}
-                        <div className="flex justify-between items-center mb-1">
-                            <div className="flex items-center gap-2">
-                                <button
-                                    type="button"
-                                    className={clsx(
-                                        "text-sm mb-1 mr-3",
-                                        paymentType === "saved" ? "text-primary underline font-semibold" : "text-on-primary"
-                                    )}
-                                    onClick={() => setPaymentType("saved")}
-                                >
-                                    Saved Cards
-                                </button>
-                                <button
-                                    type="button"
-                                    className={clsx(
-                                        "text-sm mb-1 mr-3",
-                                        paymentType === "new" ? "text-primary underline font-semibold" : "text-on-primary"
-                                    )}
-                                    onClick={() => {
-                                        setPaymentType("new");
-                                        setSelectedPaymentMethod(null);
-                                    }}
-                                >
-                                    New Card
-                                </button>
-                            </div>
-                        </div>
-
-                        {renderSavedCards()}
-
-                        <form onSubmit={handleSubmit}>
-                            {(clientSecret && paymentType === "new") && (
-                                <PaymentElement
-                                    options={{
-                                        layout: 'tabs',
-                                        fields: {
-                                            billingDetails: {
-                                                address: {
-                                                    postalCode: "never",
-                                                    country: "never",
-                                                }
-                                            }
-                                        }
-                                    }}
-                                />
+                {/* tab options for using saved cards or stripe element */}
+                <div className="flex justify-between items-center mb-1">
+                    <div className="flex items-center gap-2">
+                        <button
+                            type="button"
+                            className={clsx(
+                                "text-sm mb-1 mr-3",
+                                paymentType === "saved" ? "text-primary underline font-semibold" : "text-on-primary"
                             )}
-
-                            <div className={clsx(
-                                "toast-box toast-bottom bg-danger",
-                                errorMessage && "show !bottom-0"
-                            )}>
-                                <div className="in">
-                                    <div className="text">
-                                        {errorMessage}
-                                    </div>
-                                </div>
-                                <button type="button"
-                                    onClick={() => setErrorMessage("")} className="btn btn-sm btn-text-light close-button">OK</button>
-                            </div>
-
-                            {clientSecretError ? (
-                                <div className="toast-box toast-bottom bg-danger text-center show !bottom-0">
-                                    <div className="text text-center w-full">
-                                        {clientSecretError}
-                                    </div>
-                                </div>
-                            ) : (
-                                <button
-                                    disabled={!stripe || loading}
-                                    className="btn btn-primary btn-block disabled:opacity-50 disabled:animate-pulse mt-3"
-                                >
-                                    {!loading ? `Place Order` : "Processing..."}
-                                </button>
+                            onClick={() => setPaymentType("saved")}
+                        >
+                            Saved Cards
+                        </button>
+                        <button
+                            type="button"
+                            className={clsx(
+                                "text-sm mb-1 mr-3",
+                                paymentType === "new" ? "text-primary underline font-semibold" : "text-on-primary"
                             )}
-                        </form>
+                            onClick={() => {
+                                setPaymentType("new");
+                                setSelectedPaymentMethod(null);
+                            }}
+                        >
+                            New Card
+                        </button>
                     </div>
-                )}
+                </div>
+
+                <div className="">
+                    {((!clientSecret || !stripe || !elements) && !clientSecretError) ? renderLoading() : (
+                        <div className="">
+                            {renderSavedCards()}
+
+                            <form onSubmit={handleSubmit}>
+                                <div className={clsx(
+                                    paymentType === "saved" ? "hidden" : "block",
+                                )}>
+                                    {(clientSecret) && (
+                                        <PaymentElement
+                                            options={{
+                                                layout: 'tabs',
+                                                fields: {
+                                                    billingDetails: {
+                                                        address: {
+                                                            postalCode: "never",
+                                                            country: "never",
+                                                        }
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    )}
+                                </div>
+
+                                <div className={clsx(
+                                    "toast-box toast-bottom bg-danger",
+                                    errorMessage && "show !bottom-0"
+                                )}>
+                                    <div className="in">
+                                        <div className="text">
+                                            {errorMessage}
+                                        </div>
+                                    </div>
+                                    <button type="button"
+                                        onClick={() => setErrorMessage("")} className="btn btn-sm btn-text-light close-button">OK</button>
+                                </div>
+
+                                {clientSecretError ? (
+                                    <div className="toast-box toast-bottom bg-danger text-center show !bottom-0">
+                                        <div className="text text-center w-full">
+                                            {clientSecretError}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <button
+                                        disabled={!stripe || loading}
+                                        className="btn btn-primary btn-block disabled:opacity-50 disabled:animate-pulse mt-3"
+                                    >
+                                        {!loading ? `Place Order` : "Processing..."}
+                                    </button>
+                                )}
+                            </form>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

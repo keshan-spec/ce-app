@@ -20,9 +20,9 @@ export interface StoreProductCart {
     title: string;
     price: number;
     qty: number;
+    thumbnail: string;
     variation?: ProductVariationTypes | null;
     variationId?: number | null;
-    thumbnail: string;
     variationLabel?: string;
 }
 
@@ -84,6 +84,8 @@ export interface CreateOrderData {
         first_name: string;
         last_name: string;
         phone?: string;
+        email: string;
+        id: string;
     };
     shipping: {
         address_1: string;
@@ -99,4 +101,21 @@ export interface CreateOrderResponse {
     success: boolean;
     message?: string;
     order_id?: number;
+}
+
+export interface UserOrderData {
+    id: string | number;
+    items: StoreProductCart[];
+    status: string;
+    order_date: string;
+    woo_order_id: string | number;
+    order_meta: {
+        order_total: string;
+        stripe_intent_id: string;
+    };
+}
+
+export interface UserOrderResponse {
+    success: boolean;
+    data?: UserOrderData[];
 }
