@@ -199,7 +199,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                         <div className='flex gap-2'>
                             <div className="profile-link" data-bs-toggle="offcanvas" data-bs-target="#profileActions">Edit Profile</div>
                             <ProfileEditPanel />
-                            <button className="profile-link dark-bg" data-location="profile-edit.php">Edit Garage</button>
+                            <Link href={'/garage'} className="profile-link dark-bg">Edit Garage</Link>
                         </div>
                     )}
 

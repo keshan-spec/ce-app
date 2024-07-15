@@ -101,6 +101,13 @@ export const TopNav: React.FC = () => {
                     </div>
                 )}
 
+                {pathname === '/garage' && (
+                    <div className="right">
+                        <Link href={'/garage/add'} className='headerButton headerSave'>
+                            Add +
+                        </Link>
+                    </div>
+                )}
                 {/* {pathname.includes('/profile/edit/') && (
                     <div className="right">
                         <button className='headerButton headerSave'>

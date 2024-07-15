@@ -32,7 +32,10 @@ export const menuIconLessPaths = [
     '/cart',
     '/checkout',
     '/checkout/payment-success',
-    '/profile/edit/'
+    '/profile/edit/',
+    '/garage',
+    '/garage/edit/',
+    '/garage/add',
 ];
 
 export const useTopNav = ({
@@ -41,6 +44,9 @@ export const useTopNav = ({
     const isGarageViewPage = pathname.includes('/profile/garage/');
     const isPostViewPage = pathname.includes('/posts/');
     const isProfileEditView = pathname.includes('/profile/edit/');
+    const isGarageEditView = pathname.includes('/garage');
+    const isGarageAddPage = pathname.includes('/garage/add');
+
     const param = pathname.split('/').pop();
     const router = useRouter();
     const { user } = useUser();
@@ -58,6 +64,10 @@ export const useTopNav = ({
             return 'Garage';
         }
 
+        if (isGarageEditView) {
+            return `@${user?.username}`;
+        }
+
         if (isPostViewPage) {
             return 'Posts';
         }
@@ -70,6 +80,10 @@ export const useTopNav = ({
     };
 
     const getHeaderTitle = useCallback(() => {
+        if (isGarageAddPage) {
+            return 'Add Vehicle';
+        }
+
         if (isGarageViewPage) {
             const qk = ['view-garage', param];
             const data = queryClient.getQueryData<Garage | null>(qk);
@@ -96,6 +110,10 @@ export const useTopNav = ({
             return 'Edit Profile';
         }
 
+        if (isGarageEditView) {
+            return 'Edit Garage';
+        }
+
         return '';
     }, [isGarageViewPage, isPostViewPage, param]);
 
@@ -111,9 +129,9 @@ export const useTopNav = ({
         returnTo: () => returnTo(),
         title: getHeaderTitle(),
         subtitle: getSubtitle(),
-        mode: isGarageViewPage || isPostViewPage || isProfileEditView ? 'view-page' : 'default',
+        mode: isGarageViewPage || isPostViewPage || isProfileEditView || isGarageEditView ? 'view-page' : 'default',
         showMenuIcon: showMenuIcon(),
-        showHeaderIcons: !isGarageViewPage && !isPostViewPage && !isProfileEditView,
-        showLogo: !isGarageViewPage && !isPostViewPage && !isProfileEditView,
+        showHeaderIcons: !isGarageViewPage && !isPostViewPage && !isProfileEditView && !isGarageEditView,
+        showLogo: !isGarageViewPage && !isPostViewPage && !isProfileEditView && !isGarageEditView,
     };
 };

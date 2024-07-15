@@ -7,10 +7,12 @@ import { useMemo } from "react";
 
 interface GarageProps {
     profileId: string;
+    edit?: boolean;
 }
 
 export const Garage: React.FC<GarageProps> = ({
-    profileId
+    profileId,
+    edit = false
 }) => {
 
     const { data, error, isLoading, isFetching } = useQuery<GarageType[] | null, Error>({
@@ -51,7 +53,7 @@ export const Garage: React.FC<GarageProps> = ({
 
                 {garage.current?.map((garage) => (
                     <li key={garage.id}>
-                        <Link href={`/profile/garage/${garage.id}`} className="item">
+                        <Link href={edit ? `/garage/edit/${garage.id}` : `/profile/garage/${garage.id}`} className="item">
                             <div className="imageWrapper">
                                 <img src={garage.cover_photo} alt="image" className="max-w-24 mr-3 object-contain h-full" />
                             </div>
@@ -97,7 +99,7 @@ export const Garage: React.FC<GarageProps> = ({
 
 };
 
-const GarageItemSkeleton: React.FC = () => {
+export const GarageItemSkeleton: React.FC = () => {
     return (
         <>
             <li>

@@ -696,24 +696,6 @@ a.badge-danger {
 }
 
 
-.image-listview>li .item {
-	cursor: pointer;
-}
-
-.image-listview>li .item:after {
-	background-image: url("data:image/svg+xml,%0A%3Csvg width='10px' height='16px' viewBox='0 0 10 16' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cg id='Page-1' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg id='Listview' transform='translate(-112.000000, -120.000000)' stroke='%23A1A1A2' stroke-width='2.178'%3E%3Cpolyline id='Path' points='114 122 120 128 114 134'%3E%3C/polyline%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-	background-repeat: no-repeat;
-	background-position: center center;
-	width: 16px;
-	height: 16px;
-	content: "";
-	position: absolute;
-	right: 12px;
-	opacity: 0.5;
-	top: 50%;
-	margin-top: -8px;
-}
-
 .profile-garage-intro {
 	margin: 20px auto;
 }
@@ -1330,4 +1312,45 @@ a.form-group {
 
 .appHeader .right .headerButton.headerSave {
 	color: #ae9159 !important;
+}
+
+.garage-sub-title {
+	background-color: #fff;
+}
+
+
+.image-listview>li .item {
+	cursor: pointer;
+}
+
+.image-listview>li .item:after {
+	background-image: url("data:image/svg+xml,%0A%3Csvg width='10px' height='16px' viewBox='0 0 10 16' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cg id='Page-1' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg id='Listview' transform='translate(-112.000000, -120.000000)' stroke='%23A1A1A2' stroke-width='2.178'%3E%3Cpolyline id='Path' points='114 122 120 128 114 134'%3E%3C/polyline%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 16px;
+	height: 16px;
+	content: "";
+	position: absolute;
+	right: 12px;
+	opacity: 0.5;
+	top: 50%;
+	margin-top: -8px;
+}
+
+.profile-garage-intro {
+	margin: 20px auto;
+}
+
+.profile-garage-intro h1 {
+	font-size: 20px;
+	margin-bottom: 1px;
+}
+
+.profile-garage-intro p {
+	font-size: 12px;
+	line-height: 20px;
+}
+
+.profile-garage-intro .profile-link {
+	margin: 0 auto 2px auto;
 }

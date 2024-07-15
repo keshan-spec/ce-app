@@ -1,20 +1,16 @@
 'use client';
-
+import { Garage } from "@/components/Profile/Garage/Garage";
 import { NoAuthWall } from "@/components/Protected/NoAuthWall";
 import { useUser } from "@/hooks/useUser";
 
 const Page: React.FC = () => {
-    const { isLoggedIn } = useUser();
+    const { user, isLoggedIn } = useUser();
 
     if (!isLoggedIn) {
         return <NoAuthWall redirectTo="/garage" />;
     }
 
-    return (
-        <div>
-            <h1>Garage Page</h1>
-        </div>
-    );
+    return <Garage profileId={user.id} edit />;
 };
 
 export default Page;

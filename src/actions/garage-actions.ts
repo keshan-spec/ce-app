@@ -3,6 +3,7 @@
 import { Garage } from "@/types/garage";
 import { API_URL } from "./api";
 import { getSessionUser } from "./auth-actions";
+import { GarageFormType } from "@/components/Profile/Garage/AddVehicle";
 
 export const getGarageById = async (garageId: string): Promise<Garage | null> => {
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-garage`, {
@@ -59,4 +60,24 @@ export const getGaragePosts = async (garageId: string, tagged: boolean, page: nu
     }
 
     return data;
+};
+
+export const addVehicleToGarage = async (data: GarageFormType) => {
+    const user = await getSessionUser();
+    if (!user) return;
+
+    const response = await fetch(`${API_URL}/wp-json/app/v1/add-vehicle-to-garage`, {
+        cache: "no-cache",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            ...data,
+            user_id: user.id,
+        }),
+    });
+
+    const res = await response.json();
+    return res;
 };

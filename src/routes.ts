@@ -44,6 +44,7 @@ export const apiRoutes = [
     "/api/stripe/create-setup-intent",
     "/api/stripe/delete-payment-method",
     "/api/webhook",
+    "/api/aws/upload",
 ];
 
 /**
