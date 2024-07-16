@@ -2,7 +2,6 @@
 
 import { IonIcon } from "@ionic/react";
 import { closeCircle, cloudUploadOutline } from "ionicons/icons";
-
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,8 +9,6 @@ import clsx from "clsx";
 import { addVehicleToGarage } from "@/actions/garage-actions";
 import { Loader } from "@/components/Loader";
 import { useRouter } from "next/navigation";
-
-// import Pickadate from 'pickadate/builds/react-dom';
 
 import { DatePicker, NextUIProvider } from "@nextui-org/react";
 import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
@@ -35,8 +32,8 @@ const vehicleFormSchema = z.object({
     variant: z.string().min(1, 'Variant is required'),
     registration: z.string().min(1, 'Registration number is required').regex(REGISTRATION_FORMAT, 'Registration number is invalid'),
     colour: z.string().optional(),
-    ownedFrom: z.any(),
-    ownedTo: z.any(),
+    ownedFrom: z.string().min(1, 'Owned from date is required'),
+    ownedTo: z.string().optional(),
     allow_tagging: z.boolean().optional(),
 });
 
@@ -103,15 +100,6 @@ const ownershipFields = [
     { label: 'Owned to', name: 'ownedTo', type: 'text' },
 ];
 
-const convertToBase64 = (file: File): Promise<string | ArrayBuffer | null> => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = (error) => reject(error);
-        reader.readAsDataURL(file);
-    });
-};
-
 export const AddVehicle: React.FC = () => {
     const router = useRouter();
     const { register, handleSubmit, setError, clearErrors, reset, formState: { errors, isSubmitting, isSubmitSuccessful } } = useForm<GarageFormType>({
@@ -119,11 +107,7 @@ export const AddVehicle: React.FC = () => {
     });
 
     const onSubmit: SubmitHandler<GarageFormType> = async (data) => {
-        console.log(data);
-        return;
-
         try {
-
             const formData = new FormData();
             formData.append('file', data.cover_photo[0], data.cover_photo[0].name);
 
@@ -186,7 +170,6 @@ export const AddVehicle: React.FC = () => {
             <div className="section full mt-1 mb-2">
                 <div className="section-title">Vehicle Photo</div>
                 <div className="wide-block pb-2 pt-2">
-
                     <div className="custom-file-upload" id="fileUpload1">
                         <input type="file" id="fileuploadInput" accept=".png, .jpg, .jpeg"
                             {...register('cover_photo')}
@@ -260,24 +243,14 @@ export const AddVehicle: React.FC = () => {
                                         <>
                                             <div className="col-12 mb-2 text-xs"><label>{field.label}</label></div>
                                             <div className="col-12 mb-2">
-                                                <div className="input-wrapper">
+                                                <div className="input-wrapper w-full">
                                                     <label className="form-label"></label>
-                                                    {/* <Pickadate.InputPicker
-                                                        key={field.name}
-                                                        className={clsx(
-                                                            "form-control date-picker",
-                                                            errors[field.name as keyof GarageFormType] && "!border-red-600"
-                                                        )}
-                                                        placeholder={`Enter ${field.label}`}
-
-                                                    // {...register(field.name as keyof GarageFormType)}
-                                                    /> */}
-
                                                     <DatePicker
-                                                        isRequired
+                                                        isRequired={register(field.name as keyof GarageFormType).required}
                                                         className={clsx(
                                                             errors[field.name as keyof GarageFormType] && "!border-red-600"
                                                         )}
+                                                        onBlur={register(field.name as keyof GarageFormType).onBlur}
                                                         variant='underlined'
                                                         showMonthAndYearPickers
                                                         onChange={(date) => {
@@ -289,18 +262,11 @@ export const AddVehicle: React.FC = () => {
                                                             });
                                                         }}
                                                         maxValue={today(getLocalTimeZone())}
-                                                    // {...register(field.name as keyof GarageFormType)}
+                                                        name={field.name as keyof GarageFormType}
+                                                        ref={register(field.name as keyof GarageFormType).ref}
+                                                        fullWidth
                                                     />
 
-                                                    {/* <input type={field.type}
-                                                    // id={field.name === 'ownedFrom' ? 'input_from' : 'input_to'}
-                                                    className={clsx(
-                                                        "form-control date-picker",
-                                                        errors[field.name as keyof GarageFormType] && "!border-red-600"
-                                                    )}
-                                                    placeholder={`Enter ${field.label}`}
-                                                    {...register(field.name as keyof GarageFormType)}
-                                                /> */}
                                                     <i className="clear-input">
                                                         <IonIcon icon={closeCircle} role="img" className="md hydrated" aria-label="close circle" />
                                                     </i>

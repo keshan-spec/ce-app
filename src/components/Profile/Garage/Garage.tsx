@@ -32,8 +32,8 @@ export const Garage: React.FC<GarageProps> = ({
         }
 
         // split the garage data into current and past vehicles
-        const current = data?.filter((garage) => garage.primary_car === true);
-        const past = data?.filter((garage) => garage.primary_car === false);
+        const current = data?.filter((garage) => garage.primary_car === true || !garage.owned_until);
+        const past = data?.filter((garage) => garage.primary_car === false && garage.owned_until);
 
         return {
             current,
@@ -55,7 +55,7 @@ export const Garage: React.FC<GarageProps> = ({
                     <li key={garage.id}>
                         <Link href={edit ? `/garage/edit/${garage.id}` : `/profile/garage/${garage.id}`} className="item">
                             <div className="imageWrapper">
-                                <img src={garage.cover_photo} alt="image" className="max-w-24 mr-3 object-contain h-full" />
+                                <img src={garage.cover_photo} alt="image" className="max-w-24 mr-3 object-contain h-full w-full" />
                             </div>
                             <div className="in">
                                 <div>

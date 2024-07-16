@@ -11,6 +11,13 @@ interface GarageViewProps {
     garageId: string;
 }
 
+const formatOwnership = (ownedSince: string, ownedUntil: string | null) => {
+    const ownedSinceDate = new Date(ownedSince);
+    const ownedUntilDate = ownedUntil ? new Date(ownedUntil).getFullYear() : 'Present';
+
+    return `Owned from ${ownedSinceDate.getFullYear()} - ${ownedUntilDate}`;
+};
+
 export const GarageView: React.FC<GarageViewProps> = ({
     garageId
 }) => {
@@ -24,8 +31,14 @@ export const GarageView: React.FC<GarageViewProps> = ({
         retry: 1,
     });
 
+    console.log(data);
+
     if (isLoading || isFetching) {
         return <GarageViewSkeleton />;
+    }
+
+    if (error || !data) {
+        return <div>Error loading garage</div>;
     }
 
     return (
@@ -43,8 +56,18 @@ export const GarageView: React.FC<GarageViewProps> = ({
 
             <div className="section mt-1 mb-2">
                 <div className="profile-garage-intro text-center">
-                    <h1>{data?.make} {data?.model}</h1>
-                    <p className="garage-owned-information">Owned from {data?.owned_since} - {data?.owned_until}</p>
+                    <h1 className="flex flex-col mb-1">
+                        <>{data.colour} {data?.make} {data?.model}</>
+                        {data.variant && (
+                            <>
+                                <small className="text-xs opacity-60 m-0 font-medium">{data.variant}</small>
+                            </>
+                        )}
+                    </h1>
+
+                    <p className="garage-owned-information">
+                        {formatOwnership(data?.owned_since, data?.owned_until)}
+                    </p>
                     <p className="garage-vehicle-description">
                         {data?.short_description}
                     </p>
