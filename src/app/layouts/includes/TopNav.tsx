@@ -52,12 +52,12 @@ export const TopNav: React.FC = () => {
                 <div className="left">
                     {showMenuIcon ? (
                         <span className="headerButton" data-bs-toggle="offcanvas" data-bs-target="#sidebarPanel" role='button'>
-                            <IonIcon icon={menuOutline} />
+                            <IonIcon icon={menuOutline} role="img" className="md hydrated" />
                         </span>
                     ) : (
                         <button onClick={returnTo}>
                             <span className="headerButton">
-                                <IonIcon icon={chevronBackOutline} />
+                                <IonIcon icon={chevronBackOutline} role="img" className="md hydrated" />
                             </span>
                         </button>
                     )}
@@ -82,7 +82,7 @@ export const TopNav: React.FC = () => {
                     <div className="right">
                         {pathname.includes('/store') || pathname.includes('/cart') ? (
                             <Link href="/cart" className="headerButton mr-1">
-                                <IonIcon icon={cartOutline} />
+                                <IonIcon icon={cartOutline} role="img" className="md hydrated" />
                                 {totalItems > 0 && (
                                     <span className="badge badge-primary absolute !top-0 !-right-1">
                                         {totalItems}
@@ -91,11 +91,11 @@ export const TopNav: React.FC = () => {
                             </Link>
                         ) : (
                             <button className="headerButton" onClick={() => setIsScanning(true)}>
-                                <IonIcon icon={qrCode} />
+                                <IonIcon icon={qrCode} role="img" className="md hydrated" />
                             </button>
                         )}
                         <Link href="/search" className="headerButton">
-                            <IonIcon icon={notifications} />
+                            <IonIcon icon={notifications} role="img" className="md hydrated" />
                         </Link>
 
                     </div>

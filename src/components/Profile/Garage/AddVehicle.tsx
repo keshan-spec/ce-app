@@ -11,6 +11,11 @@ import { addVehicleToGarage } from "@/actions/garage-actions";
 import { Loader } from "@/components/Loader";
 import { useRouter } from "next/navigation";
 
+// import Pickadate from 'pickadate/builds/react-dom';
+
+import { DatePicker, NextUIProvider } from "@nextui-org/react";
+import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
+
 // Zod schema for validation
 const MAX_FILE_SIZE = 500000;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -30,8 +35,8 @@ const vehicleFormSchema = z.object({
     variant: z.string().min(1, 'Variant is required'),
     registration: z.string().min(1, 'Registration number is required').regex(REGISTRATION_FORMAT, 'Registration number is invalid'),
     colour: z.string().optional(),
-    ownedFrom: z.string().min(1, 'Owned from date is required'),
-    ownedTo: z.string().optional(),
+    ownedFrom: z.any(),
+    ownedTo: z.any(),
     allow_tagging: z.boolean().optional(),
 });
 
@@ -114,6 +119,9 @@ export const AddVehicle: React.FC = () => {
     });
 
     const onSubmit: SubmitHandler<GarageFormType> = async (data) => {
+        console.log(data);
+        return;
+
         try {
 
             const formData = new FormData();
@@ -172,6 +180,7 @@ export const AddVehicle: React.FC = () => {
                     }}
                 >OK</button>
             </div>
+
 
             {isSubmitting && <Loader transulcent />}
             <div className="section full mt-1 mb-2">
@@ -240,36 +249,68 @@ export const AddVehicle: React.FC = () => {
                 </div>
             </div>
 
-            <div className="section full mb-2">
-                <div className="section-title">Ownership dates</div>
-                <div className="wide-block pb-1 pt-1">
-                    <div className="form-group basic horizontal">
-                        <div className="input-wrapper">
-                            <div className="row align-items-center">
-                                {ownershipFields.map((field) => (
-                                    <>
-                                        <div className="col-12 mb-2 text-xs"><label>{field.label}</label></div>
-                                        <div className="col-12 mb-2">
-                                            <div className="input-wrapper">
-                                                <label className="form-label"></label>
-                                                <input type={field.type}
+            <NextUIProvider>
+                <div className="section full mb-2">
+                    <div className="section-title">Ownership dates</div>
+                    <div className="wide-block pb-1 pt-1">
+                        <div className="form-group basic horizontal">
+                            <div className="input-wrapper">
+                                <div className="row align-items-center">
+                                    {ownershipFields.map((field) => (
+                                        <>
+                                            <div className="col-12 mb-2 text-xs"><label>{field.label}</label></div>
+                                            <div className="col-12 mb-2">
+                                                <div className="input-wrapper">
+                                                    <label className="form-label"></label>
+                                                    {/* <Pickadate.InputPicker
+                                                        key={field.name}
+                                                        className={clsx(
+                                                            "form-control date-picker",
+                                                            errors[field.name as keyof GarageFormType] && "!border-red-600"
+                                                        )}
+                                                        placeholder={`Enter ${field.label}`}
+
+                                                    // {...register(field.name as keyof GarageFormType)}
+                                                    /> */}
+
+                                                    <DatePicker
+                                                        isRequired
+                                                        className={clsx(
+                                                            errors[field.name as keyof GarageFormType] && "!border-red-600"
+                                                        )}
+                                                        variant='underlined'
+                                                        showMonthAndYearPickers
+                                                        onChange={(date) => {
+                                                            register(field.name as keyof GarageFormType).onChange({
+                                                                target: {
+                                                                    value: date.toString(),
+                                                                    name: field.name
+                                                                },
+                                                            });
+                                                        }}
+                                                        maxValue={today(getLocalTimeZone())}
+                                                    // {...register(field.name as keyof GarageFormType)}
+                                                    />
+
+                                                    {/* <input type={field.type}
+                                                    // id={field.name === 'ownedFrom' ? 'input_from' : 'input_to'}
                                                     className={clsx(
-                                                        "form-control",
+                                                        "form-control date-picker",
                                                         errors[field.name as keyof GarageFormType] && "!border-red-600"
                                                     )}
                                                     placeholder={`Enter ${field.label}`}
                                                     {...register(field.name as keyof GarageFormType)}
-                                                />
-                                                <i className="clear-input">
-                                                    <IonIcon icon={closeCircle} role="img" className="md hydrated" aria-label="close circle" />
-                                                </i>
-                                                {errors[field.name as keyof GarageFormType] && <span className="text-danger text-xs">{errors[field.name as keyof GarageFormType]?.message?.toString()}</span>}
+                                                /> */}
+                                                    <i className="clear-input">
+                                                        <IonIcon icon={closeCircle} role="img" className="md hydrated" aria-label="close circle" />
+                                                    </i>
+                                                    {errors[field.name as keyof GarageFormType] && <span className="text-danger text-xs">{errors[field.name as keyof GarageFormType]?.message?.toString()}</span>}
+                                                </div>
                                             </div>
-                                        </div>
-                                    </>
-                                ))}
+                                        </>
+                                    ))}
 
-                                {/* <div className="col-3 mb-2"><label>Variant</label></div>
+                                    {/* <div className="col-3 mb-2"><label>Variant</label></div>
                                 <div className="col-9 mb-2">
                                     <div className="input-wrapper">
                                         <label className="form-label"></label>
@@ -279,11 +320,13 @@ export const AddVehicle: React.FC = () => {
                                         </i>
                                     </div>
                                 </div> */}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </NextUIProvider>
+
 
             <div className="section full mt-1 mb-2">
                 <div className="section-title">Vehicle Tagging</div>
