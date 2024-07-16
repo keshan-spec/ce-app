@@ -67,12 +67,12 @@ const OrderCard: React.FC<UserOrderData> = ({ ...order }) => {
                 <div className="flex flex-col">
                     <div className="flex items-center space-x-4">
                         <div className="text-gray-900 min-w-20">Shipping</div>
-                        <div className="text-gray-500 text-sm">A£{FIXED_SHIPPING_COST}</div>
+                        <div className="text-gray-500 text-sm">£{FIXED_SHIPPING_COST}</div>
                     </div>
 
                     <div className="flex items-center space-x-4">
                         <div className="text-gray-900 min-w-20">Total</div>
-                        <div className="text-gray-500 text-sm">A{order.order_meta.order_total}</div>
+                        <div className="text-gray-500 text-sm">{order.order_meta.order_total}</div>
                     </div>
                 </div>
 
