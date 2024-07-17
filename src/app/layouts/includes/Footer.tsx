@@ -1,22 +1,15 @@
 'use client';
-
-import { CreatePostProvider, CreatePostSteps } from "@/app/context/CreatePostContext";
 import { CreateActionSheet } from "@/components/ActionSheets/Create";
 import { useUser } from "@/hooks/useUser";
-import SlideInPanel from "@/shared/CreatePostSlideIn";
 import { sendRNMessage } from "@/utils/nativeFeel";
 import { IonIcon } from "@ionic/react";
 import { homeOutline, searchOutline, addOutline, cartOutline } from "ionicons/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-
 
 export const Footer: React.FC = () => {
     const pathname = usePathname();
-
     const { user } = useUser();
-    // const [isOpen, setOpen] = useState<boolean>(false);
 
     const onAddPost = () => {
         if (!user) return;
@@ -30,15 +23,6 @@ export const Footer: React.FC = () => {
 
     return (
         <>
-            {/* <CreatePostProvider>
-                <SlideInPanel isOpen={isOpen} onClose={() => setOpen(false)}>
-                    <CreatePostSteps
-                        closePanel={() => {
-                            setOpen(false);
-                        }}
-                    />
-                </SlideInPanel>
-            </CreatePostProvider> */}
             <div className="appBottomMenu">
                 <Link href="/" className={`item ${pathname == '/' ? 'active' : ''}`}>
                     <div className="col">

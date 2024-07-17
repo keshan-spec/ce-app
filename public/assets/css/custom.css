@@ -650,6 +650,10 @@ a.badge-danger {
 	font-size: 14px;
 }
 
+.profile-link.dark-bg {
+	background-color: #1D1D1B;
+}
+
 .profile-link.following {
 	background-color: #ababab;
 }

@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { GaragePosts } from "./GaragePosts";
 import { MiniPostSkeleton } from "../Sections/Feed";
+import { sendRNMessage } from "@/utils/nativeFeel";
 
 interface GarageViewProps {
     garageId: string;
@@ -30,8 +31,6 @@ export const GarageView: React.FC<GarageViewProps> = ({
         refetchOnMount: false,
         retry: 1,
     });
-
-    console.log(data);
 
     if (isLoading || isFetching) {
         return <GarageViewSkeleton />;
@@ -71,9 +70,23 @@ export const GarageView: React.FC<GarageViewProps> = ({
                     <p className="garage-vehicle-description">
                         {data?.short_description}
                     </p>
-                    {(user && user.id === data?.owner_id) && (
-                        <div className="profile-link" data-location="profile-vehicle-edit.php">Edit Vehicle</div>
-                    )}
+
+                    <div className="flex justify-between gap-1">
+                        {(user && user.id === data?.owner_id) && (
+                            <div className="profile-link w-fit">Edit Vehicle</div>
+                        )}
+                        <div className="profile-link w-fit dark-bg" onClick={() => {
+                            sendRNMessage({
+                                type: "createPost",
+                                user_id: user.id,
+                                page: `/profile/garage/${garageId}`,
+                                association_id: garageId,
+                                association_type: 'garage',
+                            });
+                        }}>
+                            Add Post
+                        </div>
+                    </div>
                 </div>
             </div>
 

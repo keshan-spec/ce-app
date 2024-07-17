@@ -20,6 +20,8 @@ interface PostMessage {
     type: 'createPost' | 'addEventPost' | 'authData';
     user_id: string | number;
     page?: string;
+    association_id?: string;
+    association_type?: 'event' | 'venue' | 'garage';
 }
 
 export const sendRNMessage = ({
