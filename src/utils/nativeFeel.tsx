@@ -27,7 +27,9 @@ interface PostMessage {
 export const sendRNMessage = ({
     page,
     type,
-    user_id
+    user_id,
+    association_id,
+    association_type
 }: PostMessage) => {
     if (typeof window.ReactNativeWebView === 'undefined') {
         console.warn(`This is not a react native webview, failed to send message: ${type} - ${user_id}`);
@@ -39,6 +41,8 @@ export const sendRNMessage = ({
                 type,
                 page,
                 user_id,
+                association_id,
+                association_type
             }));
         }
     } catch (e) {

@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { GaragePosts } from "./GaragePosts";
 import { MiniPostSkeleton } from "../Sections/Feed";
-import { sendRNMessage } from "@/utils/nativeFeel";
+import { PLACEHOLDER_PFP, sendRNMessage } from "@/utils/nativeFeel";
 
 interface GarageViewProps {
     garageId: string;
@@ -48,7 +48,7 @@ export const GarageView: React.FC<GarageViewProps> = ({
                 <Link className="vehicle-profile-image"
                     href={`/profile/${data?.owner_id}`}
                     style={{
-                        backgroundImage: `url(${data?.owner?.profile_image})`,
+                        backgroundImage: `url(${data?.owner?.profile_image || PLACEHOLDER_PFP})`,
                     }}
                 />
             </div>
