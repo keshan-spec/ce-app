@@ -7,6 +7,7 @@ import Link from "next/link";
 import { GaragePosts } from "./GaragePosts";
 import { MiniPostSkeleton } from "../Sections/Feed";
 import { PLACEHOLDER_PFP, sendRNMessage } from "@/utils/nativeFeel";
+import { isValidDate } from "@/utils/dateUtils";
 
 interface GarageViewProps {
     garageId: string;
@@ -14,7 +15,7 @@ interface GarageViewProps {
 
 const formatOwnership = (ownedSince: string, ownedUntil: string | null) => {
     const ownedSinceDate = new Date(ownedSince);
-    const ownedUntilDate = ownedUntil ? new Date(ownedUntil).getFullYear() : 'Present';
+    const ownedUntilDate = (ownedUntil && isValidDate(ownedUntil)) ? new Date(ownedUntil).getFullYear() : 'Present';
 
     return `Owned from ${ownedSinceDate.getFullYear()} - ${ownedUntilDate}`;
 };

@@ -1,3 +1,5 @@
+import { Garage } from "./garage";
+
 export type Post = {
     id: number;
     user_id: string;
@@ -13,6 +15,7 @@ export type Post = {
     is_bookmarked: boolean;
     garage_id: number | null;
     updated_at: string;
+    garage: Garage | null;
 };
 
 export interface PostMedia {

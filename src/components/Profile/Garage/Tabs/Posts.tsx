@@ -34,6 +34,8 @@ export const GaragePostsTab: React.FC<GaragePostsProps> = ({
         initialPageParam: null,
     });
 
+    console.log(data);
+
     // Infinite scroll
     useEffect(() => {
         let fetching = isFetchingNextPage || isFetching || false;
@@ -104,6 +106,12 @@ export const GaragePostsTab: React.FC<GaragePostsProps> = ({
                 {isVideo && (
                     <div className="absolute -top-1 left-0 bg-black/30 text-white !p-1.5 rounded-br-md text-xs">
                         <i className="fas fa-video" />
+                    </div>
+                )}
+
+                {post.garage_id && (
+                    <div className="absolute -top-1 left-0 bg-black/30 text-white !p-1.5 rounded-br-md text-xs">
+                        <i className="fas fa-car" />
                     </div>
                 )}
             </div>

@@ -359,7 +359,13 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                     backgroundImage: `url(${post.user_profile_image || PLACEHOLDER_PFP})`
                 }} />
                 <Link href={`/profile/${post.user_id}`} passHref>
-                    <div className="media-post-user text-black">{post.username}</div>
+                    <div className="media-post-user text-black">
+                        {post.username}
+                        {post.garage_id && (
+                            <span className="text-xs opacity-50"> • {` `}
+                                {post.garage?.make} {post.garage?.model}, owned by @{post.garage?.owner?.username}</span>
+                        )}
+                    </div>
                 </Link>
                 <div className="media-post-date">{formatPostDate(post.post_date)}</div>
             </div>
@@ -415,6 +421,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
 
             <span className="media-post-likecount">{post.likes_count ?? 0} likes</span>
             <MediaPostDescription {...post} />
+
 
             {post.comments_count ? (
                 <div className="media-post-commentcount opacity-60 !text-xm"

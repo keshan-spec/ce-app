@@ -32,6 +32,7 @@ export const Feed: React.FC<FeedProps> = ({
         retry: 1,
         initialPageParam: null,
     });
+    console.log(data);
 
     // Infinite scroll
     useEffect(() => {
@@ -107,6 +108,12 @@ export const Feed: React.FC<FeedProps> = ({
                 {isVideo && (
                     <div className="absolute -top-1 left-0 bg-black/30 text-white !p-1.5 rounded-br-md text-xs">
                         <i className="fas fa-video" />
+                    </div>
+                )}
+
+                {post.garage_id && (
+                    <div className="absolute -top-1 left-0 bg-black/30 text-white !p-1.5 rounded-br-md text-xs">
+                        <i className="fas fa-car" />
                     </div>
                 )}
             </div>

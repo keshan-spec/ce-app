@@ -41,10 +41,6 @@ export const getUserGarage = async (profileId: string) => {
 };
 
 export const getGaragePosts = async (garageId: string, tagged: boolean, page: number, limit = 10,) => {
-    if (tagged) {
-        return [];
-    }
-
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-garage-posts`, {
         cache: "no-cache",
         method: "POST",
