@@ -292,27 +292,4 @@ const CreatePostSteps = ({
     );
 };
 
-const EditPostContainer = ({ post_id }: { post_id: string; }) => {
-    const { step, taggedData, handleMediaChange } = useCreatePost();
-
-    const { data, error, isLoading, isFetching } = useQuery<Post | null, Error>({
-        queryKey: ["view-post", post_id],
-        queryFn: () => fetchPost(post_id),
-        refetchOnWindowFocus: false,
-        refetchOnMount: false,
-        retry: 1,
-    });
-
-    useEffect(() => {
-        if (data) {
-            console.log(data);
-        }
-    }, [data]);
-
-    return (
-        <PostEditSharePanel post_id={post_id} />
-    );
-
-};
-
-export { EditPostContainer, CreatePostProvider, useCreatePost, CreatePostSteps };
+export { CreatePostProvider, useCreatePost, CreatePostSteps };
