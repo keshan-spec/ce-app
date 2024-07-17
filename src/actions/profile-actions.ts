@@ -15,8 +15,6 @@ export const getUserPosts = async (profileId: string, page: number, tagged = fal
     });
 
     const data = await response.json();
-    console.log(data);
-
     if (response.status !== 200) {
         return [];
     }

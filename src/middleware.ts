@@ -18,15 +18,14 @@ export default auth((req) => {
 
     const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
     const isApiWebhookRoute = apiRoutes.includes(nextUrl.pathname);
-    const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
+    // const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
     const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
     // check for dynamic routes
-    const publicDynamicRoute = publcDynamicRoutes.find((route) => {
-        const re = new RegExp(`^${route.replace(/:[^/]+/g, '([^/]+)')}$`);
-        return re.test(nextUrl.pathname);
-    });
-
+    // const publicDynamicRoute = publcDynamicRoutes.find((route) => {
+    //     const re = new RegExp(`^${route.replace(/:[^/]+/g, '([^/]+)')}$`);
+    //     return re.test(nextUrl.pathname);
+    // });
 
     if (isApiAuthRoute || isApiWebhookRoute) {
         return null;

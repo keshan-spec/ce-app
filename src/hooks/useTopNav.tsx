@@ -36,13 +36,14 @@ export const menuIconLessPaths = [
     '/garage',
     '/garage/edit/',
     '/garage/add',
+    '/edit-post/'
 ];
 
 export const useTopNav = ({
     pathname
 }: TopNavProps): TopNavType => {
     const isGarageViewPage = pathname.includes('/profile/garage/');
-    const isPostViewPage = pathname.includes('/posts/');
+    const isPostViewPage = pathname.includes('/post/') || pathname.includes('/edit-post/');
     const isProfileEditView = pathname.includes('/profile/edit/');
     const isGarageEditView = pathname.includes('/garage');
     const isGarageAddPage = pathname.includes('/garage/add');

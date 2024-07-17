@@ -254,6 +254,13 @@ export interface PostTag {
     media_id: number;
 }
 
+export interface PartialPostTag {
+    entity_id: number;
+    type: 'car' | 'user' | 'event';
+    name: string;
+    image: string;
+}
+
 export const fetchTagsForPost = async (postId: number): Promise<PostTag[] | null> => {
     try {
         const response = await fetch(`${API_URL}/wp-json/app/v1/get-post-tags`, {
@@ -275,7 +282,8 @@ export const fetchTagsForPost = async (postId: number): Promise<PostTag[] | null
     }
 };
 
-export const fetchTaggableEntites = async (search: string, tagged_entities: Tag[], is_vehicle?: boolean): Promise<any> => {
+
+export const fetchTaggableEntites = async (search: string, tagged_entities: Partial<Tag>[], is_vehicle?: boolean): Promise<any> => {
     const url = is_vehicle ? `${API_URL}/wp-json/app/v1/get-taggable-vehicles` : `${API_URL}/wp-json/app/v1/get-taggable-entities`;
 
     try {
@@ -301,5 +309,35 @@ export const fetchTaggableEntites = async (search: string, tagged_entities: Tag[
         return data;
     } catch (e: any) {
         return [];
+    }
+};
+
+interface UpdateTagRequest {
+    post_id: string | number;
+    new_tags: PostTag[];
+    removed_tags: number[];
+    caption?: string;
+    location?: string;
+}
+
+export const updatePost = async (data: UpdateTagRequest) => {
+    try {
+        const user = await getSessionUser();
+        if (!user || !user.id) throw new Error("User session expired. Please login again.");
+
+        const response = await fetch(`${API_URL}/wp-json/app/v1/edit-post`, {
+            cache: "no-cache",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user_id: user.id, ...data }),
+        });
+
+        const res = await response.json();
+        return res;
+    } catch (e: any) {
+        console.error("Error updating post", e.message);
+        return null;
     }
 };

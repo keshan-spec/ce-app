@@ -12,6 +12,7 @@ export type Post = {
     user_profile_image?: string;
     is_bookmarked: boolean;
     garage_id: number | null;
+    updated_at: string;
 };
 
 export interface PostMedia {

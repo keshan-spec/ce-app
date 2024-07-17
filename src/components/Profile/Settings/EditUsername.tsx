@@ -11,7 +11,7 @@ import { z } from 'zod';
 
 const usernameSchema = z.object({
     username: z.string()
-        .min(1, { message: "Username is required" })
+        .min(3, { message: "Username is required" })
         // allow only alphanumeric characters and underscores
         .regex(/^[a-zA-Z0-9_]+$/, { message: "Invalid username" })
 });

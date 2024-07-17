@@ -1,6 +1,7 @@
 import { closeCircleOutline, createOutline, settingsOutline } from "ionicons/icons";
 import { IonIcon } from "@ionic/react";
 import { deletePost } from "@/actions/post-actions";
+import Link from "next/link";
 
 interface PostActionsProps {
     postId: number;
@@ -50,12 +51,12 @@ export const PostActionsSheet: React.FC<PostActionsProps> = ({
                 <div className="offcanvas-body">
                     <ul className="action-button-list">
                         <li>
-                            <button className="btn btn-list" data-bs-dismiss="offcanvas">
+                            <Link href={`/edit-post/${postId}`} className="btn btn-list">
                                 <span>
                                     <IonIcon icon={createOutline} role="img" className="md hydrated" aria-label="create outline" />
                                     Edit Post
                                 </span>
-                            </button>
+                            </Link>
                         </li>
                         <li>
                             <button

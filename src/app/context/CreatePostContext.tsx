@@ -2,8 +2,10 @@ import React, { createContext, useState, ReactNode, useContext, useCallback, use
 import Webcam from 'react-webcam';
 import { vibrateDevice } from '@/utils/nativeFeel';
 import { Area } from 'react-easy-crop';
-import { EditMediaPanel, PostInitialPanel, PostSharePanel, PostTagPanel } from '@/components/CreatePost/CreatePost';
-import { addTagsForPost } from '@/actions/post-actions';
+import { EditMediaPanel, PostEditSharePanel, PostInitialPanel, PostSharePanel, PostTagPanel } from '@/components/CreatePost/CreatePost';
+import { addTagsForPost, fetchPost } from '@/actions/post-actions';
+import { useQuery } from '@tanstack/react-query';
+import { Post } from '@/types/posts';
 
 export type ImageMeta = {
     width: number;
@@ -98,9 +100,6 @@ const CreatePostProvider: React.FC<{ children: ReactNode; }> = ({ children }) =>
     }, []);
 
     useEffect(() => {
-        // Un edited media
-        console.log('Selected media:', selectedMedia);
-
         const media = selectedMedia.filter(media => media !== null) as string[];
         media.push(...recordedChunks.map(chunk => URL.createObjectURL(chunk)));
 
@@ -293,4 +292,27 @@ const CreatePostSteps = ({
     );
 };
 
-export { CreatePostProvider, useCreatePost, CreatePostSteps };
+const EditPostContainer = ({ post_id }: { post_id: string; }) => {
+    const { step, taggedData, handleMediaChange } = useCreatePost();
+
+    const { data, error, isLoading, isFetching } = useQuery<Post | null, Error>({
+        queryKey: ["view-post", post_id],
+        queryFn: () => fetchPost(post_id),
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        retry: 1,
+    });
+
+    useEffect(() => {
+        if (data) {
+            console.log(data);
+        }
+    }, [data]);
+
+    return (
+        <PostEditSharePanel post_id={post_id} />
+    );
+
+};
+
+export { EditPostContainer, CreatePostProvider, useCreatePost, CreatePostSteps };

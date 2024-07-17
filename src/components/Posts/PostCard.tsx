@@ -453,6 +453,9 @@ const MediaPostDescription = (post: Post) => {
                     )}
                 </>
             )}
+            {post.updated_at && (
+                <span className="media-post-updated text-xs opacity-50"><br />Updated {formatPostDate(post.updated_at)}</span>
+            )}
         </div>
     );
 };

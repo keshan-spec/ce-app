@@ -682,6 +682,7 @@ var multiListview = document.querySelectorAll(".listview .multi-level > a.item")
 
 multiListview.forEach(function (el) {
     el.addEventListener("click", function () {
+        console.log("clicked");
         var parent = this.parentNode;
         var listview = parent.parentNode;
         var container = parent.querySelectorAll('.listview');

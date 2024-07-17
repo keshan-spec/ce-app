@@ -1,13 +1,13 @@
 'use client';
 import { IonIcon } from '@ionic/react';
-import { camera, closeOutline, images, recording, swapVertical, videocam, personOutline, carOutline, cameraReverse, cameraSharp } from 'ionicons/icons';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { camera, closeOutline, images, recording, swapVertical, videocam, personOutline, carOutline, cameraReverse, cameraSharp, closeCircleOutline } from 'ionicons/icons';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { Button } from '@/shared/Button';
 import { Options } from '@splidejs/splide';
 import { Splide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
-import { addPost, fetchTaggableEntites } from '@/actions/post-actions';
+import { addPost, fetchTaggableEntites, fetchTagsForPost, PartialPostTag, PostTag, updatePost } from '@/actions/post-actions';
 
 import Modal from '@/shared/Modal';
 import ImageCropModal from './ImageCrop';
@@ -19,6 +19,14 @@ import { useQuery } from '@tanstack/react-query';
 import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
 import { DraggableTagEntity, TagEntity } from '../TagEntity/TagEntity';
 import PostMediaSlider from './PostMediaSlider';
+import { useEditPost } from '@/app/context/EditPostProvider';
+import { BiLoader } from 'react-icons/bi';
+import SlideInFromBottomToTop from '@/shared/SlideIn';
+import Link from 'next/link';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { Loader } from '../Loader';
 
 const carouselOptions: Options = {
     perPage: 1,
@@ -110,7 +118,7 @@ export const EditMediaPanel = () => {
             </Modal>
 
             <div className="flex flex-wrap gap-4">
-                <PostMediaSlider mediaData={mediaData} onImageClick={(e, index) => setEditImage(index)} />
+                {/* <PostMediaSlider mediaData={mediaData} onImageClick={(e, index) => setEditImage(index)} /> */}
             </div>
         </div>
     );
@@ -201,7 +209,7 @@ export const PostSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess })
     return (
         <form className="relative h-full flex flex-col" action={handleShare}>
             <div className="flex flex-wrap gap-4">
-                <PostMediaSlider mediaData={mediaData} />
+                {/* <PostMediaSlider mediaData={mediaData} /> */}
             </div>
             <textarea placeholder="Write a caption..." className="p-2" name='caption' ref={textAreaRef} onFocus={handleFocus}></textarea>
 
@@ -401,7 +409,7 @@ export const PostTagPanel: React.FC = () => {
                     </div>
                 </div>
 
-                <PostMediaSlider
+                {/* <PostMediaSlider
                     ref={splideRef}
                     mediaData={mediaData}
                     onImageClick={onImageClick}
@@ -438,9 +446,319 @@ export const PostTagPanel: React.FC = () => {
                             {renderImageTagsList(index)}
                         </div>
                     )}
-                />
+                /> */}
             </div>
         </div>
     );
 };
 
+const PostEditTagPanel: React.FC<{
+    taggedData: PostTag[];
+    step: 'car' | 'user' | 'event' | 'venue';
+    onTaggedDataChange: (data: PostTag) => void;
+}> = ({
+    onTaggedDataChange,
+    taggedData,
+    step,
+}) => {
+        const [currentTag, setCurrentTag] = useState('');
+        const { data, isFetching, isLoading, refetch } = useQuery<any[], Error>({
+            queryKey: ["taggable-entities"],
+            queryFn: () => fetchTaggableEntites(currentTag, taggedData, step === 'car'),
+            retry: 0,
+            refetchOnWindowFocus: false,
+            refetchOnMount: false,
+            enabled: currentTag.trim().length > 3,
+        });
+
+
+        const handleTagInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+            if (event.target.value.trim().length === 0) {
+                return;
+            }
+
+            if (event.target.value.trim().length < 4) {
+                return;
+            }
+
+            try {
+                await refetch({
+                    cancelRefetch: isFetching || isLoading,
+                });
+            } catch (e: any) {
+                console.error('Error fetching taggable entities', e.message);
+            }
+        };
+
+        const debouncedHandleTagInputChange = useCallback(debounce(handleTagInputChange, 500), []);
+
+        return (
+            <div className="relative h-full flex flex-col gap-4 w-full">
+                <div className="flex flex-wrap gap-4">
+                    <div className="tag-input-container w-full px-2 relative">
+                        <input
+                            type="text"
+                            placeholder={`Tag a ${step}...`}
+                            className="border p-1 rounded-md w-full px-2"
+                            onChange={(e) => {
+                                setCurrentTag(e.target.value);
+                                debouncedHandleTagInputChange(e);
+                            }}
+                            defaultValue={currentTag}
+                            autoFocus
+                        />
+                    </div>
+
+                    <div className="results absolute w-full z-50 left-0 px-2 bg-white top-12">
+                        {(isFetching || isLoading) && (
+                            <div className="tag-suggestions max-h-36 overflow-scroll shadow-md w-full border">
+                                <div className="tag-suggestion p-1 border-b flex items-center gap-2 animate-pulse">
+                                    <div className="w-8 h-8 rounded-full bg-gray-200 "></div>
+                                    <div className='w-32 h-4 bg-gray-200'></div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* if no data */}
+                        {!isFetching && !isLoading && data && data.length === 0 && (
+                            <div className="tag-suggestions max-h-36 overflow-scroll shadow-md w-full border">
+                                <div className="tag-suggestion p-1 border-b">No results found</div>
+                            </div>
+                        )}
+
+                        {(!(isFetching || isLoading) && (data && data.length > 0 && currentTag.length > 3)) && (
+                            <div className="tag-suggestions max-h-44 overflow-scroll shadow-md w-full border">
+                                {data.map((entity, idx) => (
+                                    <div key={idx} className="tag-suggestion p-1 border-b flex items-center gap-2" onClick={() => {
+                                        setCurrentTag('');
+                                        onTaggedDataChange({
+                                            entity_id: entity.entity_id,
+                                            type: entity.type,
+                                            media_id: 0,
+                                            x: 0,
+                                            y: 0,
+                                            entity: {
+                                                id: entity.entity_id,
+                                                name: entity.name,
+                                            },
+                                        });
+                                        console.log(entity);
+                                    }}>
+                                        <div className="w-8 h-8 rounded-full bg-gray-200 border-2">
+                                            <img src={entity.image || PLACEHOLDER_PFP} alt={entity.name} className="w-full h-full rounded-full" />
+                                        </div>
+                                        <div>{entity.name}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+const editPostSchema = z.object({
+    caption: z.string().optional(),
+    location: z.string().optional(),
+});
+
+type EditPostData = z.infer<typeof editPostSchema>;
+
+export const PostEditSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess }) => {
+    const errorDiv = useRef<HTMLDivElement>(null);
+
+    const { post, loading, error } = useEditPost();
+    const { register, handleSubmit, setError, clearErrors, formState: { errors, isSubmitting, isSubmitSuccessful, isDirty, dirtyFields } } = useForm<EditPostData>({
+        resolver: zodResolver(editPostSchema),
+        defaultValues: {
+            caption: post?.caption,
+        }
+    });
+
+    const [addTags, setAddTags] = useState<'user' | 'car' | 'event' | 'venue' | null>(null);
+    const [tags, setTags] = useState<PostTag[]>([]);
+    const [removedTags, setRemovedTags] = useState<number[]>([]);
+    const [updatedTags, setUpdatedTags] = useState<PostTag[]>([]);
+
+    const onTagChanged = (tag: PostTag) => {
+        setUpdatedTags([...updatedTags, {
+            ...tag,
+            media_id: post?.media[0].id || 0,
+        }]);
+        setAddTags(null);
+    };
+
+    const handleShare: SubmitHandler<EditPostData> = async (data) => {
+        if (!post || !post.id) return;
+
+        try {
+            const response = await updatePost({
+                caption: data.caption,
+                location: data.location,
+                new_tags: updatedTags,
+                removed_tags: removedTags,
+                post_id: post.id,
+            });
+
+            console.log(response);
+            if (!response || response.error) {
+                throw new Error(response.error);
+            }
+            // onPostSuccess(response.post_id);
+        } catch (e: any) {
+            setError('root', { message: e.message });
+        }
+    };
+
+    const getTaggedEntities = (type: 'user' | 'car') => {
+        const mergedTags = [...tags, ...updatedTags];
+
+        return mergedTags.filter(tag => tag.type === type && !removedTags.includes(tag.entity_id)).map(tag => tag);
+    };
+
+    const removeTag = (entityId: number) => {
+        const foundTag = tags.find(tag => tag.entity_id === entityId);
+
+        if (foundTag) {
+            setRemovedTags([...removedTags, entityId]);
+        } else {
+            console.log('Removing from updated tags', entityId);
+
+            setUpdatedTags([...updatedTags.filter(tag => tag.entity_id !== entityId)]);
+        }
+    };
+
+    const fetchTags = async () => {
+        if (!post) return;
+
+        const data = await fetchTagsForPost(post.id);
+        if (data) {
+            setTags(data);
+        }
+    };
+
+    useEffect(() => {
+        fetchTags();
+    }, [post]);
+
+    const taggedUsers = useMemo(() => getTaggedEntities('user'), [tags, updatedTags, removedTags]);
+    const taggedCars = useMemo(() => getTaggedEntities('car'), [tags, updatedTags, removedTags]);
+
+    return (
+        <>
+            <SlideInFromBottomToTop isOpen={addTags !== null} onClose={() => setAddTags(null)} title='Add Tags' height={'80%'}>
+                <PostEditTagPanel onTaggedDataChange={onTagChanged} taggedData={[...tags, ...updatedTags]} step={addTags!} />
+            </SlideInFromBottomToTop>
+            {isSubmitting && <Loader transulcent />}
+
+            <div id="toast-16" className={clsx(
+                "toast-box toast-top",
+                { "bg-success": isSubmitSuccessful },
+                { "bg-danger": errors.root },
+                { "show": isSubmitSuccessful || errors.root }
+            )}>
+                <div className="in">
+                    <div className="text">
+                        {errors.root && errors.root.message}
+                        {isSubmitSuccessful && "Post updated successfully"}
+                    </div>
+                </div>
+                <button type="button" className="btn btn-sm btn-text-light close-button"
+                    onClick={() => {
+                        if (isSubmitSuccessful) {
+                            onPostSuccess(post?.id!);
+                        } else {
+                            clearErrors();
+                        }
+                    }}
+                >OK</button>
+            </div>
+
+            <form className="relative flex flex-col h-screen" onSubmit={handleSubmit(handleShare)}>
+                <div className="flex flex-wrap gap-4">
+                    <PostMediaSlider mediaData={post?.media || []} />
+                </div>
+
+                <textarea
+                    placeholder="Write a caption..."
+                    className="p-2 h-auto"
+                    rows={3}
+                    {...register('caption')}
+                />
+
+                <div className="section full mb-2">
+                    <ul className="listview link-listview mb-2">
+                        <TagSection
+                            title='Tag Users'
+                            tags={taggedUsers}
+                            loading={loading}
+                            onAdd={() => setAddTags('user')}
+                            onRemove={removeTag}
+                        />
+
+                        <TagSection
+                            title='Tag Vehicle Registrations'
+                            tags={taggedCars}
+                            loading={loading}
+                            onAdd={() => setAddTags('car')}
+                            onRemove={removeTag}
+                        />
+
+                        <TagSection
+                            title='Tag Events'
+                            tags={[]}
+                            loading={loading}
+                            onAdd={() => { }}
+                            onRemove={() => { }}
+                        />
+
+                        <TagSection
+                            title='Tag Venues'
+                            tags={[]}
+                            loading={loading}
+                            onAdd={() => { }}
+                            onRemove={() => { }}
+                        />
+                    </ul>
+                </div>
+
+                <div className="fixed bottom-2 px-2 w-full z-[999]">
+                    <button className='btn btn-primary btn-block btn-lg'>
+                        Update
+                    </button>
+                </div>
+            </form>
+        </>
+    );
+};
+
+interface TagSectionProps {
+    title: string;
+    tags: PostTag[];
+    loading: boolean;
+    onAdd: () => void;
+    onRemove: (entityId: number) => void;
+}
+
+const TagSection: React.FC<TagSectionProps> = ({ title, tags, loading, onAdd, onRemove }) => (
+    <li className="multi-level" key={title}>
+        <Link href={'#'} className="item">
+            {title} <span className={clsx("badge", tags.length === 0 ? 'badge-primary-zero' : 'badge-primary')}>
+                {tags.length}
+                {loading && <BiLoader className="animate-spin" />}
+            </span>
+        </Link >
+        <ul className="listview simple-listview" style={{ height: 0 }}>
+            <li>
+                <button type='button' className="btn btn-primary btn-block btn-sm" onClick={onAdd}>+ Add</button>
+            </li>
+            {tags.map((tag, i) => (
+                <li key={i}>
+                    {tag.entity.name}
+                    <IonIcon icon={closeCircleOutline} role="img" className="md hydrated" onClick={() => onRemove(tag.entity_id)} />
+                </li>
+            ))}
+        </ul>
+    </li>
+);
