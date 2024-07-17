@@ -116,6 +116,8 @@ export const AddVehicle: React.FC = () => {
                 body: formData,
             });
 
+            console.log(response);
+
             const apiData = await response.json();
 
             if (apiData.keys) {
@@ -138,6 +140,10 @@ export const AddVehicle: React.FC = () => {
             }
         } catch (error) {
             console.error(error);
+            setError('cover_photo', {
+                type: 'manual',
+                message: 'Failed to upload image.',
+            });
         }
     };
 
