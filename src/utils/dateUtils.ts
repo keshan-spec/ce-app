@@ -43,3 +43,8 @@ export const formatPostDate = (date: string) => {
         return `${Math.floor(years)} years ago`;
     }
 };
+
+export const isValidDate = (date: string): boolean => {
+    const dateObj = new Date(date);
+    return dateObj instanceof Date && !isNaN(dateObj.getTime());
+};

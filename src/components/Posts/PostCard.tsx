@@ -12,7 +12,7 @@ import clsx from "clsx";
 import NcImage from "../Image/Image";
 import { NativeShare } from "../ActionSheets/Share";
 import { DotButton } from "./Posts";
-import { formatPostDate } from "@/utils/dateUtils";
+import { formatPostDate, isValidDate } from "@/utils/dateUtils";
 import Link from "next/link";
 import { useObservedQuery } from "@/app/context/ObservedQuery";
 import { PostActionsSheet } from "./PostActionSheets";
@@ -453,7 +453,7 @@ const MediaPostDescription = (post: Post) => {
                     )}
                 </>
             )}
-            {post.updated_at && (
+            {(post.updated_at && isValidDate(post.updated_at)) && (
                 <span className="media-post-updated text-xs opacity-50"><br />Updated {formatPostDate(post.updated_at)}</span>
             )}
         </div>
