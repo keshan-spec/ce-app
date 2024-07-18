@@ -1,4 +1,5 @@
 'use client';
+import { useSharedContext } from '@/app/context/MainContextProvider';
 import QRScanner from '@/components/Scanner/Scanner';
 import { SidePanel } from '@/components/SidePanel';
 import { useCartStore } from '@/hooks/useCartStore';
@@ -19,6 +20,7 @@ export const TopNav: React.FC = () => {
     const { user } = useUser();
     const { totalItems } = useCartStore();
     const [isScanning, setIsScanning] = useState(false);
+    const { renderTopTabs, setHeaderAction } = useSharedContext();
 
     useEffect(() => {
         // send user data to react native every time the app loads
@@ -117,7 +119,7 @@ export const TopNav: React.FC = () => {
                 )} */}
             </div>
 
-            {pathname === '/' && (
+            {/* {pathname === '/' && (
                 <div className="social-tabs">
                     <ul className="nav nav-tabs capsuled" role="tablist">
                         <li className="nav-item">
@@ -130,7 +132,9 @@ export const TopNav: React.FC = () => {
                         </li>
                     </ul>
                 </div>
-            )}
+            )} */}
+
+            {renderTopTabs()}
 
             {pathname == '/discover' && (
                 <DiscoverTabs />

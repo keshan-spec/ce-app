@@ -9,6 +9,8 @@ import { PostCardSkeleton } from "@/components/Posts/PostCardSkeleton";
 import { PostCard } from "@/components/Posts/PostCard";
 import { useQuery } from "@tanstack/react-query";
 import { CommentsSlider } from "./CommentsSlider";
+import SlideInFromBottomToTop from "@/shared/SlideIn";
+import { ComentsSection } from "./ComentSection";
 
 const PostClient = ({ postId }: { postId: string; }) => {
     const { data, error, isLoading, isFetching } = useQuery<Post | null, Error>({
@@ -30,10 +32,31 @@ const PostClient = ({ postId }: { postId: string; }) => {
         return data?.comments_count || 0;
     }, [data]);
 
+    const incrementCommentCount = useCallback(() => {
+        if (data) {
+            data.comments_count++;
+        }
+    }, [data]);
+
     const renderContent = useCallback(() => {
         if (data && !isLoading) {
             return (
                 <>
+                    <SlideInFromBottomToTop
+                        titleClassName="comments-container-header"
+                        isOpen={commentsOpen}
+                        onClose={() => setCommentsOpen(false)}
+                        height={"80%"}
+                        title={`${getCommentCount()} comments`}
+                        stickyScroll={true}
+                        className="offcanvas-large"
+                    >
+                        {commentsOpen && <ComentsSection
+                            postId={parseInt(postId)}
+                            onNewComment={incrementCommentCount}
+                        />}
+                    </SlideInFromBottomToTop>
+
                     <CommentsSlider postId={parseInt(postId)} commentCount={getCommentCount()} />
                     <PostCard
                         post={data}

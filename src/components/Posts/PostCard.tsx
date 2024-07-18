@@ -355,18 +355,21 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
     return (
         <div className="media-post-content relative mb-6 text-black" id={`PostMain-${post.id}`}>
             <div className="media-post-header">
-                <div className="media-post-avatar border-black border-2" style={{
-                    backgroundImage: `url(${post.user_profile_image || PLACEHOLDER_PFP})`
-                }} />
                 <Link href={`/profile/${post.user_id}`} passHref>
+                    <div className="media-post-avatar border-black border-2" style={{
+                        backgroundImage: `url(${post.user_profile_image || PLACEHOLDER_PFP})`
+                    }} />
                     <div className="media-post-user text-black">
                         {post.username}
-                        {post.garage_id && (
-                            <span className="text-xs opacity-50"> • {` `}
-                                {post.garage?.make} {post.garage?.model}, owned by @{post.garage?.owner?.username}</span>
-                        )}
                     </div>
                 </Link>
+                {post.garage_id && (
+                    <Link
+                        href={`/profile/garage/${post.garage_id}`}
+                        className="text-xs opacity-50">
+                        {post.garage?.make} {post.garage?.model}, owned by @{post.garage?.owner?.username}
+                    </Link>
+                )}
                 <div className="media-post-date">{formatPostDate(post.post_date)}</div>
             </div>
 

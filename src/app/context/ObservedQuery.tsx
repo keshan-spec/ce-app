@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { Post } from '../../types/posts';
 import { fetchPosts } from '@/actions/post-actions';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -14,6 +14,8 @@ interface ObservedQueryContextProps {
     fetchNextPage: () => Promise<any>;
     hasNextPage: boolean | undefined;
     refetch: () => Promise<any>;
+    followingOnly: boolean;
+    setFollowingOnly: (value: boolean) => void;
 }
 
 const ObservedQueryContext = createContext<ObservedQueryContextProps>(
@@ -25,10 +27,12 @@ export const useObservedQuery = (): ObservedQueryContextProps => {
 };
 
 export const ObservedQueryProvider = ({ children }: any) => {
+    const [followingOnly, setFollowingOnly] = useState(false);
+    const key = followingOnly ? 'following-posts' : 'latest-posts';
     const { isLoading, error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
-        queryKey: ['posts'],
+        queryKey: [key],
         queryFn: ({ pageParam }) => {
-            return fetchPosts(pageParam || 1);
+            return fetchPosts(pageParam || 1, followingOnly);
         },
         getNextPageParam: (lastPage: { total_pages: number, data: Post[], limit: number; }, pages: any[]) => {
             const maxPages = Math.ceil(lastPage.total_pages / lastPage.limit);
@@ -70,7 +74,9 @@ export const ObservedQueryProvider = ({ children }: any) => {
         isFetchingNextPage,
         fetchNextPage,
         hasNextPage,
-        refetch
+        refetch,
+        followingOnly,
+        setFollowingOnly,
     };
 
     return (

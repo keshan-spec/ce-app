@@ -36,7 +36,7 @@ export const maybeBookmarkPost = async (postId: number) => {
     return data;
 };
 
-export const fetchPosts = async (page: number) => {
+export const fetchPosts = async (page: number, following_only = false) => {
     let user;
     try {
         user = await getSessionUser();
@@ -50,7 +50,7 @@ export const fetchPosts = async (page: number) => {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user_id: user?.id }),
+        body: JSON.stringify({ user_id: user?.id, following_only }),
     });
 
     const data = await response.json();
