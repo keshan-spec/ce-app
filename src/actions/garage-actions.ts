@@ -77,3 +77,44 @@ export const addVehicleToGarage = async (data: GarageFormType) => {
     const res = await response.json();
     return res;
 };
+
+export const updateVehicleInGarage = async (data: GarageFormType, garageId: string) => {
+    const user = await getSessionUser();
+    if (!user) return;
+
+    const response = await fetch(`${API_URL}/wp-json/app/v1/update-garage`, {
+        cache: "no-cache",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            ...data,
+            user_id: user.id,
+            garage_id: garageId,
+        }),
+    });
+
+    const res = await response.json();
+    return res;
+};
+
+export const deleteVehicleFromGarage = async (garageId: string) => {
+    const user = await getSessionUser();
+    if (!user) return;
+
+    const response = await fetch(`${API_URL}/wp-json/app/v1/delete-garage`, {
+        cache: "no-cache",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            user_id: user.id,
+            garage_id: garageId,
+        }),
+    });
+
+    const res = await response.json();
+    return res;
+};

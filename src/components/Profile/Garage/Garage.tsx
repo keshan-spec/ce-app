@@ -2,6 +2,7 @@
 import { getUserGarage } from "@/actions/garage-actions";
 import { Garage as GarageType } from "@/types/garage";
 import { useQuery } from "@tanstack/react-query";
+import clsx from "clsx";
 import Link from "next/link";
 import { useMemo } from "react";
 
@@ -77,13 +78,16 @@ export const Garage: React.FC<GarageProps> = ({
 
                 {garage.past?.map((garage) => (
                     <li key={garage.id}>
-                        <Link href={`/profile/garage/${garage.id}`} className="item">
+                        <Link href={garage.status === 'deleted' ? '' : `/profile/garage/${garage.id}`} className={clsx(
+                            "item",
+                            garage.status === 'deleted' ? "opacity-50" : ""
+                        )}>
                             <div className="imageWrapper">
                                 <img src={garage.cover_photo} alt="image" className="max-w-24 mr-3 object-contain h-full" />
                             </div>
                             <div className="in">
                                 <div>
-                                    {garage.make} {garage.model}
+                                    {garage.make} {garage.model} {garage.status === 'deleted' ? '(Deleted)' : ''}
                                 </div>
                             </div>
                         </Link>

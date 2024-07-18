@@ -74,7 +74,7 @@ export const GarageView: React.FC<GarageViewProps> = ({
 
                     <div className="flex justify-between gap-1">
                         {(user && user.id === data?.owner_id) && (
-                            <div className="profile-link w-fit">Edit Vehicle</div>
+                            <Link href={`/garage/edit/${garageId}`} className="profile-link w-fit">Edit Vehicle</Link>
                         )}
                         <div className="profile-link w-fit dark-bg" onClick={() => {
                             sendRNMessage({

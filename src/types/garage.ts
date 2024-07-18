@@ -7,11 +7,15 @@ export type Garage = {
     variant?: string;
     short_description: string;
     primary_car: boolean;
+    registration: string;
     owned_since: string;
     owned_until: string;
     images: GarageImage[];
     colour: string | null;
-    allow_tagging: boolean;
+    allow_tagging: string;
+    created_at: string;
+    updated_at: string;
+    status: 'active' | 'deleted';
     owner: {
         name: string;
         username: string;

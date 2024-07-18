@@ -6,12 +6,13 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import clsx from "clsx";
-import { addVehicleToGarage } from "@/actions/garage-actions";
+import { addVehicleToGarage, deleteVehicleFromGarage, updateVehicleInGarage } from "@/actions/garage-actions";
 import { Loader } from "@/components/Loader";
 import { useRouter } from "next/navigation";
 
 import { DatePicker, NextUIProvider } from "@nextui-org/react";
 import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
+
 
 // Zod schema for validation
 const MAX_FILE_SIZE = 500000;
@@ -20,13 +21,13 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/web
 const REGISTRATION_FORMAT = /^[a-zA-Z0-9\-_]{1,20}$/;
 
 const vehicleFormSchema = z.object({
-    cover_photo: z.any()
-        .refine((files) => files?.length == 1, "Image is required.")
-        // .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
-        .refine(
-            (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-            ".jpg, .jpeg, .png and .webp files are accepted."
-        ),
+    cover_photo: z.any(),
+    // .refine((files) => files?.length == 1, "Image is required.")
+    // // .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
+    // .refine(
+    //     (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+    //     ".jpg, .jpeg, .png and .webp files are accepted."
+    // ),
     make: z.string().min(1, 'Please select a make'),
     model: z.string().min(1, 'Model is required'),
     variant: z.string().min(1, 'Variant is required'),
@@ -35,11 +36,20 @@ const vehicleFormSchema = z.object({
     ownedFrom: z.string().min(1, 'Owned from date is required'),
     ownedTo: z.string().optional(),
     allow_tagging: z.boolean().optional(),
+    vehicle_period: z.enum(['current', 'past']),
+}).refine((data) => {
+    if (data.vehicle_period === 'past' && !data.ownedTo) {
+        return false;
+    }
+    return true;
+}, {
+    message: 'Owned to is required when vehicle is past',
+    path: ['ownedTo'],
 });
 
 export type GarageFormType = z.infer<typeof vehicleFormSchema>;
 
-const vehicleMakes = {
+export const vehicleMakes = {
     acura: 'Acura',
     alfa_romeo: 'Alfa Romeo',
     aston_martin: 'Aston Martin',
@@ -89,39 +99,97 @@ const vehicleMakes = {
 };
 
 const vehicleDetailFields = [
-    { label: 'Model', name: 'model', type: 'text' },
-    { label: 'Variant', name: 'variant', type: 'text' },
-    { label: 'Registration', name: 'registration', type: 'text' },
-    { label: 'Colour', name: 'colour', type: 'text' },
+    { label: 'Model', name: 'model', type: 'text', required: true },
+    { label: 'Variant', name: 'variant', type: 'text', required: true },
+    { label: 'Registration', name: 'registration', type: 'text', required: true },
+    { label: 'Colour', name: 'colour', type: 'text', required: false },
 ];
 
 const ownershipFields = [
-    { label: 'Owned from', name: 'ownedFrom', type: 'text' },
-    { label: 'Owned to', name: 'ownedTo', type: 'text' },
+    { label: 'Owned from', name: 'ownedFrom', type: 'text', required: true },
+    { label: 'Owned to', name: 'ownedTo', type: 'text', required: true },
 ];
 
-export const AddVehicle: React.FC = () => {
+interface AddVehicleProps {
+    isEditing?: boolean;
+    vehicleValues?: GarageFormType;
+    garageId?: string;
+}
+
+export const AddVehicle: React.FC<AddVehicleProps> = ({
+    isEditing = false,
+    vehicleValues,
+    garageId
+}) => {
     const router = useRouter();
-    const { register, handleSubmit, setError, clearErrors, reset, formState: { errors, isSubmitting, isSubmitSuccessful } } = useForm<GarageFormType>({
+    const { register, handleSubmit, setError, clearErrors, reset, watch, formState: { errors, isSubmitting, isSubmitSuccessful, isDirty, dirtyFields } } = useForm<GarageFormType>({
         resolver: zodResolver(vehicleFormSchema),
+        defaultValues: vehicleValues,
     });
 
+    const showOwnedTo = watch('vehicle_period', 'current');
+    const defaultFrom = vehicleValues?.ownedFrom ? parseDate(vehicleValues?.ownedFrom) : null;
+    const defaultTo = vehicleValues?.ownedTo ? parseDate(vehicleValues?.ownedTo) : null;
+
     const onSubmit: SubmitHandler<GarageFormType> = async (data) => {
-        try {
-            const formData = new FormData();
-            formData.append('file', data.cover_photo[0], data.cover_photo[0].name);
+        const isImageDirty = dirtyFields.cover_photo;
 
-            const response = await fetch('/api/aws/upload', {
-                method: 'POST',
-                body: formData,
+        if (!isEditing && data.cover_photo.length === 0) {
+            setError('cover_photo', {
+                type: 'manual',
+                message: 'Please upload an image.',
             });
+            return;
+        }
 
-            console.log(response);
+        if (isEditing && !vehicleValues?.cover_photo) {
+            setError('cover_photo', {
+                type: 'manual',
+                message: 'Please upload an image.',
+            });
+            return;
+        }
 
-            const apiData = await response.json();
+        try {
+            let imageUrl = vehicleValues?.cover_photo?.[0].url || '';
 
-            if (apiData.keys) {
-                const imageUrl = `${process.env.NEXT_PUBLIC_AWS_CLOUDFRONT_URL}/${apiData.keys[0]}`;
+            if (isImageDirty) {
+                const formData = new FormData();
+                formData.append('file', data.cover_photo[0], data.cover_photo[0].name);
+
+                const response = await fetch('/api/aws/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const apiData = await response.json();
+
+                if (apiData.keys) {
+                    imageUrl = `${process.env.NEXT_PUBLIC_AWS_CLOUDFRONT_URL}/${apiData.keys[0]}`;
+
+                } else {
+                    setError('cover_photo', {
+                        type: 'manual',
+                        message: 'Failed to upload image.',
+                    });
+                    return;
+                }
+            }
+
+            if (isEditing && garageId) {
+                const vehicleData = {
+                    ...data,
+                    make: vehicleMakes[data.make as keyof typeof vehicleMakes],
+                    cover_photo: imageUrl
+                };
+
+                const response = await updateVehicleInGarage(vehicleData, garageId);
+                if (!response || !response.success) {
+                    throw new Error('Failed to update vehicle.');
+                }
+
+                reset(data);
+            } else {
                 const response = await addVehicleToGarage({
                     ...data,
                     make: vehicleMakes[data.make as keyof typeof vehicleMakes],
@@ -131,12 +199,9 @@ export const AddVehicle: React.FC = () => {
                 if (response && response.success) {
                     reset();
                     router.push(`/profile/garage/${response.id}`);
+                } else {
+                    throw new Error('Failed to add vehicle.');
                 }
-            } else {
-                setError('cover_photo', {
-                    type: 'manual',
-                    message: 'Failed to upload image.',
-                });
             }
         } catch (error) {
             console.error(error);
@@ -144,6 +209,25 @@ export const AddVehicle: React.FC = () => {
                 type: 'manual',
                 message: 'Failed to upload image.',
             });
+        }
+    };
+
+    const onDelete = async () => {
+        if (confirm('Are you sure you want to delete this vehicle?')) {
+            try {
+                if (garageId) {
+                    const response = await deleteVehicleFromGarage(garageId);
+
+                    if (response && response.success) {
+                        router.push('/garage');
+                    }
+                }
+            } catch (error: any) {
+                setError('root', {
+                    type: 'manual',
+                    message: error.message || 'Failed to delete vehicle.',
+                });
+            }
         }
     };
 
@@ -158,7 +242,7 @@ export const AddVehicle: React.FC = () => {
                 <div className="in">
                     <div className="text">
                         {errors.root && errors.root.message}
-                        {isSubmitSuccessful && "Vehicle added successfully."}
+                        {isSubmitSuccessful && `Vehicle ${isEditing ? 'updated' : 'added'} successfully`}
                     </div>
                 </div>
                 <button type="button" className="btn btn-sm btn-text-light close-button"
@@ -171,21 +255,25 @@ export const AddVehicle: React.FC = () => {
                 >OK</button>
             </div>
 
-
             {isSubmitting && <Loader transulcent />}
             <div className="section full mt-1 mb-2">
                 <div className="section-title">Vehicle Photo</div>
                 <div className="wide-block pb-2 pt-2">
-                    <div className="custom-file-upload" id="fileUpload1">
-                        <input type="file" id="fileuploadInput" accept=".png, .jpg, .jpeg"
-                            {...register('cover_photo')}
-                        />
-                        <label htmlFor="fileuploadInput">
+                    <div className="custom-file-upload" id="fileUpload1" >
+                        <input type="file" id="fileuploadInput" accept=".png, .jpg, .jpeg" {...register('cover_photo')} />
+                        <label htmlFor="fileuploadInput"
+                            className={clsx(
+                                vehicleValues?.cover_photo?.length && "file-uploaded"
+                            )}
+                            style={{ backgroundImage: `url(${vehicleValues?.cover_photo[0].url})` }}
+                        >
                             <span>
-                                <strong>
-                                    <IonIcon icon={cloudUploadOutline} role="img" className="md hydrated" aria-label="cloud upload outline" />
-                                    <i>Tap to Upload</i>
-                                </strong>
+                                {vehicleValues?.cover_photo ? 'Click to update image' : (
+                                    <strong>
+                                        <IonIcon icon={cloudUploadOutline} role="img" className="md hydrated" aria-label="cloud upload outline" />
+                                        <i>Tap to Upload</i>
+                                    </strong>
+                                )}
                             </span>
                         </label>
                     </div>
@@ -212,7 +300,7 @@ export const AddVehicle: React.FC = () => {
 
                                 {vehicleDetailFields.map((field) => (
                                     <>
-                                        <div className="col-3 mb-2 text-xs"><label>{field.label}</label></div>
+                                        <div className="col-3 mb-2 text-xs"><label>{field.label} {field.required && '*'}</label></div>
                                         <div className="col-9 mb-2">
                                             <div className="input-wrapper">
                                                 <label className="form-label"></label>
@@ -245,10 +333,25 @@ export const AddVehicle: React.FC = () => {
                         <div className="form-group basic horizontal">
                             <div className="input-wrapper">
                                 <div className="row align-items-center">
+                                    <div className="col-3 mb-2 text-xs"><label>Ownership *</label></div>
+
+                                    <div className="col-9 mb-2">
+                                        <select className="form-control form-select" {...register('vehicle_period')}>
+                                            <option value="current">Current vehicle</option>
+                                            <option value="past">Past vehicle</option>
+                                        </select>
+                                    </div>
+
                                     {ownershipFields.map((field) => (
                                         <>
-                                            <div className="col-12 mb-2 text-xs"><label>{field.label}</label></div>
-                                            <div className="col-12 mb-2">
+                                            <div className={clsx(
+                                                "col-3 mb-2 text-xs",
+                                                field.name === 'ownedTo' && showOwnedTo === 'current' && 'd-none'
+                                            )}><label>{field.label} {field.required && '*'}</label></div>
+                                            <div className={clsx(
+                                                "col-9 mb-2",
+                                                field.name === 'ownedTo' && showOwnedTo === 'current' && 'd-none'
+                                            )}>
                                                 <div className="input-wrapper w-full">
                                                     <label className="form-label"></label>
                                                     <DatePicker
@@ -267,6 +370,7 @@ export const AddVehicle: React.FC = () => {
                                                                 },
                                                             });
                                                         }}
+                                                        defaultValue={field.name === 'ownedFrom' ? defaultFrom : defaultTo}
                                                         maxValue={today(getLocalTimeZone())}
                                                         name={field.name as keyof GarageFormType}
                                                         ref={register(field.name as keyof GarageFormType).ref}
@@ -281,17 +385,6 @@ export const AddVehicle: React.FC = () => {
                                             </div>
                                         </>
                                     ))}
-
-                                    {/* <div className="col-3 mb-2"><label>Variant</label></div>
-                                <div className="col-9 mb-2">
-                                    <div className="input-wrapper">
-                                        <label className="form-label"></label>
-                                        <input type="text" className="form-control" placeholder="Model variant (if applicable)" />
-                                        <i className="clear-input">
-                                            <IonIcon icon={closeCircle} role="img" className="md hydrated" aria-label="close circle" />
-                                        </i>
-                                    </div>
-                                </div> */}
                                 </div>
                             </div>
                         </div>
@@ -316,11 +409,19 @@ export const AddVehicle: React.FC = () => {
                     </ul>
                 </div>
             </div>
-            <div className="fixed bottom-1 w-full px-1 z-30">
-                <button type="submit" className="btn btn-primary btn-block" disabled={isSubmitting}>
-                    {isSubmitting ? 'Adding vehicle...' : 'Add Vehicle'}
-                </button>
-            </div>
+
+            {isEditing ? (
+                <div className="section flex">
+                    <button className="btn btn-primary btn-block me-1 mb-1">Update</button>
+                    <button type="button" className="btn btn-danger btn-block me-1 mb-1" onClick={onDelete}>Delete Vehicle</button>
+                </div>
+            ) : (
+                <div className="fixed bottom-1 w-full px-1 z-30">
+                    <button type="submit" className="btn btn-primary btn-block" disabled={isSubmitting || !isDirty}>
+                        {isSubmitting ? 'Adding vehicle...' : 'Add Vehicle'}
+                    </button>
+                </div>
+            )}
         </form>
     );
 };
