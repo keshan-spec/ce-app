@@ -19,6 +19,8 @@ const QRScanner: React.FC<QRScannerProps> = ({ }) => {
     const onScanSuccess = async (decodedText: string) => {
         // https://mydrivelife.com/qr/clpmhHGEXyUD
         // get the qr code and verify it
+        console.log('decodedText', decodedText);
+
         try {
             const url = new URL(decodedText);
             if (url.hostname === 'mydrivelife.com') {
@@ -29,6 +31,8 @@ const QRScanner: React.FC<QRScannerProps> = ({ }) => {
                     setLoading(false);
                     setResult(response);
                 }
+            } else {
+                throw new Error('Invalid QR Code');
             }
         } catch (error) {
             console.log('error', error);
