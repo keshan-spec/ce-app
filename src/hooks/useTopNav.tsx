@@ -2,7 +2,7 @@
 import { getQueryClient } from "@/app/context/QueryClientProvider";
 import { Garage } from "@/types/garage";
 import { Post } from "@/types/posts";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { useCallback } from "react";
 import { useUser } from "./useUser";
@@ -47,6 +47,7 @@ export const useTopNav = ({
     const isProfileEditView = pathname.includes('/profile/edit/');
     const isGarageEditView = pathname.includes('/garage');
     const isGarageAddPage = pathname.includes('/garage/add');
+    const searchParam = useSearchParams();
 
     const param = pathname.split('/').pop();
     const router = useRouter();
@@ -119,6 +120,10 @@ export const useTopNav = ({
     }, [isGarageViewPage, isPostViewPage, param]);
 
     const returnTo = () => {
+        if (searchParam.get('ref') && searchParam.get('ref') === 'redirect') {
+            return router.push('/');
+        }
+
         if (pathname.includes('checkout/payment-success')) {
             return router.push('/store');
         } else {

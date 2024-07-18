@@ -51,6 +51,6 @@ export const apiRoutes = [
  * The default redirect path after logging in
  * @type {string}
  */
-export const DEFAULT_LOGIN_REDIRECT = "/profile";
+export const DEFAULT_LOGIN_REDIRECT = "/profile?ref=redirect";
 export const LOGIN_PAGE = "/auth/login";
 export const AUTH_LANDING_PAGE = "/auth";

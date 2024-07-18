@@ -1,6 +1,7 @@
 'use client';
 import { updateUsername } from '@/actions/auth-actions';
 import { useUser } from '@/hooks/useUser';
+import { UsernameFormValues, usernameSchema } from '@/zod-schemas/register-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IonIcon } from '@ionic/react';
 import clsx from 'clsx';
@@ -9,24 +10,16 @@ import React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const usernameSchema = z.object({
-    username: z.string()
-        .min(3, { message: "Username is required" })
-        // allow only alphanumeric characters and underscores
-        .regex(/^[a-zA-Z0-9_]+$/, { message: "Invalid username" })
-});
-
-type UsernameForm = z.infer<typeof usernameSchema>;
 
 export const EditUsername: React.FC = () => {
     const { user, isLoggedIn } = useUser();
 
-    const { register, handleSubmit, reset, setError, formState: { errors, isDirty, isSubmitting } } = useForm<UsernameForm>({
+    const { register, handleSubmit, reset, setError, formState: { errors, isDirty, isSubmitting } } = useForm<UsernameFormValues>({
         resolver: zodResolver(usernameSchema),
         defaultValues: { username: user?.username || '' }
     });
 
-    const onSubmit: SubmitHandler<UsernameForm> = async (data) => {
+    const onSubmit: SubmitHandler<UsernameFormValues> = async (data) => {
         try {
             const response = await updateUsername({
                 user_id: user?.id,

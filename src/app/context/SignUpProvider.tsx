@@ -1,6 +1,5 @@
 import React, { createContext, useState, ReactNode, useContext, useCallback, useEffect } from 'react';
 import { RegisterCompleteSection, RegisterSection, UserNameSection } from '../auth/register/Steps';
-import { handleSignIn } from '@/actions/auth-actions';
 
 export interface NewUser {
     user_id?: number;
@@ -15,10 +14,8 @@ type Step = 'register' | 'username' | 'complete';
 interface SignUpContextType {
     user: NewUser | null;
     step: Step;
-    error: string;
     signUp: (user: NewUser) => void;
     setStep: (step: Step) => void;
-    setError: (error: string) => void;
 }
 
 // Create context with default values
@@ -28,26 +25,15 @@ const SignUpContext = createContext<SignUpContextType | undefined>(undefined);
 const SignUpProvider: React.FC<{ children: ReactNode; }> = ({ children }) => {
     const [user, setUser] = useState<NewUser | null>(null);
     const [step, setStep] = useState<Step>('register');
-    const [error, setError] = useState<string>('');
     const signUp = (user: NewUser) => setUser(user);
-
-    useEffect(() => {
-        if (error) {
-            setTimeout(() => {
-                setError("");
-            }, 3000);
-        }
-    }, [error]);
 
     return (
         <SignUpContext.Provider
             value={{
                 user,
                 step,
-                error,
                 signUp,
                 setStep,
-                setError
             }}
         >
             {children}

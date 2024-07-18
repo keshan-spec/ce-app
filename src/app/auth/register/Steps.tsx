@@ -6,11 +6,16 @@ import '@splidejs/react-splide/css';
 import React, { useCallback, useEffect, useState } from "react";
 import { Wrapper } from "../Wrapper";
 import { handleSignIn, handleSignUp, updateUsername } from "@/actions/auth-actions";
-import { ErrorMessage } from "@/shared/ErrorMessage";
 import { Button } from "@/shared/Button";
 import { useSignUp } from "@/app/context/SignUpProvider";
 import { InputField } from "@/shared/Input";
 import { sendRNMessage } from "@/utils/nativeFeel";
+import { registerFields, RegistrationFormValues, registrationSchema, UsernameFormValues, usernameSchema } from "@/zod-schemas/register-form";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import clsx from "clsx";
+import { IonIcon } from "@ionic/react";
+import { closeCircle } from "ionicons/icons";
 
 const carouselOptions: Options = {
     perPage: 1,
@@ -43,40 +48,38 @@ const getStartedData = [
 export const UserNameSection = () => {
     const {
         setStep,
-        error,
-        setError,
+        // error,
+        // setError,
         user,
     } = useSignUp();
 
-    const handleSubmit = async (formData: FormData) => {
+    const {
+        register,
+        handleSubmit,
+        setError,
+        clearErrors,
+        formState: { errors, isSubmitting },
+    } = useForm<UsernameFormValues>({
+        resolver: zodResolver(usernameSchema),
+        defaultValues: {
+            username: user?.username || "",
+        },
+    });
+
+    const onSubmit: SubmitHandler<UsernameFormValues> = async (data) => {
         try {
             if (!user?.user_id) {
-                setError("User ID is missing, please try the process again.");
+                setError("root", {
+                    type: "manual",
+                    message: "User ID is missing, please try the process again.",
+                });
                 return;
             }
 
-            setError("");
-
-            const username = formData.get("username")?.toString();
+            const username = data.username;
 
             if (username === user?.username) {
                 setStep("complete");
-                return;
-            }
-
-            if (!username) {
-                setError("Username is required");
-                return;
-            }
-
-            // validation
-            if (username.length < 3) {
-                setError("Username must be at least 3 characters");
-                return;
-            }
-
-            if (username.length > 20) {
-                setError("Username must be less than 20 characters");
                 return;
             }
 
@@ -86,15 +89,32 @@ export const UserNameSection = () => {
             });
 
             if (!response || !response.success) {
-                setError(response?.message || "Something went wrong");
+                switch (response?.code) {
+                    case "username_exists":
+                        setError("root", {
+                            type: "manual",
+                            message: "Username already exists",
+                        });
+                        break;
+                    default:
+                        setError("root", {
+                            type: "manual",
+                            message: response?.message || "Something went wrong",
+                        });
+                        break;
+                }
                 return;
             }
 
             setStep("complete");
         } catch (error: any) {
-            setError(error.message);
+            setError("root", {
+                type: "manual",
+                message: error?.message || "An error occurred",
+            });
         }
     };
+
 
     return (
         <div id="appCapsule">
@@ -104,16 +124,49 @@ export const UserNameSection = () => {
                     <h4>Set your DriveLife username</h4>
                 </div>
                 <div className="section mt-2 mb-5">
-                    <form action={handleSubmit}>
-                        <InputField type="text" name="username" placeholder="Username" className="text-center" error={error} defaultValue={user?.username} />
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <div className="form-group boxed">
+                            <div className="input-wrapper">
+                                <input
+                                    type="text"
+                                    placeholder="Username"
+                                    className={clsx(
+                                        "form-control",
+                                        errors.username ? "!border-red-600" : ""
+                                    )}
+                                    {...register("username")}
+                                />
+                                <i className="clear-input">
+                                    <IonIcon icon={closeCircle} role="img" className="md hydrated" aria-label="close circle" />
+                                </i>
+                            </div>
+                            {errors.username && <div className="text-red-600 text-left text-xs mt-1">{errors.username.message}</div>}
+                        </div>
 
                         <div className="form-button-group">
-                            <Button type="submit">
-                                Continue
-                            </Button>
+                            <button type="submit" className="btn btn-primary btn-block" disabled={isSubmitting}>
+                                {isSubmitting ? 'Loading...' : 'Continue'}
+                            </button>
                         </div>
                     </form>
                 </div>
+            </div>
+
+            <div id="toast-16" className={clsx(
+                "toast-box toast-top",
+                { "bg-danger": errors.root },
+                { "show": errors.root }
+            )}>
+                <div className="in">
+                    <div className="text">
+                        {errors.root && errors.root.message}
+                    </div>
+                </div>
+                <button type="button" className="btn btn-sm btn-text-light close-button"
+                    onClick={() => {
+                        clearErrors();
+                    }}
+                >OK</button>
             </div>
         </div>
     );
@@ -224,99 +277,61 @@ export const RegisterCompleteSection = () => {
 };
 
 export const RegisterSection = () => {
-    const { error, setError, setStep, signUp } = useSignUp();
-    const [nameError, setNameError] = useState("");
-    const [emailError, setEmailError] = useState("");
-    const [passwordError, setPasswordError] = useState("");
+    const { setStep, signUp } = useSignUp();
 
-    const resetErrors = () => {
-        setError("");
-        setNameError("");
-        setEmailError("");
-        setPasswordError("");
-    };
+    const {
+        register,
+        handleSubmit,
+        setError,
+        clearErrors,
+        formState: { errors, isSubmitting },
+    } = useForm<RegistrationFormValues>({
+        resolver: zodResolver(registrationSchema),
+    });
 
-
-    const handleSubmit = async (formData: FormData) => {
-        resetErrors();
-
-        let hasError = false;
-
+    const onSubmit: SubmitHandler<RegistrationFormValues> = async (data) => {
         try {
-            const rawFormData = {
-                full_name: formData.get("name")?.toString(),
-                email: formData.get("email")?.toString(),
-                password: formData.get("password")?.toString(),
-                terms: formData.get("terms")?.toString(),
-            };
+            const response = await handleSignUp(data);
 
-            // validation
-            if (!rawFormData.full_name) {
-                setNameError("Full name is required");
-                hasError = true;
-            }
-
-            if (!rawFormData.email) {
-                setEmailError("Email is required");
-                hasError = true;
-            }
-
-            if (!rawFormData.password) {
-                setPasswordError("Password is required");
-                hasError = true;
-            }
-
-            if (rawFormData.password !== formData.get("password2")?.toString()) {
-                setPasswordError("Passwords do not match");
-                hasError = true;
-            }
-
-            if (hasError) {
+            if (!response || !response.success) {
+                switch (response?.code) {
+                    case "email_exists":
+                        setError("root", {
+                            type: "manual",
+                            message: "Email already exists",
+                        });
+                        break;
+                    case "username_exists":
+                        setError("root", {
+                            type: "manual",
+                            message: "Username already exists",
+                        });
+                        break;
+                    default:
+                        setError("root", {
+                            type: "manual",
+                            message: response?.message || "Something went wrong",
+                        });
+                        break;
+                }
                 return;
             }
 
-            if (rawFormData.email && rawFormData.password && rawFormData.full_name) {
-                if (rawFormData.terms !== "on") {
-                    setError("You must agree to the terms and conditions");
-                    return;
-                }
+            const username = response.username;
 
-                const response = await handleSignUp({
-                    email: rawFormData.email,
-                    full_name: rawFormData.full_name,
-                    password: rawFormData.password,
-                });
-
-                if (!response || !response.success) {
-                    switch (response?.code) {
-                        case "email_exists":
-                            setEmailError("Email already exists");
-                            break;
-                        case "username_exists":
-                            setError("Username already exists");
-                            break;
-                        default:
-                            setError(response?.message || "Something went wrong");
-                            break;
-                    }
-
-                    return;
-                }
-
-                const username = response.username;
-
-                signUp({
-                    user_id: response.user_id,
-                    email: rawFormData.email,
-                    full_name: rawFormData.full_name,
-                    password: rawFormData.password,
-                    username,
-                });
-
-                setStep("username");
-            }
+            signUp({
+                user_id: response.user_id,
+                email: data.email,
+                full_name: data.full_name,
+                password: data.password,
+                username,
+            });
+            setStep("username");
         } catch (error: any) {
-            setError(error.message);
+            setError("root", {
+                type: "manual",
+                message: error?.message || "An error occurred",
+            });
         }
     };
 
@@ -329,26 +344,63 @@ export const RegisterSection = () => {
                         <h4>Create your DriveLife Account</h4>
                     </div>
                     <div className="section mt-2 mb-5">
-                        <form action={handleSubmit}>
-                            <InputField type="text" name="name" placeholder="Full name" error={nameError} />
-                            <InputField type="email" name="email" placeholder="Email address" error={emailError} />
-                            <InputField type="password" name="password" placeholder="Password" error={passwordError} />
-                            <InputField type="password" name="password2" placeholder="Password (again)" error={passwordError} />
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            {registerFields.map((field) => (
+                                <div className="form-group boxed" key={field.name}>
+                                    <div className="input-wrapper">
+                                        <input
+                                            type={field.type}
+                                            placeholder={field.placeholder}
+                                            {...register(field.name as keyof RegistrationFormValues)}
+                                            className={clsx(
+                                                "form-control",
+                                                errors[field.name as keyof RegistrationFormValues] ? "!border-red-600" : ""
+                                            )}
+                                        />
+                                        <i className="clear-input">
+                                            <IonIcon icon={closeCircle} role="img" className="md hydrated" aria-label="close circle" />
+                                        </i>
+                                    </div>
+                                    {errors[field.name as keyof RegistrationFormValues] && <div className="text-red-600 text-left text-xs mt-1">{errors[field.name as keyof RegistrationFormValues]?.message}</div>}
+                                </div>
+                            ))}
+
+                            {/* <InputField type="text" placeholder="Full name" error={errors.full_name?.message} {...register('full_name')} />
+                            <InputField type="email" placeholder="Email address" error={errors.email?.message} {...register('email')} />
+                            <InputField type="password" placeholder="Password" error={errors.password?.message} {...register('password')} />
+                            <InputField type="password" placeholder="Password (again)" error={errors.password2?.message} {...register('password2')} /> */}
 
                             <div className="mt-1 text-start">
                                 <div className="form-check">
-                                    <input type="checkbox" name="terms" className="form-check-input" id="terms" />
+                                    <input type="checkbox" className="form-check-input" id="terms" {...register('terms')} />
                                     <label className="form-check-label" htmlFor="terms">
-                                        I Agree to the <a href="#">Terms &amp; Conditions</a></label>
+                                        I Agree to the <a href="#">Terms &amp; Conditions</a>
+                                    </label>
                                 </div>
+                                {errors.terms && <span className="text-danger text-xs">{errors.terms.message}</span>}
                             </div>
 
-                            <ErrorMessage message={error} />
+                            <div id="toast-16" className={clsx(
+                                "toast-box toast-top",
+                                { "bg-danger": errors.root },
+                                { "show": errors.root }
+                            )}>
+                                <div className="in">
+                                    <div className="text">
+                                        {errors.root && errors.root.message}
+                                    </div>
+                                </div>
+                                <button type="button" className="btn btn-sm btn-text-light close-button"
+                                    onClick={() => {
+                                        clearErrors();
+                                    }}
+                                >OK</button>
+                            </div>
 
                             <div className="form-button-group">
-                                <Button type="submit">
-                                    Continue
-                                </Button>
+                                <button type="submit" className="btn btn-primary btn-block" disabled={isSubmitting}>
+                                    {isSubmitting ? 'Loading...' : 'Continue'}
+                                </button>
                             </div>
                         </form>
                     </div>
