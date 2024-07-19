@@ -9,7 +9,6 @@ import "../../public/assets/css/custom.css";
 
 import Script from "next/script";
 import Providers from "./context/QueryClientProvider";
-import { MainProvider } from "./context/MainContextProvider";
 
 const inter = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
@@ -35,9 +34,7 @@ export default async function RootLayout({
 
         <Providers>
           <SessionProvider session={session}>
-            {/* <MainProvider> */}
             {children}
-            {/* </MainProvider> */}
           </SessionProvider>
         </Providers>
 
