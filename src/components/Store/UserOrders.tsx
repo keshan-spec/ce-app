@@ -17,8 +17,6 @@ export const UserOrders: React.FC = () => {
         staleTime: 60 * 1000,
     });
 
-    console.log("data", data);
-
     if (isFetching) return <div>Loading...</div>;
 
     return (

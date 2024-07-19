@@ -1,6 +1,5 @@
 'use client';
-import { usePathname } from "next/navigation";
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 
 interface MainContextType {
     setHeaderAction: (callback: () => void) => void;
@@ -11,15 +10,8 @@ interface MainContextType {
 const MainContext = createContext<MainContextType | undefined>(undefined);
 
 const MainProvider: React.FC<{ children: ReactNode; }> = ({ children }) => {
-    const pathname = usePathname();
     const [headerAction, setHeaderAction] = useState<() => void>(() => () => { });
     const [topTabs, setTopTabs] = useState<ReactNode | undefined>(undefined);
-
-    // useEffect(() => {
-    //     // reset header action when the pathname changes
-    //     setHeaderAction(() => () => { });
-    //     setTopTabs(undefined);
-    // }, [pathname]);
 
     const contextValues: MainContextType = {
         setHeaderAction,

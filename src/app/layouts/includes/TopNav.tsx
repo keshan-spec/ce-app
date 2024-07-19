@@ -20,7 +20,7 @@ export const TopNav: React.FC = () => {
     const { user } = useUser();
     const { totalItems } = useCartStore();
     const [isScanning, setIsScanning] = useState(false);
-    const { renderTopTabs, setHeaderAction } = useSharedContext();
+    // const { renderTopTabs, setHeaderAction } = useSharedContext();
 
     useEffect(() => {
         // send user data to react native every time the app loads
@@ -119,7 +119,7 @@ export const TopNav: React.FC = () => {
                 )} */}
             </div>
 
-            {/* {pathname === '/' && (
+            {pathname === '/' && (
                 <div className="social-tabs">
                     <ul className="nav nav-tabs capsuled" role="tablist">
                         <li className="nav-item">
@@ -132,9 +132,9 @@ export const TopNav: React.FC = () => {
                         </li>
                     </ul>
                 </div>
-            )} */}
+            )}
 
-            {renderTopTabs()}
+            {/* {renderTopTabs()} */}
 
             {pathname == '/discover' && (
                 <DiscoverTabs />

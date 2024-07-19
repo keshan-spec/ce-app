@@ -2,6 +2,7 @@ import type { Config } from "tailwindcss";
 const { nextui } = require("@nextui-org/react");
 
 const config: Config = {
+  // important: true,
   content: [
     "./src/**/*.{js,ts,jsx,tsx}",
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
@@ -27,4 +28,5 @@ const config: Config = {
   },
   plugins: [nextui()],
 };
+
 export default config;

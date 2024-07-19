@@ -61,7 +61,7 @@ export const DotButton: React.FC<DotButtonPropType> = (props) => {
 export const Posts: React.FC = () => {
     const { data, isFetching, setFollowingOnly, followingOnly } = useObservedQuery();
     const [muted, setMuted] = useState(true); // State to track muted state
-    const { setTopTabs } = useSharedContext();
+    // const { setTopTabs } = useSharedContext();
 
     const [activeSection, setActiveSection] = useState<number | undefined>();
     const [activeTab, setActiveTab] = useState<"latest" | "following">("latest");
@@ -104,34 +104,34 @@ export const Posts: React.FC = () => {
         </>;
     }, []);
 
-    useEffect(() => {
-        setTopTabs((
-            <div className="social-tabs">
-                <ul className="nav nav-tabs capsuled" role="tablist">
-                    <li className="nav-item" onClick={() => {
-                        setActiveTab("latest");
-                        setFollowingOnly(false);
-                    }}>
-                        <a className="nav-link active" data-bs-toggle="tab" href="#latest-posts" role="tab" aria-selected="false">
-                            Latest
-                        </a>
-                    </li>
-                    <li className="nav-item" onClick={() => {
-                        setActiveTab("following");
-                        setFollowingOnly(true);
-                    }}>
-                        <a className="nav-link" data-bs-toggle="tab" href="#following-posts" role="tab" aria-selected="true">
-                            Following
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        ));
+    // useEffect(() => {
+    //     setTopTabs((
+    //         <div className="social-tabs">
+    //             <ul className="nav nav-tabs capsuled" role="tablist">
+    //                 <li className="nav-item" onClick={() => {
+    //                     setActiveTab("latest");
+    //                     setFollowingOnly(false);
+    //                 }}>
+    //                     <a className="nav-link active" data-bs-toggle="tab" href="#latest-posts" role="tab" aria-selected="false">
+    //                         Latest
+    //                     </a>
+    //                 </li>
+    //                 <li className="nav-item" onClick={() => {
+    //                     setActiveTab("following");
+    //                     setFollowingOnly(true);
+    //                 }}>
+    //                     <a className="nav-link" data-bs-toggle="tab" href="#following-posts" role="tab" aria-selected="true">
+    //                         Following
+    //                     </a>
+    //                 </li>
+    //             </ul>
+    //         </div>
+    //     ));
 
-        return () => {
-            setTopTabs(undefined);
-        };
-    }, []);
+    //     return () => {
+    //         setTopTabs(undefined);
+    //     };
+    // }, []);
 
     return (
         <div className="w-full h-full bg-white">
