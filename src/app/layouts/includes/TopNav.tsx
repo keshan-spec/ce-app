@@ -94,10 +94,12 @@ export const TopNav: React.FC = () => {
                                 <IonIcon icon={qrCode} role="img" className="md hydrated" />
                             </button>
                         )}
-                        <Link href="/search" className="headerButton">
-                            <IonIcon icon={notifications} role="img" className="md hydrated" />
-                        </Link>
 
+                        {!pathname.includes('/notifications') && (
+                            <Link href="/notifications" className="headerButton">
+                                <IonIcon icon={notifications} role="img" className="md hydrated" />
+                            </Link>
+                        )}
                     </div>
                 )}
 

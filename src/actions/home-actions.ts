@@ -19,6 +19,8 @@ export const fetchTrendingEvents = async () => {
         },
         body: JSON.stringify({ user_id: user?.id }),
     });
+
+
     const data = await response.json();
     return data;
 };

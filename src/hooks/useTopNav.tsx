@@ -36,7 +36,8 @@ export const menuIconLessPaths = [
     '/garage',
     '/garage/edit/',
     '/garage/add',
-    '/edit-post/'
+    '/edit-post/',
+    '/notifications',
 ];
 
 export const useTopNav = ({
