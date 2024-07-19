@@ -363,7 +363,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                         {post.username}
                     </div>
                 </Link>
-                {post.garage_id && (
+                {(post.garage_id && post.garage?.status === 'active') && (
                     <Link
                         href={`/profile/garage/${post.garage_id}`}
                         className="text-xs opacity-50">

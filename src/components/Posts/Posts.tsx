@@ -1,7 +1,7 @@
 'use client';
 
 import { PostCardSkeleton } from "./PostCardSkeleton";
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import useEmblaCarousel from 'embla-carousel-react';
 
@@ -17,10 +17,8 @@ import { useObservedQuery } from "@/app/context/ObservedQuery";
 import clsx from "clsx";
 
 import { PostCard } from "./PostCard";
-import { CommentsSlider } from "./CommentsSlider";
 import { ComentsSection } from "./ComentSection";
 import SlideInFromBottomToTop from "@/shared/SlideIn";
-import { useSharedContext } from "@/app/context/MainContextProvider";
 
 type DotButtonPropType = PropsWithChildren<
     React.DetailedHTMLProps<
@@ -59,9 +57,8 @@ export const DotButton: React.FC<DotButtonPropType> = (props) => {
 };
 
 export const Posts: React.FC = () => {
-    const { data, isFetching, setFollowingOnly, followingOnly } = useObservedQuery();
+    const { data, isFetching, setFollowingOnly } = useObservedQuery();
     const [muted, setMuted] = useState(true); // State to track muted state
-    // const { setTopTabs } = useSharedContext();
 
     const [activeSection, setActiveSection] = useState<number | undefined>();
     const [activeTab, setActiveTab] = useState<"latest" | "following">("latest");
@@ -104,37 +101,29 @@ export const Posts: React.FC = () => {
         </>;
     }, []);
 
-    // useEffect(() => {
-    //     setTopTabs((
-    //         <div className="social-tabs">
-    //             <ul className="nav nav-tabs capsuled" role="tablist">
-    //                 <li className="nav-item" onClick={() => {
-    //                     setActiveTab("latest");
-    //                     setFollowingOnly(false);
-    //                 }}>
-    //                     <a className="nav-link active" data-bs-toggle="tab" href="#latest-posts" role="tab" aria-selected="false">
-    //                         Latest
-    //                     </a>
-    //                 </li>
-    //                 <li className="nav-item" onClick={() => {
-    //                     setActiveTab("following");
-    //                     setFollowingOnly(true);
-    //                 }}>
-    //                     <a className="nav-link" data-bs-toggle="tab" href="#following-posts" role="tab" aria-selected="true">
-    //                         Following
-    //                     </a>
-    //                 </li>
-    //             </ul>
-    //         </div>
-    //     ));
-
-    //     return () => {
-    //         setTopTabs(undefined);
-    //     };
-    // }, []);
-
     return (
         <div className="w-full h-full bg-white">
+            <div className="fixed w-full social-tabs !mt-0 z-50">
+                <ul className="nav nav-tabs capsuled" role="tablist">
+                    <li className="nav-item" onClick={() => {
+                        setActiveTab("latest");
+                        setFollowingOnly(false);
+                    }}>
+                        <a className="nav-link active" data-bs-toggle="tab" href="#latest-posts" role="tab" aria-selected="false">
+                            Latest
+                        </a>
+                    </li>
+                    <li className="nav-item" onClick={() => {
+                        setActiveTab("following");
+                        setFollowingOnly(true);
+                    }}>
+                        <a className="nav-link" data-bs-toggle="tab" href="#following-posts" role="tab" aria-selected="true">
+                            Following
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
             <SlideInFromBottomToTop
                 titleClassName="comments-container-header"
                 isOpen={activeSection ? true : false}
@@ -151,7 +140,7 @@ export const Posts: React.FC = () => {
             </SlideInFromBottomToTop>
 
             <ul className={clsx(
-                "listview flush transparent no-line image-listview max-w-md mx-auto",
+                "listview flush transparent no-line image-listview max-w-md mx-auto !pt-16",
             )}>
                 <div className="tab-content">
                     <div className="tab-pane fade active show" id="latest-posts" role="tabpanel">

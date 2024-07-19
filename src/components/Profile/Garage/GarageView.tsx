@@ -38,8 +38,17 @@ export const GarageView: React.FC<GarageViewProps> = ({
     }
 
     if (error || !data) {
-        return <div>Error loading garage</div>;
+        return (
+            <div className="section">
+                <div className="profile-garage-intro text-center">
+                    <h1 className="flex flex-col mb-1">
+                        Vehicle Not Found
+                    </h1>
+                </div>
+            </div>
+        );
     }
+
 
     return (
         <>

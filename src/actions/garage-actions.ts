@@ -17,9 +17,8 @@ export const getGarageById = async (garageId: string): Promise<Garage | null> =>
 
     const data = await response.json();
     if (response.status !== 200) {
-        throw new Error(data.message);
+        return null;
     }
-
     return data;
 };
 
