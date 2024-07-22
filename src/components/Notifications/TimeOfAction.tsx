@@ -1,7 +1,5 @@
 "use client";
 
-import { Notification } from "@/types/notifications";
-
 interface TimeOfActionProps {
     date: string;
 }
@@ -16,19 +14,19 @@ const TimeOfAction = ({ date }: TimeOfActionProps) => {
     const weeks = Math.floor(days / 7);
 
     if (weeks > 1) {
-        return <div>{weeks} weeks ago</div>;
+        return <div className="text-xs">{weeks} weeks ago</div>;
     } else if (weeks === 1) {
-        return <div>{weeks} week ago</div>;
+        return <div className="text-xs">{weeks} week ago</div>;
     } else if (days > 1) {
-        return <div>{days} days ago</div>;
+        return <div className="text-xs">{days} days ago</div>;
     } else if (days === 1) {
-        return <div>{days} day ago</div>;
+        return <div className="text-xs">{days} day ago</div>;
     } else if (hours >= 1) {
-        return <div>{hours}h ago</div>;
+        return <div className="text-xs">{hours}h ago</div>;
     } else if (mins >= 1) {
-        return <div>{mins}m ago</div>;
+        return <div className="text-xs">{mins}m ago</div>;
     } else {
-        return <div>{seconds}s ago</div>;
+        return <div className="text-xs">{seconds}s ago</div>;
     }
 };
 

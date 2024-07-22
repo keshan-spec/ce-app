@@ -1,24 +1,27 @@
 "use client";
 import Image from "next/image";
-import React from "react";
-
-const myphotos = [
-    {
-        id: "1",
-        imgUrl: "/assets/logo.png",
-    },
-];
 
 function CommentPhoto({ src }: { src: string; }) {
+    if (src.endsWith(".mp4")) {
+        return (
+            <video
+                src={src}
+                muted
+                className="mt-1 inline-block h-11 w-11 hover:cursor-pointer object-cover"
+            ></video>
+        );
+    }
+
+
     return (
         <Image
             src={src}
-            alt="user photo"
+            alt="Post photo"
             width={0}
             height={0}
             unoptimized
-            className="mt-1 inline-block h-11 w-11 hover:cursor-pointer"
-        ></Image>
+            className="mt-1 inline-block h-11 w-11 hover:cursor-pointer object-cover"
+        />
     );
 }
 

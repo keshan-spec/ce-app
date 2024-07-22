@@ -21,7 +21,7 @@ export const getUserPosts = async (profileId: string, page: number, tagged = fal
     return data;
 };
 
-export const maybeFollowUser = async (profileId: string) => {
+export const maybeFollowUser = async (profileId: string | number) => {
     const user = await getSessionUser();
     if (!user) return;
 
@@ -35,7 +35,6 @@ export const maybeFollowUser = async (profileId: string) => {
     });
 
     const data = await response.json();
-    if (response.status !== 200) throw new Error(data.message);
     return data;
 };
 
@@ -172,24 +171,6 @@ export const updateBillingInfo = async (info: UserSchema) => {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({ user_id: user.id, info }),
-    });
-
-    const data = await response.json();
-    return data;
-};
-
-
-export const getUserNotifications = async () => {
-    const user = await getSessionUser();
-    if (!user) return [];
-
-    const response = await fetch(`${API_URL}/wp-json/app/v1/get-notifications`, {
-        cache: "no-cache",
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user_id: user.id }),
     });
 
     const data = await response.json();

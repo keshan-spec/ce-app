@@ -172,6 +172,7 @@ const Comment: React.FC<{
         profile_image: string;
         likes_count: string | null;
         liked: boolean;
+        user_id: string;
     };
 }> = ({ comment }) => {
     const [likesCount, setLikesCount] = useState<number>(parseInt(comment.likes_count ?? '0'));
@@ -187,7 +188,7 @@ const Comment: React.FC<{
         setLikesCount(newLikesCount);
 
         try {
-            const responsne = await maybeLikeComment(comment.id);
+            const responsne = await maybeLikeComment(comment.id, comment.user_id);
             if (responsne) {
                 comment.liked = newLikedState;
                 comment.likes_count = newLikesCount.toString();

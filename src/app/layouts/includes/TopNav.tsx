@@ -12,13 +12,22 @@ import { menuOutline, notifications, chevronBackOutline, qrCode, cartOutline } f
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
+import { useQuery } from "@tanstack/react-query";
+import { getNotificationCount } from "@/actions/notification-actions";
 
 export const TopNav: React.FC = () => {
     const pathname = usePathname();
     const { user } = useUser();
     const { totalItems } = useCartStore();
     const [isScanning, setIsScanning] = useState(false);
+
+    const { data } = useQuery({
+        queryKey: ["notification-count"],
+        queryFn: () => getNotificationCount(),
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        retry: 1,
+    });
 
     useEffect(() => {
         // send user data to react native every time the app loads
@@ -96,8 +105,13 @@ export const TopNav: React.FC = () => {
                         )}
 
                         {!pathname.includes('/notifications') && (
-                            <Link href="/notifications" className="headerButton">
+                            <Link href="/notifications" className="headerButton relative">
                                 <IonIcon icon={notifications} role="img" className="md hydrated" />
+                                {data && data.count > 0 && (
+                                    <span className="badge badge-primary absolute !-top-1 !-right-1">
+                                        {data.count}
+                                    </span>
+                                )}
                             </Link>
                         )}
                     </div>

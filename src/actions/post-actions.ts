@@ -183,7 +183,7 @@ export const deletePost = async (postId: number) => {
     }
 };
 
-export const maybeLikeComment = async (commentId: number) => {
+export const maybeLikeComment = async (commentId: number, ownerId: string) => {
     try {
         const user = await getSessionUser();
         if (!user || !user.id) throw new Error("User session expired. Please login again.");
@@ -194,7 +194,7 @@ export const maybeLikeComment = async (commentId: number) => {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ user_id: user?.id, comment_id: commentId }),
+            body: JSON.stringify({ user_id: user?.id, comment_id: commentId, owner_id: ownerId }),
         });
         const data = await response.json();
 

@@ -1,3 +1,5 @@
+import { Garage } from "./garage";
+
 export interface Notification {
     _id: string;
     date: string;
@@ -6,10 +8,16 @@ export interface Notification {
     entity: Entity;
 }
 
-export type NotificationType = 'like' | 'comment' | 'follow' | 'mention' | 'tag' | 'event' | 'club_event' | 'car';
+interface NotificationData {
+    recent: Notification[];
+    last_week: Notification[];
+    last_30_days: Notification[];
+}
+
+export type NotificationType = 'like' | 'comment' | 'follow' | 'mention' | 'tag' | 'event' | 'club_event' | 'car' | 'post';
 
 export interface NotificationResponse {
-    data: Notification[];
+    data: NotificationData;
     success: boolean;
 }
 
@@ -23,6 +31,10 @@ interface Entity {
 
 interface EntityData {
     media: string;
+    post_id?: string;
+    comment_id?: string;
+    comment?: string;
+    garage?: Garage;
 }
 
 interface InitiatorData {
