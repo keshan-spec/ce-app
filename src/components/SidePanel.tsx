@@ -6,7 +6,7 @@ import { IonIcon } from '@ionic/react';
 import { close, cubeOutline, homeOutline } from "ionicons/icons";
 import { useState } from "react";
 import { Loader } from "./Loader";
-import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
+import { PLACEHOLDER_PFP, sendRNMessage } from "@/utils/nativeFeel";
 
 export const SidePanel: React.FC = () => {
     const { isLoggedIn, user } = useUser();
@@ -15,6 +15,10 @@ export const SidePanel: React.FC = () => {
 
     const onSignout = async () => {
         setLoading(true);
+        sendRNMessage({
+            type: 'signOut',
+            user_id: user?.id
+        });
         await handleSignOut();
     };
 

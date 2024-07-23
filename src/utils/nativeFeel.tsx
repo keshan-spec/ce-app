@@ -17,7 +17,7 @@ export const vibrateDevice = (pattern: number | number[]) => {
 };
 
 interface PostMessage {
-    type: 'createPost' | 'addEventPost' | 'authData';
+    type: 'createPost' | 'addEventPost' | 'authData' | 'signOut';
     user_id: string | number;
     page?: string;
     association_id?: string;
