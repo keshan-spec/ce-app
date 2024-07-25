@@ -24,7 +24,9 @@ export const Footer: React.FC = () => {
     return (
         <>
             <div className="appBottomMenu">
-                <Link href="/" className={`item ${pathname == '/' ? 'active' : ''}`}>
+                <Link href="/" className={`item ${pathname == '/' ? 'active' : ''}`} onClick={() => {
+                    pathname == '/' && window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}>
                     <div className="col">
                         <IonIcon icon={homeOutline} />
                         <strong>For You</strong>
