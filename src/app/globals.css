@@ -17,6 +17,10 @@ body {
     line-height: 1.65;
 }
 
+span.description {
+    @apply text-gray-500 text-xs block mt-1;
+}
+
 .error-message {
     @apply text-red-500 text-xs mt-1;
 }

@@ -41,3 +41,7 @@ export const convertToBase64 = (file: File): Promise<string | ArrayBuffer | null
         reader.readAsDataURL(file);
     });
 };
+
+export const convertToCurrency = (amount: number) => {
+    return `£${amount.toFixed(2)}`;
+};

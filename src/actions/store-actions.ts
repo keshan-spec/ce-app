@@ -173,9 +173,6 @@ export const createOrder = async ({
     }
 };
 
-
-
-
 export const getUserOrders = async (): Promise<UserOrderResponse | null> => {
     const user = await getSessionUser();
     if (!user) return null;
@@ -191,6 +188,25 @@ export const getUserOrders = async (): Promise<UserOrderResponse | null> => {
         });
 
         const data = await response.json() as UserOrderResponse;
+        return data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
+export const getOrder = async (order_id: number) => {
+    try {
+        const response = await fetch(`${STORE_API_URL}/wp-json/app/v1/get-order`, {
+            cache: "no-cache",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ order_id }),
+        });
+
+        const data = await response.json();
         return data;
     } catch (error) {
         console.error(error);

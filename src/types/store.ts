@@ -119,3 +119,37 @@ export interface UserOrderResponse {
     success: boolean;
     data?: UserOrderData[];
 }
+
+interface Order {
+    id: string;
+    items: {
+        id: string;
+        title: string;
+        price: number;
+        qty: number;
+        thumbnail: string;
+    }[];
+    status: string;
+    order_date: string;
+    order_meta: {
+        order_total: string;
+        stripe_intent_id: string;
+    };
+    billing: {
+        first_name: string;
+        last_name: string;
+        address_1: string;
+        address_2: string;
+        city: string;
+        state: string;
+        postcode: string;
+        country: string;
+        email: string;
+        phone: string;
+    };
+}
+
+export interface OrderData {
+    data?: Order;
+    success: boolean;
+}

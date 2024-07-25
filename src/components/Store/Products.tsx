@@ -4,6 +4,7 @@ import { StoreProduct } from '@/types/store';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import React, { memo, useEffect, useMemo } from 'react';
+import NcImage from '../Image/Image';
 
 export const Products: React.FC = () => {
     const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
@@ -54,9 +55,13 @@ export const Products: React.FC = () => {
                                 <div className="col-6 mb-3" key={j}>
                                     <div className="card product-card min-h-[310px] flex justify-between">
                                         <div className="card-body">
-                                            <div className="card-img-box" style={{
+                                            {/* <div className="card-img-box" style={{
                                                 backgroundImage: `url('${product.thumb}')`,
-                                            }}></div>
+                                            }}/> */}
+                                            <NcImage src={product.thumb} alt={product.title} className="card-img-top" imageDimension={{
+                                                height: 200,
+                                                width: 200,
+                                            }} />
                                             <h2 className="title truncate" dangerouslySetInnerHTML={{ __html: product.title }}></h2>
                                             <p className="text">{product.highlight}</p>
                                             <div className="price">£{product.price}</div>
