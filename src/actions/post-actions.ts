@@ -57,7 +57,7 @@ export const fetchPosts = async (page: number, following_only = false) => {
     return data;
 };
 
-export const addComment = async (postId: number, comment: string) => {
+export const addComment = async (postId: number, comment: string, comment_id?: string) => {
     const user = await getSessionUser();
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/add-post-comment`, {
@@ -66,7 +66,7 @@ export const addComment = async (postId: number, comment: string) => {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user_id: user?.id, post_id: postId, comment }),
+        body: JSON.stringify({ user_id: user?.id, post_id: postId, comment, parent_id: comment_id }),
     });
 
     const data = await response.json();
@@ -183,7 +183,7 @@ export const deletePost = async (postId: number) => {
     }
 };
 
-export const maybeLikeComment = async (commentId: number, ownerId: string) => {
+export const maybeLikeComment = async (commentId: string, ownerId: string) => {
     try {
         const user = await getSessionUser();
         if (!user || !user.id) throw new Error("User session expired. Please login again.");
