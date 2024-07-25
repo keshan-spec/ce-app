@@ -56,7 +56,7 @@ export const ComentsSection: React.FC<ComentsSectionProps> = ({
 
     return (
         <div className={clsx("w-full overflow-scroll h-full px-4", minHeight)}>
-            <div className="section full mb-3 w-full">
+            <div className="section full w-full">
                 {(isLoading || isFetching) && <CommentLoadingSkeleton />}
 
                 {error && <p className="px-3">{error.message}</p>}
@@ -295,7 +295,7 @@ const CommentForm: React.FC<{
                     </button>
                 </div>
                 <textarea
-                    className="form-control relative !text-sm z-20 !focus-within:ring-transparent !focus:ring-0 !focus:outline-none !ring-0"
+                    className="form-control relative !text-sm z-20 !rounded-none !focus-within:ring-transparent !focus:ring-0 !focus:outline-none !ring-0"
                     rows={rows}
                     placeholder="Comment..."
                     spellCheck="false"

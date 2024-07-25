@@ -49,7 +49,8 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
                 onClose();
             }
         },
-        delta: 50, // Minimum distance to trigger swipe
+        touchEventOptions: { passive: false },
+        delta: 350, // Minimum distance to trigger swipe
         trackMouse: true,
         trackTouch: true,
     });
@@ -86,9 +87,9 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
             leave={transitionClasses.leave}
             leaveFrom={transitionClasses.leaveFrom}
             leaveTo={transitionClasses.leaveTo}
+            {...handlers}
         >
             <div
-                {...handlers}
                 className={clsx(
                     "w-full my-2 pb-1 px-3",
                     fullScreen ? 'absolute top-0 z-50' : 'flex justify-between items-center border-b',
