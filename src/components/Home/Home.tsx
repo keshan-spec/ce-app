@@ -1,8 +1,12 @@
+'use client';
 import { BiCaretRight } from "react-icons/bi";
 import { Carousel } from "../Posts/Posts";
-import { Events, NearYouEvents, TrendingEvents } from "./Events";
 import Link from "next/link";
-import { API_URL } from "@/actions/api";
+import { useQuery } from "@tanstack/react-query";
+import { useCallback, useState } from "react";
+import { getDiscoverData } from "@/actions/home-actions";
+import { debounce } from "@/utils/utils";
+import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 
 const bannerData = [
     {
@@ -48,16 +52,154 @@ const Banner = () => {
     );
 };
 
-export const HomePage: React.FC = async () => {
+export const HomePage: React.FC = () => {
+    const [searchText, setSearchText] = useState("");
+    const { data, isFetching, isLoading, refetch } = useQuery<any, Error>({
+        queryKey: ["discover-search", searchText],
+        queryFn: () => getDiscoverData(searchText),
+        retry: 0,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        enabled: searchText.trim().length > 3,
+    });
+
+    console.log(data);
+
+    const handleInputChange = async (search: string) => {
+        setSearchText(search);
+
+        await refetch({
+            cancelRefetch: isFetching || isLoading,
+        });
+    };
+
+    const debouncedHandleTagInputChange = useCallback(debounce(handleInputChange, 500), []);
+
     return (
-        <div className="home">
-            <div className="section full">
+        <div className="home h-screen">
+            <div className="extraHeader p-0">
+                <div className="search-container">
+                    <div className="search-box-top">
+                        <input type="text" placeholder="Search" defaultValue={searchText} onChange={(e) => debouncedHandleTagInputChange(e.target.value)} />
+                    </div>
+                </div>
+
+                <ul className="nav nav-tabs lined" role="tablist">
+                    <li className="nav-item">
+                        <a className="nav-link active" data-bs-toggle="tab" href="#top" role="tab">
+                            Top Results
+                        </a>
+                    </li>
+                    <li className="nav-item">
+                        <a className="nav-link" data-bs-toggle="tab" href="#events" role="tab">
+                            Events
+                        </a>
+                    </li>
+                    <li className="nav-item">
+                        <a className="nav-link" data-bs-toggle="tab" href="#venues" role="tab">
+                            Venues
+                        </a>
+                    </li>
+                    <li className="nav-item">
+                        <a className="nav-link" data-bs-toggle="tab" href="#users" role="tab">
+                            Users
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div className="tab-content mt-1">
+                <div className="tab-pane fade show active" id="top" role="tabpanel">
+                    <div className="section full mt-1">
+                        <ul className="listview image-listview media search-result mb-2">
+                            <li>
+                                <a href="#" className="item">
+                                    <div className="imageWrapper">
+                                        <img src="assets/img/sample/photo/4.jpg" alt="image" className="imaged w64" />
+                                    </div>
+                                    <div className="in">
+                                        <div>
+                                            <h4 className="mb-05">Search Result</h4>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="tab-pane fade" id="events" role="tabpanel">
+                    <div className="section full mt-1">
+                        <ul className="listview image-listview media search-result mb-2">
+                            {(data && data.events?.length > 0) && data.events.map((event: any, index: number) => (
+                                <li key={event.id}>
+                                    <a href="#" className="item">
+                                        <div className="imageWrapper">
+                                            <img src={event.thumbnail} alt="image" className="max-w-20 max-h-20 object-cover w-full h-full" />
+                                        </div>
+                                        <div className="in">
+                                            <div>
+                                                <h4 className="mb-05" dangerouslySetInnerHTML={{
+                                                    __html: event.title,
+                                                }} />
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div className="tab-pane fade" id="venues" role="tabpanel">
+                    <div className="section full mt-1">
+                        <ul className="listview image-listview media search-result mb-2">
+                            <li>
+                                <a href="#" className="item">
+                                    <div className="imageWrapper">
+                                        <img src="assets/img/sample/photo/4.jpg" alt="image" className="imaged w64" />
+                                    </div>
+                                    <div className="in">
+                                        <div>
+                                            <h4 className="mb-05">Search Result</h4>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="tab-pane fade" id="users" role="tabpanel">
+                    <div className="section full mt-1">
+                        <ul className="listview image-listview media search-result mb-2">
+                            {(data && data.users?.length > 0) && data.users.map((item: any, index: number) => (
+                                <li key={item.id}>
+                                    <a href="#" className="item">
+                                        <div className="imageWrapper">
+                                            <img src={item.profile_image || PLACEHOLDER_PFP} alt="image" className="imaged w64" />
+                                        </div>
+                                        <div className="in">
+                                            <div>
+                                                <h4 className="mb-05">
+                                                    {item.username}
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {/* <div className="section full">
                 <div className="home-tabs-wrapper">
                     <div className="tab-content">
                         <div className="tab-pane fade show active" id="panels-tab1" role="tabpanel">
-                            {/* <Banner /> */}
                             <Events />
-                            {/* <NearYouEvents /> */}
                         </div>
 
                         <div className="tab-pane fade" id="panels-tab2" role="tabpanel">
@@ -92,7 +234,7 @@ export const HomePage: React.FC = async () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 };

@@ -53,7 +53,7 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
             case '/':
                 return 'social';
             case '/discover':
-                return 'discover';
+                return 'extra-header-active';
             case '/store':
                 return 'store';
             default:

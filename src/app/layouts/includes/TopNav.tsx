@@ -148,9 +148,9 @@ export const TopNav: React.FC = () => {
                 </div>
             )} */}
 
-            {pathname == '/discover' && (
+            {/* {pathname == '/discover' && (
                 <DiscoverTabs />
-            )}
+            )} */}
 
             {pathname == '/store' && (
                 <StoreTabs />

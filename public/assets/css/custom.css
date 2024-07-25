@@ -1358,3 +1358,35 @@ a.form-group {
 .profile-garage-intro .profile-link {
 	margin: 0 auto 2px auto;
 }
+
+
+/* SEARCH */
+#appCapsule.extra-header-active {
+	padding-top: 155px;
+}
+
+.extraHeader {
+	height: 92px;
+	top: 56px;
+	width: 100%;
+	position: fixed;
+	align-items: end;
+}
+
+.search-container {
+	display: block !important;
+	position: absolute;
+	width: 95%;
+	top: 10px;
+	left: 2.5%;
+}
+
+.search-box-top input {
+	display: block;
+	width: 100%;
+	background-color: #ededed;
+	font-size: 13px;
+	border: 0;
+	padding: 6px;
+	border-radius: 4px;
+}

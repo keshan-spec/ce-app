@@ -75,3 +75,24 @@ export const maybeFavoriteEvent = async (eventId: string) => {
 
     return data;
 };
+
+export const getDiscoverData = async (search: string) => {
+    let user;
+    try {
+        user = await getSessionUser();
+    } catch (e) {
+        console.error("Error fetching user no session");
+    }
+
+    const response = await fetch(`${API_URL}/wp-json/app/v1/discover-search`, {
+        cache: "no-cache",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ search, user_id: user?.id }),
+    });
+
+    const data = await response.json();
+    return data;
+};
