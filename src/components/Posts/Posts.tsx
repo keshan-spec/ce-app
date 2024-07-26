@@ -30,13 +30,17 @@ type DotButtonPropType = PropsWithChildren<
 interface CarouselProps {
     children: React.ReactNode;
     settings?: EmblaOptionsType;
+    className?: string;
 }
 
-export const Carousel = ({ children, settings = { loop: false } }: CarouselProps) => {
+export const Carousel = ({ children, className, settings = { loop: false } }: CarouselProps) => {
     const [emblaRef, emblaApi] = useEmblaCarousel(settings);
 
     return (
-        <div className="embla" ref={emblaRef}>
+        <div className={clsx(
+            "embla",
+            className
+        )} ref={emblaRef}>
             <div className="embla__container">
                 {children}
             </div>

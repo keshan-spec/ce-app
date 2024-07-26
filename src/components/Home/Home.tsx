@@ -1,69 +1,26 @@
 'use client';
-import { BiCaretRight } from "react-icons/bi";
-import { Carousel } from "../Posts/Posts";
-import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getDiscoverData } from "@/actions/home-actions";
 import { debounce } from "@/utils/utils";
 import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
-
-const bannerData = [
-    {
-        title: "Great British Motor Show",
-        date: "17th – 20th August",
-        img: "assets/img/sample/photo/home-slider-1.jpg",
-    },
-    {
-        title: "Great British Motor Show",
-        date: "17th – 20th August",
-        img: "assets/img/sample/photo/home-slider-2.jpg",
-    },
-];
-
-const Banner = () => {
-    return (
-        <div className="section full mb-4 overflow-hidden">
-            <Carousel settings={{
-                loop: true,
-            }}>
-                {bannerData.map((banner, index) => (
-                    <div key={index} className="embla__slide relative">
-                        <div className="carousel-full-img">
-                            <img src={banner.img} alt="alt" className="imaged w-100 square" />
-                        </div>
-                        <div className="slider-home-info-row">
-                            <div className="slider-home-info-left">
-                                <h2 className="">
-                                    {banner.title}
-                                </h2>
-                                <p>{banner.date}</p>
-                                <div className="slider-home-info-right">
-                                    <Link href="#" className="theme-btn-1 ">
-                                        See More <BiCaretRight className="inline" />
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </Carousel>
-        </div>
-    );
-};
+import clsx from "clsx";
+import { DiscoverPage } from "../Discover/Discover";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export const HomePage: React.FC = () => {
     const [searchText, setSearchText] = useState("");
+    const router = useRouter();
+    const searchParam = useSearchParams();
+
     const { data, isFetching, isLoading, refetch } = useQuery<any, Error>({
         queryKey: ["discover-search", searchText],
-        queryFn: () => getDiscoverData(searchText),
+        queryFn: () => getDiscoverData(searchText, 'all', 1),
         retry: 0,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         enabled: searchText.trim().length > 3,
     });
-
-    console.log(data);
 
     const handleInputChange = async (search: string) => {
         setSearchText(search);
@@ -74,167 +31,193 @@ export const HomePage: React.FC = () => {
     };
 
     const debouncedHandleTagInputChange = useCallback(debounce(handleInputChange, 500), []);
+    const [searchVisible, setSearchVisible] = useState(false);
+
+    // on params change
+    useEffect(() => {
+        if (searchParam.get('dtype') && searchParam.get('dtype') === 'search') {
+            setSearchVisible(true);
+        } else {
+            setSearchVisible(false);
+        }
+    }, [searchParam]);
+
+
+    const onSearchClick = () => {
+        setSearchVisible(true);
+        router.push('/discover?dtype=search',);
+    };
 
     return (
         <div className="home h-screen">
-            <div className="extraHeader p-0">
+            <div className={clsx(
+                "extraHeader p-0",
+                // searchVisible ? "!h-auto" : "!top-0"
+            )}>
                 <div className="search-container">
-                    <div className="search-box-top">
-                        <input type="text" placeholder="Search" defaultValue={searchText} onChange={(e) => debouncedHandleTagInputChange(e.target.value)} />
+                    <div className="search-box-top flex items-center gap-2">
+                        <input type="text" placeholder="Search" defaultValue={searchText}
+                            onClick={onSearchClick}
+                            onChange={(e) => debouncedHandleTagInputChange(e.target.value)}
+                        />
                     </div>
                 </div>
 
                 <ul className="nav nav-tabs lined" role="tablist">
-                    <li className="nav-item">
-                        <a className="nav-link active" data-bs-toggle="tab" href="#top" role="tab">
-                            Top Results
-                        </a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" data-bs-toggle="tab" href="#events" role="tab">
-                            Events
-                        </a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" data-bs-toggle="tab" href="#venues" role="tab">
-                            Venues
-                        </a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" data-bs-toggle="tab" href="#users" role="tab">
-                            Users
-                        </a>
-                    </li>
+                    {searchVisible ? (
+                        <>
+                            <li className="nav-item">
+                                <a className="nav-link active" data-bs-toggle="tab" href="#top" role="tab">
+                                    Top
+                                </a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" data-bs-toggle="tab" href="#events" role="tab">
+                                    Events
+                                </a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" data-bs-toggle="tab" href="#venues" role="tab">
+                                    Venues
+                                </a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" data-bs-toggle="tab" href="#users" role="tab">
+                                    Users & Vehicles
+                                </a>
+                            </li>
+                        </>
+                    ) : (
+                        <>
+                            <li className="nav-item">
+                                <a className="nav-link active" data-bs-toggle="tab" href="#top" role="tab">
+                                    Featured
+                                </a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" data-bs-toggle="tab" href="#events" role="tab">
+                                    Events
+                                </a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" data-bs-toggle="tab" href="#venues" role="tab">
+                                    Venues
+                                </a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" data-bs-toggle="tab" href="#users" role="tab">
+                                    Users & Vehicles
+                                </a>
+                            </li>
+                        </>
+
+                    )}
                 </ul>
             </div>
 
-            <div className="tab-content mt-1">
-                <div className="tab-pane fade show active" id="top" role="tabpanel">
-                    <div className="section full mt-1">
-                        <ul className="listview image-listview media search-result mb-2">
-                            <li>
-                                <a href="#" className="item">
-                                    <div className="imageWrapper">
-                                        <img src="assets/img/sample/photo/4.jpg" alt="image" className="imaged w64" />
-                                    </div>
-                                    <div className="in">
-                                        <div>
-                                            <h4 className="mb-05">Search Result</h4>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div className="tab-pane fade" id="events" role="tabpanel">
-                    <div className="section full mt-1">
-                        <ul className="listview image-listview media search-result mb-2">
-                            {(data && data.events?.length > 0) && data.events.map((event: any, index: number) => (
-                                <li key={event.id}>
-                                    <a href="#" className="item">
-                                        <div className="imageWrapper">
-                                            <img src={event.thumbnail} alt="image" className="max-w-20 max-h-20 object-cover w-full h-full" />
-                                        </div>
-                                        <div className="in">
-                                            <div>
-                                                <h4 className="mb-05" dangerouslySetInnerHTML={{
-                                                    __html: event.title,
-                                                }} />
+            {searchVisible ? (
+                <div className="tab-content pt-16 pb-10">
+                    <div className="tab-pane fade show active" id="top" role="tabpanel">
+                        <div className="section full mt-1">
+                            <ul className="listview image-listview media search-result mb-2">
+                                {isFetching && <LoadingSkeleton />}
+                                {(data && data.events?.length > 0) && data.events.map((event: any, index: number) => (
+                                    <li key={event.id}>
+                                        <a href="#" className="item">
+                                            <div className="imageWrapper">
+                                                <img src={event.thumbnail} alt="image" className="max-w-20 max-h-20 object-cover w-full h-full" />
                                             </div>
-                                        </div>
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-
-
-                <div className="tab-pane fade" id="venues" role="tabpanel">
-                    <div className="section full mt-1">
-                        <ul className="listview image-listview media search-result mb-2">
-                            <li>
-                                <a href="#" className="item">
-                                    <div className="imageWrapper">
-                                        <img src="assets/img/sample/photo/4.jpg" alt="image" className="imaged w64" />
-                                    </div>
-                                    <div className="in">
-                                        <div>
-                                            <h4 className="mb-05">Search Result</h4>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div className="tab-pane fade" id="users" role="tabpanel">
-                    <div className="section full mt-1">
-                        <ul className="listview image-listview media search-result mb-2">
-                            {(data && data.users?.length > 0) && data.users.map((item: any, index: number) => (
-                                <li key={item.id}>
-                                    <a href="#" className="item">
-                                        <div className="imageWrapper">
-                                            <img src={item.profile_image || PLACEHOLDER_PFP} alt="image" className="imaged w64" />
-                                        </div>
-                                        <div className="in">
-                                            <div>
-                                                <h4 className="mb-05">
-                                                    {item.username}
-                                                </h4>
+                                            <div className="in">
+                                                <div>
+                                                    <h4 className="mb-05" dangerouslySetInnerHTML={{
+                                                        __html: event.title,
+                                                    }} />
+                                                </div>
                                             </div>
-                                        </div>
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            {/* <div className="section full">
-                <div className="home-tabs-wrapper">
-                    <div className="tab-content">
-                        <div className="tab-pane fade show active" id="panels-tab1" role="tabpanel">
-                            <Events />
-                        </div>
-
-                        <div className="tab-pane fade" id="panels-tab2" role="tabpanel">
-                            <div className="tab-panele-content-body">
-                                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
-                                    the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley
-                                    of type and scrambled it to make a type specimen book. It has survived not only five centuries,
-                                    but also the leap into electronic typesetting, remaining essentially unchanged</p>
-
-                            </div>
-                        </div>
-                        <div className="tab-pane fade" id="panels-tab3" role="tabpanel">
-                            <div className="tab-panele-content-body">
-                                <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a
-                                    piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard
-                                    McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of
-                                    the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and
-                                    going through the cites of the word in classical literature, discovered the undoubtable
-                                    source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum
-                                    et Malorum" (The Extremes of Good and Evil) by Cicero, written in</p>
-
-                            </div>
-                        </div>
-                        <div className="tab-pane fade" id="panels-tab4" role="tabpanel">
-                            <div className="tab-panele-content-body">
-                                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
-                                    the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley
-                                    of type and scrambled it to make a type specimen book. It has survived not only five centuries,
-                                    but also the leap into electronic typesetting, remaining essentially unchanged</p>
-
-                            </div>
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     </div>
+
+                    <div className="tab-pane fade" id="events" role="tabpanel">
+                        <div className="section full mt-1">
+                            <ul className="listview image-listview media search-result mb-2">
+                                {isFetching && <LoadingSkeleton />}
+                                {(data && data.events?.length > 0) && data.events.map((event: any, index: number) => (
+                                    <li key={event.id}>
+                                        <a href="#" className="item">
+                                            <div className="imageWrapper">
+                                                <img src={event.thumbnail} alt="image" className="max-w-20 max-h-20 object-cover w-full h-full" />
+                                            </div>
+                                            <div className="in">
+                                                <div>
+                                                    <h4 className="mb-05" dangerouslySetInnerHTML={{
+                                                        __html: event.title,
+                                                    }} />
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+
+
+                    <div className="tab-pane fade" id="venues" role="tabpanel">
+                        <div className="section full mt-1">
+                            <ul className="listview image-listview media search-result mb-2">
+                                {isFetching && <LoadingSkeleton />}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className="tab-pane fade" id="users" role="tabpanel">
+                        <div className="section full mt-1">
+                            <ul className="listview image-listview media search-result mb-2">
+                                {isFetching && <LoadingSkeleton />}
+
+                                {(data && data.users?.length > 0) && data.users.map((item: any, index: number) => (
+                                    <li key={item.id}>
+                                        <a href="#" className="item">
+                                            <div className="imageWrapper">
+                                                <img src={item.profile_image || PLACEHOLDER_PFP} alt="image" className="imaged w64" />
+                                            </div>
+                                            <div className="in">
+                                                <div>
+                                                    <h4 className="mb-05">
+                                                        {item.username}
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-            </div> */}
+            ) : <DiscoverPage />}
         </div>
+    );
+};
+
+const LoadingSkeleton = () => {
+    return (
+        Array.from({ length: 5 }).map((_, index) => (
+            <li className="list-group-item" key={index}>
+                <div className="flex items-center py-3 px-3">
+                    <div className="flex-shrink-0">
+                        <div className="animate-pulse rounded-lg h-16 w-16 bg-gray-300" />
+                    </div>
+                    <div className="ml-4 w-full flex flex-col gap-2">
+                        <div className="animate-pulse h-4 w-1/2 bg-gray-300 rounded" />
+                        <div className="animate-pulse h-4 w-1/4 bg-gray-300 rounded" />
+                    </div>
+                </div>
+            </li>
+        ))
     );
 };

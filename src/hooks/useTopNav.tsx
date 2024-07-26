@@ -43,18 +43,24 @@ export const menuIconLessPaths = [
 export const useTopNav = ({
     pathname
 }: TopNavProps): TopNavType => {
+    const searchParam = useSearchParams();
+
     const isGarageViewPage = pathname.includes('/profile/garage/');
     const isPostViewPage = pathname.includes('/post/') || pathname.includes('/edit-post/');
     const isProfileEditView = pathname.includes('/profile/edit/');
     const isGarageEditView = pathname.includes('/garage');
     const isGarageAddPage = pathname.includes('/garage/add');
-    const searchParam = useSearchParams();
+    const isDiscoverPage = pathname.includes('/discover') && searchParam.get('dtype') === 'search';
 
     const param = pathname.split('/').pop();
     const router = useRouter();
     const { user } = useUser();
 
     const showMenuIcon = () => {
+        if (searchParam.get('dtype') && searchParam.get('dtype') === 'search') {
+            return false;
+        }
+
         if (menuIconLessPaths.some((path) => pathname.includes(path))) {
             return false;
         }
@@ -63,6 +69,10 @@ export const useTopNav = ({
     };
 
     const getSubtitle = () => {
+        if (isDiscoverPage) {
+            return 'Discover Anything';
+        }
+
         if (isGarageViewPage) {
             return 'Garage';
         }
@@ -83,6 +93,10 @@ export const useTopNav = ({
     };
 
     const getHeaderTitle = useCallback(() => {
+        if (isDiscoverPage) {
+            return 'Search';
+        }
+
         if (isGarageAddPage) {
             return 'Add Vehicle';
         }
@@ -118,7 +132,7 @@ export const useTopNav = ({
         }
 
         return '';
-    }, [isGarageViewPage, isPostViewPage, param]);
+    }, [isGarageViewPage, isPostViewPage, param, isDiscoverPage]);
 
     const returnTo = () => {
         if (searchParam.get('ref') && searchParam.get('ref') === 'redirect') {
@@ -136,9 +150,9 @@ export const useTopNav = ({
         returnTo: () => returnTo(),
         title: getHeaderTitle(),
         subtitle: getSubtitle(),
-        mode: isGarageViewPage || isPostViewPage || isProfileEditView || isGarageEditView ? 'view-page' : 'default',
+        mode: isGarageViewPage || isPostViewPage || isProfileEditView || isGarageEditView || isDiscoverPage ? 'view-page' : 'default',
         showMenuIcon: showMenuIcon(),
-        showHeaderIcons: !isGarageViewPage && !isPostViewPage && !isProfileEditView && !isGarageEditView,
-        showLogo: !isGarageViewPage && !isPostViewPage && !isProfileEditView && !isGarageEditView,
+        showHeaderIcons: !isGarageViewPage && !isPostViewPage && !isProfileEditView && !isGarageEditView && !isDiscoverPage,
+        showLogo: !isGarageViewPage && !isPostViewPage && !isProfileEditView && !isGarageEditView && !isDiscoverPage,
     };
 };

@@ -76,7 +76,7 @@ export const maybeFavoriteEvent = async (eventId: string) => {
     return data;
 };
 
-export const getDiscoverData = async (search: string) => {
+export const getDiscoverData = async (search: string, type: 'user' | 'event' | 'venue' | 'all', page: number) => {
     let user;
     try {
         user = await getSessionUser();
@@ -90,7 +90,7 @@ export const getDiscoverData = async (search: string) => {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ search, user_id: user?.id }),
+        body: JSON.stringify({ search, user_id: user?.id, page, type, per_page: 10 }),
     });
 
     const data = await response.json();

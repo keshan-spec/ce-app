@@ -556,10 +556,6 @@ button:focus {
   margin-top: env(safe-area-inset-top);
 }
 
-#appCapsule.extra-header-active {
-  padding-top: 112px;
-}
-
 #appCapsule.full-height {
   min-height: 100vh;
 }

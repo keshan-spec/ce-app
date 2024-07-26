@@ -119,12 +119,12 @@ export const CarEventCard = ({ event, onClick }: { event: any; onClick: (id: str
             <div className="card-body pt-2 cursor-pointer" onClick={() => onClick(event.id)}>
                 <div className="news-list-slider-info flex flex-col justify-start h-full">
                     <div className="flex flex-col">
-                        <h3>
+                        <h3 className="text-ellipsis truncate">
                             {event.title}
                         </h3>
                         <p>{formatEventDate(event.start_date)}</p>
                     </div>
-                    <p>{event.location}</p>
+                    <p className="text-ellipsis truncate">{event.location}</p>
                 </div>
             </div>
         </>
@@ -264,8 +264,6 @@ export const Events: React.FC<EventProps> = ({ }) => {
         retry: 1,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
-        // cacheTime: 1000,
-        staleTime: 1000,
     });
 
     const [activeEvent, setActiveEvent] = useState<string>();
