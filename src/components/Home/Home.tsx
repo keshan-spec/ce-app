@@ -7,6 +7,7 @@ import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 import clsx from "clsx";
 import { DiscoverPage } from "../Discover/Discover";
 import { useRouter, useSearchParams } from "next/navigation";
+import NcImage from "../Image/Image";
 
 export const HomePage: React.FC = () => {
     const [searchText, setSearchText] = useState("");
@@ -39,6 +40,7 @@ export const HomePage: React.FC = () => {
             setSearchVisible(true);
         } else {
             setSearchVisible(false);
+            setSearchText("");
         }
     }, [searchParam]);
 
@@ -49,7 +51,7 @@ export const HomePage: React.FC = () => {
     };
 
     return (
-        <div className="home h-screen">
+        <div className="home">
             <div className={clsx(
                 "extraHeader p-0",
                 // searchVisible ? "!h-auto" : "!top-0"
@@ -125,7 +127,15 @@ export const HomePage: React.FC = () => {
                                     <li key={event.id}>
                                         <a href="#" className="item">
                                             <div className="imageWrapper">
-                                                <img src={event.thumbnail} alt="image" className="max-w-20 max-h-20 object-cover w-full h-full" />
+                                                <NcImage
+                                                    src={event.thumbnail}
+                                                    alt="image"
+                                                    imageDimension={{
+                                                        height: 60,
+                                                        width: 60,
+                                                    }}
+                                                    className="max-w-20 object-cover w-full"
+                                                />
                                             </div>
                                             <div className="in">
                                                 <div>
@@ -149,7 +159,15 @@ export const HomePage: React.FC = () => {
                                     <li key={event.id}>
                                         <a href="#" className="item">
                                             <div className="imageWrapper">
-                                                <img src={event.thumbnail} alt="image" className="max-w-20 max-h-20 object-cover w-full h-full" />
+                                                <NcImage
+                                                    src={event.thumbnail}
+                                                    alt="image"
+                                                    imageDimension={{
+                                                        height: 60,
+                                                        width: 60,
+                                                    }}
+                                                    className="max-w-20 object-cover w-full"
+                                                />
                                             </div>
                                             <div className="in">
                                                 <div>
@@ -183,7 +201,15 @@ export const HomePage: React.FC = () => {
                                     <li key={item.id}>
                                         <a href="#" className="item">
                                             <div className="imageWrapper">
-                                                <img src={item.profile_image || PLACEHOLDER_PFP} alt="image" className="imaged w64" />
+                                                <NcImage
+                                                    src={item.profile_image || PLACEHOLDER_PFP}
+                                                    alt="image"
+                                                    imageDimension={{
+                                                        height: 60,
+                                                        width: 60,
+                                                    }}
+                                                    className="max-w-20 object-cover w-full"
+                                                />
                                             </div>
                                             <div className="in">
                                                 <div>
