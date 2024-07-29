@@ -3,13 +3,16 @@ import { CreateActionSheet } from "@/components/ActionSheets/Create";
 import { useUser } from "@/hooks/useUser";
 import { sendRNMessage } from "@/utils/nativeFeel";
 import { IonIcon } from "@ionic/react";
+import clsx from "clsx";
 import { homeOutline, searchOutline, addOutline, cartOutline } from "ionicons/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export const Footer: React.FC = () => {
     const pathname = usePathname();
     const { user } = useUser();
+    const [keyboardOpen, setKeyboardOpen] = useState(false);
 
     const onAddPost = () => {
         if (!user) return;
@@ -21,9 +24,33 @@ export const Footer: React.FC = () => {
         });
     };
 
+    useEffect(() => {
+        const handleResize = () => {
+            const footer = document.querySelector('.appBottomMenu');
+            if (!footer) return;
+
+            if (window.innerHeight < document.documentElement.clientHeight) {
+                // Keyboard is open
+                setKeyboardOpen(true);
+            } else {
+                // Keyboard is closed
+                setKeyboardOpen(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     return (
         <>
-            <div className="appBottomMenu">
+            <div className={clsx(
+                "appBottomMenu",
+                keyboardOpen && '!absolute'
+            )}>
                 <Link href="/" className={`item ${pathname == '/' ? 'active' : ''}`} onClick={() => {
                     pathname == '/' && window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}>

@@ -79,7 +79,6 @@ export const DiscoverPage: React.FC = () => {
             <div className="tab-pane fade" id="users" role="tabpanel">
                 <div className="section full mt-1">
                     <ul className="listview image-listview media search-result mb-2">
-
                     </ul>
                 </div>
             </div>
