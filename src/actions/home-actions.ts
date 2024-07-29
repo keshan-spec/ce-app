@@ -3,7 +3,7 @@
 import { API_URL } from "./api";
 import { getSessionUser } from "./auth-actions";
 
-export const fetchTrendingEvents = async () => {
+export const fetchTrendingEvents = async (page: number) => {
     let user;
     try {
         user = await getSessionUser();
@@ -17,7 +17,7 @@ export const fetchTrendingEvents = async () => {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user_id: user?.id }),
+        body: JSON.stringify({ user_id: user?.id, page, per_page: 10 }),
     });
 
 
@@ -76,7 +76,9 @@ export const maybeFavoriteEvent = async (eventId: string) => {
     return data;
 };
 
-export const getDiscoverData = async (search: string, type: 'user' | 'event' | 'venue' | 'all', page: number) => {
+export type SearchType = 'users' | 'events' | 'venues' | 'all';
+
+export const getDiscoverData = async (search: string, type: SearchType, page: number) => {
     let user;
     try {
         user = await getSessionUser();

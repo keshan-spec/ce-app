@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BiHeart, BiSolidHeart } from "react-icons/bi";
 // import { useQuery } from "react-query";
 import likeAnimation2 from "../lottie/lottie-2.json";
@@ -15,7 +15,7 @@ import { formatEventDate } from "@/utils/dateUtils";
 import SlideInFromBottomToTop from "@/shared/SlideIn";
 import { ViewEvent } from "./ViewPost";
 import { useUser } from "@/hooks/useUser";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 const carouselOptions: Options = {
     perPage: 4,
@@ -169,7 +169,7 @@ export const TrendingEvents: React.FC<EventProps> = ({ }) => {
     const { data, error, isFetching, isLoading } = useQuery<any[], Error>({
         queryKey: ["trending-events"],
         queryFn: () => {
-            return fetchTrendingEvents();
+            return fetchTrendingEvents(1);
         },
         retry: 1,
         refetchOnWindowFocus: false,
@@ -214,7 +214,7 @@ export const NearYouEvents: React.FC<EventProps> = ({ }) => {
     const { data, error, isFetching, isLoading } = useQuery<any[], Error>({
         queryKey: ["close-events"],
         queryFn: () => {
-            return fetchTrendingEvents();
+            return fetchTrendingEvents(1);
         },
         retry: 1,
         refetchOnWindowFocus: false,
@@ -256,15 +256,49 @@ export const NearYouEvents: React.FC<EventProps> = ({ }) => {
 };
 
 export const Events: React.FC<EventProps> = ({ }) => {
-    const { data, error, isFetching, isLoading } = useQuery<any[], Error>({
+    const { isLoading, error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
         queryKey: ["filtered-events"],
-        queryFn: () => {
-            return fetchTrendingEvents();
+        queryFn: ({ pageParam }) => {
+            return fetchTrendingEvents(pageParam || 1);
         },
-        retry: 1,
+        getNextPageParam: (lastPage: { total_pages: number, data: any[], limit: number; }, pages: any[]) => {
+            const maxPages = Math.ceil(lastPage.total_pages / lastPage.limit);
+            const nextPage = pages.length + 1;
+            return nextPage <= maxPages ? nextPage : undefined;
+        },
         refetchOnWindowFocus: false,
         refetchOnMount: false,
+        initialPageParam: null,
     });
+
+    // Infinite scroll
+    useEffect(() => {
+        let fetching = false;
+
+        const onScroll = async (event: any) => {
+            if (isFetchingNextPage) return;
+
+            const { scrollHeight, scrollTop, clientHeight } =
+                event.target.scrollingElement;
+
+            if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.2) {
+                fetching = true;
+
+                if (hasNextPage && !isFetchingNextPage) {
+                    console.log("hasNextPage", fetching);
+                    await fetchNextPage();
+                };
+
+                fetching = false;
+            }
+        };
+
+        document.addEventListener("scroll", onScroll);
+        return () => {
+            document.removeEventListener("scroll", onScroll);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [hasNextPage, isFetchingNextPage]);
 
     const [activeEvent, setActiveEvent] = useState<string>();
 
@@ -277,8 +311,15 @@ export const Events: React.FC<EventProps> = ({ }) => {
             <div className="section mt-2 mb-3">
                 {error instanceof Error && <p className="px-3">Error: {error?.message ?? "An error occured"}</p>}
                 <div className="row">
+                    {data && data?.pages.map((page, idx) => page.data.map((event: any, idx: number) => (
+                        <div className="col-6">
+                            <div className="card mb-3">
+                                <CarEventCard event={event} onClick={(id) => setActiveEvent(id)} key={idx} />
+                            </div>
+                        </div>
+                    )))}
 
-                    {(isLoading || isFetching) && (
+                    {(isFetchingNextPage || isFetching) && (
                         <>
                             <div className="col-6">
                                 <div className="card mb-3">
@@ -302,14 +343,6 @@ export const Events: React.FC<EventProps> = ({ }) => {
                             </div>
                         </>
                     )}
-
-                    {data && data?.map((event: any, idx: number) => (
-                        <div className="col-6">
-                            <div className="card mb-3">
-                                <CarEventCard event={event} onClick={(id) => setActiveEvent(id)} key={idx} />
-                            </div>
-                        </div>
-                    ))}
                 </div>
             </div>
         </>

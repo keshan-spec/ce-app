@@ -2,14 +2,6 @@
 import { BiCaretRight } from "react-icons/bi";
 import { Carousel } from "../Posts/Posts";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
-import { getDiscoverData } from "@/actions/home-actions";
-import { debounce } from "@/utils/utils";
-import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
-import clsx from "clsx";
-import { IonIcon } from "@ionic/react";
-import { chevronBack } from "ionicons/icons";
 import { Events } from "../Home/Events";
 
 const bannerData = [
@@ -71,7 +63,7 @@ export const DiscoverPage: React.FC = () => {
             <div className="tab-pane fade" id="events" role="tabpanel">
                 <div className="section full mt-1">
                     <ul className="listview image-listview media search-result mb-2">
-
+                        <Events />
                     </ul>
                 </div>
             </div>
