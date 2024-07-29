@@ -3,6 +3,53 @@ import { BiCaretRight } from "react-icons/bi";
 import { Carousel } from "../Posts/Posts";
 import Link from "next/link";
 import { Events } from "../Home/Events";
+import { useUser } from "@/hooks/useUser";
+import { use, useEffect, useState } from "react";
+import { reverseGeocode } from "@/utils/utils";
+
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, NextUIProvider, DatePicker } from "@nextui-org/react";
+import { DiscoverFilters } from "./Filters";
+import { DiscoverFilterProvider } from "@/app/context/DiscoverFilterContext";
+
+export const DateRangeSelect: React.FC = () => {
+    return (
+        <Dropdown>
+            <DropdownTrigger>
+                <Button
+                    variant="bordered"
+                >
+                    Open Menu
+                </Button>
+            </DropdownTrigger>
+            <DropdownMenu variant="flat" aria-label="Dropdown menu with shortcut">
+                <DropdownItem key="new" shortcut="⌘N">New file</DropdownItem>
+                <DropdownItem key="copy" shortcut="⌘C">Copy link</DropdownItem>
+                <DropdownItem key="edit" shortcut="⌘⇧E">Edit file</DropdownItem>
+                <DropdownItem key="delete" shortcut="⌘⇧D" className="text-danger" color="danger">
+                    Delete file
+                </DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+    );
+};
+
+const LocationInput: React.FC<{
+    defaultLocation: string | null;
+}> = ({
+    defaultLocation
+}) => {
+        return (
+            <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Location</span>
+                <input
+                    type="text"
+                    value={defaultLocation || ""}
+                    placeholder="Enter your location"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                />
+            </div>
+        );
+    };
 
 const bannerData = [
     {
@@ -51,8 +98,22 @@ const Banner = () => {
 };
 
 export const DiscoverPage: React.FC = () => {
+    const { user } = useUser();
+    const [userLocation, setUserLocation] = useState<string | undefined>(undefined);
+
+    useEffect(() => {
+        if (user && user.last_location) {
+            reverseGeocode(user.last_location.latitude, user.last_location.longitude)
+                .then((data) => {
+                    if (data && data.address) {
+                        setUserLocation(data.address.city);
+                    }
+                });
+        }
+    }, []);
+
     return (
-        <div className="tab-content pt-16 pb-10">
+        <div className="tab-content pt-14 pb-10">
             <div className="tab-pane fade show active" id="top" role="tabpanel">
                 <div className="section full mt-1">
                     <Banner />
@@ -60,21 +121,29 @@ export const DiscoverPage: React.FC = () => {
                 </div>
             </div>
 
-            <div className="tab-pane fade" id="events" role="tabpanel">
-                <div className="section full mt-1">
-                    <ul className="listview image-listview media search-result mb-2">
-                        <Events />
-                    </ul>
-                </div>
-            </div>
+            <DiscoverFilterProvider>
 
+                <div className="tab-pane fade" id="events" role="tabpanel">
+                    <div className="section full mt-1">
+                        <DiscoverFilters defaultLocation={userLocation} key={'events'} type="events" />
 
-            <div className="tab-pane fade" id="venues" role="tabpanel">
-                <div className="section full mt-1">
-                    <ul className="listview image-listview media search-result mb-2">
-                    </ul>
+                        <ul className="listview image-listview media search-result mb-2 !border-none">
+                            <Events />
+                        </ul>
+                    </div>
                 </div>
-            </div>
+            </DiscoverFilterProvider>
+
+            <DiscoverFilterProvider>
+                <div className="tab-pane fade" id="venues" role="tabpanel">
+                    <div className="section full mt-1">
+                        <DiscoverFilters defaultLocation={userLocation} key={'venues'} type="venues" />
+
+                        <ul className="listview image-listview media search-result mb-2">
+                        </ul>
+                    </div>
+                </div>
+            </DiscoverFilterProvider>
 
             <div className="tab-pane fade" id="users" role="tabpanel">
                 <div className="section full mt-1">

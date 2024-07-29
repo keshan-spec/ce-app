@@ -10,7 +10,7 @@ interface SlideInFromBottomToTopProps {
     children: React.ReactNode;
     height?: string | number;
     onClose: () => void;
-    title?: string;
+    title?: string | React.ReactNode;
     stickyScroll?: boolean;
     fullScreen?: boolean;
     titleClassName?: string;
@@ -69,6 +69,21 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
                 document.body.style.overflow = 'auto';
             }, 500);
         }
+
+
+        // on outside click
+        const handleClickOutside = (event: MouseEvent) => {
+            // if target has id overlay, close the modal
+            if ((event.target as HTMLElement).id === 'overlay') {
+                onClose();
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
     }, [isOpen]);
 
     return (
@@ -76,7 +91,7 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
             // ref={ref}
             show={isOpen}
             className={clsx(
-                "z-10 w-full fixed bottom-0 inset-x-0 bg-white h-full rounded-t-lg slide-in",
+                "w-full fixed bottom-0 inset-x-0 bg-white h-full rounded-t-lg slide-in",
                 !stickyScroll && 'overflow-scroll',
                 className
             )}

@@ -12,7 +12,6 @@ import { useEffect, useState } from "react";
 export const Footer: React.FC = () => {
     const pathname = usePathname();
     const { user } = useUser();
-    const [keyboardOpen, setKeyboardOpen] = useState(false);
 
     const onAddPost = () => {
         if (!user) return;
@@ -24,32 +23,10 @@ export const Footer: React.FC = () => {
         });
     };
 
-    useEffect(() => {
-        const handleResize = () => {
-            const footer = document.querySelector('.appBottomMenu');
-            if (!footer) return;
-
-            if (window.innerHeight < document.documentElement.clientHeight) {
-                // Keyboard is open
-                setKeyboardOpen(true);
-            } else {
-                // Keyboard is closed
-                setKeyboardOpen(false);
-            }
-        };
-
-        window.addEventListener('resize', handleResize);
-
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
-
     return (
         <>
             <div className={clsx(
                 "appBottomMenu",
-                keyboardOpen && '!absolute'
             )}>
                 <Link href="/" className={`item ${pathname == '/' ? 'active' : ''}`} onClick={() => {
                     pathname == '/' && window.scrollTo({ top: 0, behavior: 'smooth' });

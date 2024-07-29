@@ -16,6 +16,7 @@ import SlideInFromBottomToTop from "@/shared/SlideIn";
 import { ViewEvent } from "./ViewPost";
 import { useUser } from "@/hooks/useUser";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { DiscoverFilters } from "../Discover/Filters";
 
 const carouselOptions: Options = {
     perPage: 4,

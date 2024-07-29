@@ -29,7 +29,7 @@ export const addBackgroundOverlay = () => {
         overlay.classList.remove('hidden');
     } else {
         // add overlay
-        document.body.insertAdjacentHTML('beforeend', '<div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50"></div>');
+        document.body.insertAdjacentHTML('beforeend', '<div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-[9998]"></div>');
     }
 };
 
@@ -44,4 +44,11 @@ export const convertToBase64 = (file: File): Promise<string | ArrayBuffer | null
 
 export const convertToCurrency = (amount: number) => {
     return `£${amount.toFixed(2)}`;
+};
+
+export const reverseGeocode = async (latitude: number, longitude: number) => {
+    // https://nominatim.org/release-docs/latest/api/Reverse/
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`);
+    const data = await response.json();
+    return data;
 };

@@ -98,3 +98,13 @@ export const getDiscoverData = async (search: string, type: SearchType, page: nu
     const data = await response.json();
     return data;
 };
+
+export const getEventCategories = async () => {
+    const response = await fetch(`${API_URL}/wp-json/app/v1/get-event-categories`, {
+        cache: "no-cache",
+        method: "GET",
+    });
+
+    const data = await response.json();
+    return data;
+};

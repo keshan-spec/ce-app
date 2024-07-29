@@ -37,6 +37,10 @@ export type AuthUser = {
     posts_count: number;
     profile_links: ProfileLinks;
     email: string;
+    last_location?: {
+        latitude: number;
+        longitude: number;
+    };
     billing_info?: {
         phone?: string;
         address_1: string;
@@ -84,6 +88,7 @@ export const {
                     session.user.cover_image = data.user.cover_image;
                     session.user.can_update_username = data.user.can_update_username;
                     session.user.next_update_username = data.user.next_update_username;
+                    session.user.last_location = data.user.last_location;
 
                     if (data.user.billing_info) {
                         session.user.billing_info = data.user.billing_info;
