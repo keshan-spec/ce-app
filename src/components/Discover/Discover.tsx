@@ -6,7 +6,7 @@ import { Events, TrendingEvents, TrendingVenues, Venues } from "../Home/Events";
 import { useUser } from "@/hooks/useUser";
 import { useEffect, useState } from "react";
 import { reverseGeocode } from "@/utils/utils";
-import { DiscoverFilters } from "./Filters";
+import { AutocompleteInput, DiscoverFilters } from "./Filters";
 import { DiscoverFilterProvider } from "@/app/context/DiscoverFilterContext";
 
 const bannerData = [

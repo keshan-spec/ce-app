@@ -1,3 +1,4 @@
+'use client';
 import { DiscoverFilterContextType, useDiscoverFilters } from "@/app/context/DiscoverFilterContext";
 import SlideInFromBottomToTop from "@/shared/SlideIn";
 import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
@@ -9,37 +10,54 @@ import { useEffect, useRef, useState } from "react";
 
 import { useJsApiLoader } from '@react-google-maps/api';
 
-const AutocompleteInput = () => {
+export const AutocompleteInput: React.FC<{
+    onSelect: (place: google.maps.places.PlaceResult) => void;
+    defaultValue?: string;
+}> = ({ onSelect, defaultValue = '' }) => {
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
         libraries: ['places', 'core'],
     });
 
     const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
-    const inputRef = useRef(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (isLoaded && inputRef.current) {
-            const autocomplete = new google.maps.places.Autocomplete(inputRef.current as HTMLInputElement);
+            const autocomplete = new google.maps.places.Autocomplete(inputRef.current as HTMLInputElement, {
+                componentRestrictions: { country: 'gb' },
+                fields: ['address_components', 'geometry', 'formatted_address'],
+            });
             setAutocomplete(autocomplete);
         }
     }, [isLoaded]);
 
     useEffect(() => {
         if (autocomplete) {
-            autocomplete.setFields(['address_components', 'geometry']);
             autocomplete.addListener('place_changed', () => {
                 const place = autocomplete.getPlace();
-                console.log(place);
+
+                if (!place.geometry || !place.geometry.location) {
+                    return;
+                }
+
+                onSelect(place);
             });
         }
     }, [autocomplete]);
 
     return (
-        <input ref={inputRef} type="text" className="form-control" placeholder="Enter location" autoComplete="on" />
+        <div className="form-group boxed px-2">
+            <div className="input-wrapper">
+                <label className="form-label" htmlFor="name5">Location</label>
+                <input ref={inputRef} type="text" className="form-control" defaultValue={defaultValue} placeholder="Enter location" autoComplete="on" />
+                <i className="clear-input">
+                    <IonIcon icon={closeCircle} role="img" className="md hydrated" aria-label="close circle" />
+                </i>
+            </div>
+        </div>
     );
 };
-
 
 const formatFilterDate = (start: string, end: string | null) => {
     // format date Jul 23, 2021
@@ -214,23 +232,20 @@ const LocationFilter: React.FC<{
 }> = ({ onComplete }) => {
     const { locationFilter, customLocation, onLocationFilterChange } = useDiscoverFilters();
     const [location, setLocation] = useState<DiscoverFilterContextType['locationFilter']>(locationFilter);
+    const [localCustomLocation, setLocalCustomLocation] = useState<DiscoverFilterContextType['customLocation']>(customLocation);
 
     const onApply = () => {
-        onLocationFilterChange(location);
+        onLocationFilterChange(location, localCustomLocation);
         onComplete();
+    };
+
+    const onCustomLocationChange = (place: google.maps.places.PlaceResult) => {
+        setLocalCustomLocation(place);
     };
 
     return (
         <div className="filter-panel w-full">
-            <div className="form-group boxed px-2">
-                <div className="input-wrapper">
-                    <label className="form-label" htmlFor="name5">Location</label>
-                    <AutocompleteInput />
-                    <i className="clear-input">
-                        <IonIcon icon={closeCircle} role="img" className="md hydrated" aria-label="close circle" />
-                    </i>
-                </div>
-            </div>
+            <AutocompleteInput onSelect={onCustomLocationChange} defaultValue={customLocation?.formatted_address} />
 
             <ul className="listview image-listview text mt-3">
                 <li onClick={() => setLocation('near-me')}>
@@ -304,13 +319,33 @@ const CategoryFilter: React.FC<{
         onComplete();
     };
 
+    const onCategoryClick = (id: number) => {
+        // if list has 0 but clicked on category, remove 0
+        if (localCategory.includes(0)) {
+            setLocalCategory([id]);
+        } else {
+            // if category is already selected, remove it
+            if (localCategory.includes(id)) {
+                setLocalCategory(localCategory.filter(category => category !== id));
+            } else {
+                setLocalCategory([...localCategory, id]);
+            }
+        }
+    };
+
+    useEffect(() => {
+        if (localCategory.length === 0) {
+            setLocalCategory([0]);
+        }
+    }, [localCategory]);
+
     return (
         <div className="filter-panel h-full">
             <ul className="listview image-listview text mt-3 !border-none">
-                <li onClick={() => setLocalCategory(0)}>
+                <li onClick={() => setLocalCategory([0])}>
                     <div className={clsx(
                         "item",
-                        localCategory === 0 ? "active" : ""
+                        localCategory?.includes(0) ? "active" : ""
                     )}>
                         <div className="in">
                             <div>All</div>
@@ -328,10 +363,10 @@ const CategoryFilter: React.FC<{
                 ))}
 
                 {categories.map((category, index) => (
-                    <li key={index} onClick={() => setLocalCategory(category.id)}>
+                    <li key={index} onClick={() => onCategoryClick(category.id)}>
                         <div className={clsx(
                             "item",
-                            localCategory === category.id ? "active" : ""
+                            localCategory?.includes(category.id) ? "active" : ""
                         )}>
                             <div className="in">
                                 <div dangerouslySetInnerHTML={{
@@ -415,33 +450,79 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({
     };
 
     const renderLocationTitle = () => {
+        let title;
+
+        if (customLocation) {
+            title = customLocation.formatted_address;
+        }
+
         switch (locationFilter) {
             case "near-me":
-                return defaultLocation || "Nearby";
+                if (customLocation) {
+                    title += " (Near Me)";
+                    break;
+                }
+
+                title = defaultLocation || "Nearby";
+                break;
             case "national":
-                return "National";
+                if (customLocation) {
+                    title += " (National)";
+                    break;
+                }
+
+                title = "National";
+                break;
             case "25-miles":
-                return "25 Miles";
+                if (customLocation) {
+                    title += " (25 Miles)";
+                    break;
+                }
+
+                title = "25 Miles";
+                break;
             case "50-miles":
-                return "50 Miles";
+                if (customLocation) {
+                    title += " (50 Miles)";
+                    break;
+                }
+
+                title = "50 Miles";
+                break;
             case "100-miles":
-                return "100 Miles";
-            case "custom":
-                return customLocation || "Custom Location";
+                if (customLocation) {
+                    title += " (100 Miles)";
+                    break;
+                }
+
+                title = "100 Miles";
+                break;
             default:
-                return "Nearby";
+                title = "Nearby";
+                break;
         }
+
+        return title;
     };
 
     const renderCategoryTitle = () => {
-        if (categoryFilter === 0) {
-            return "Categories";
+        let title = "Categories";
+
+        if (categoryFilter?.includes(0)) {
+            return title;
         }
 
-        const category = categories.find(category => category.id === categoryFilter);
+
+        const category = categories.find(category => category.id === categoryFilter[0]);
+        title = category?.name || title;
+
+        if (categoryFilter.length > 1) {
+            // show a plus n
+            title += `, +${categoryFilter.length - 1} `;
+        }
 
         return <div dangerouslySetInnerHTML={{
-            __html: category?.name
+            __html: title
         }} /> || "Categories";
     };
 
@@ -475,7 +556,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({
 
                 <div className={clsx(
                     "filter-item flex items-center gap-1 min-w-fit w-full justify-center",
-                    locationFilter !== "near-me" ? "active" : ""
+                    locationFilter !== "near-me" || customLocation ? "active" : ""
                 )}
                     onClick={() => {
                         setActiveFilter("location");
@@ -500,7 +581,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({
 
                     <div className={clsx(
                         "filter-item flex items-center gap-1 min-w-fit w-full justify-center",
-                        categoryFilter !== 0 ? "active" : ""
+                        !categoryFilter?.includes(0) ? "active" : ""
                     )}
                         onClick={() => {
                             setActiveFilter("category");
@@ -526,7 +607,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({
                         activeFilter === 'category' && 'h-full'
                     )}
                 >
-                    <NextUIProvider className="w-full px-2">
+                    <NextUIProvider className="w-full px-2 relative">
                         <DiscoverFilterModal type={activeFilter} onComplete={() => setActiveFilter(null)} />
                     </NextUIProvider>
                 </SlideInFromBottomToTop>

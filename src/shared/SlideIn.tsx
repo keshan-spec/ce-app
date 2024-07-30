@@ -95,7 +95,7 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
                 !stickyScroll && 'overflow-scroll',
                 className
             )}
-            style={{ height, position: 'fixed', zIndex: 9999 }}
+            style={{ height, zIndex: 9999 }}
             enter={transitionClasses.enter}
             enterFrom={transitionClasses.enterFrom}
             enterTo={transitionClasses.enterTo}

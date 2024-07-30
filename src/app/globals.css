@@ -215,3 +215,7 @@ span.description {
     border-right: 5px solid transparent;
     border-bottom: 5px solid rgba(0, 0, 0, 0.842);
 }
+
+.pac-container {
+    z-index: 9999 !important;
+}

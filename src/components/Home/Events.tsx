@@ -16,7 +16,6 @@ import SlideInFromBottomToTop from "@/shared/SlideIn";
 import { ViewEvent } from "./ViewPost";
 import { useUser } from "@/hooks/useUser";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { DiscoverFilters } from "../Discover/Filters";
 import { useDiscoverFilters } from "@/app/context/DiscoverFilterContext";
 
 const carouselOptions: Options = {
@@ -91,7 +90,8 @@ export const CarEventCard = ({ event, onClick }: { event: any; onClick: (id: str
                     onClick={() => onClick(event.id)}
                     style={{
                         backgroundImage: `url(${event.thumbnail ?? "https://via.placeholder.com/300"})`
-                    }}> </div>
+                    }}
+                />
 
                 {(isAnimationPlaying) && (
                     <Lottie
@@ -336,16 +336,24 @@ export const NearYouEvents: React.FC<EventProps> = ({ }) => {
 
 export const Events: React.FC<EventProps> = ({ }) => {
     const { dateFilter, locationFilter, categoryFilter, customDateRange, customLocation } = useDiscoverFilters();
-    const { isLoading, error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
+    const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
         queryKey: ["filtered-events", dateFilter, locationFilter, categoryFilter, customDateRange, customLocation],
         queryFn: ({ pageParam }) => {
+            let location;
+            if (customLocation) {
+                location = {
+                    latitude: customLocation.geometry?.location?.lat(),
+                    longitude: customLocation.geometry?.location?.lng(),
+                };
+            }
+
             const filters = {
-                'event_category': categoryFilter,
                 'event_location': locationFilter,
-                'custom_location': customLocation,
+                'custom_location': location,
                 'event_date': dateFilter,
                 'event_start': customDateRange?.start,
                 'event_end': customDateRange?.end,
+                'event_category': !categoryFilter?.includes(0) ? categoryFilter : undefined,
             };
 
             return fetchTrendingEvents(pageParam || 1, true, filters);
@@ -359,6 +367,8 @@ export const Events: React.FC<EventProps> = ({ }) => {
         refetchOnMount: false,
         initialPageParam: null,
     });
+
+    console.log(data);
 
     const [activeEvent, setActiveEvent] = useState<string>();
 
@@ -448,10 +458,33 @@ export const Events: React.FC<EventProps> = ({ }) => {
 };
 
 export const Venues: React.FC<EventProps> = ({ }) => {
-    const { isLoading, error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
-        queryKey: ["filtered-venues"],
+    const { locationFilter, customLocation } = useDiscoverFilters();
+
+    const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
+        queryKey: ["filtered-venues", locationFilter, customLocation],
         queryFn: ({ pageParam }) => {
-            return fetchTrendingVenues(pageParam || 1, true);
+            let location;
+
+            if (customLocation) {
+                location = {
+                    latitude: customLocation.geometry?.location?.lat(),
+                    longitude: customLocation.geometry?.location?.lng(),
+                };
+            }
+
+            const filters = {
+                'location': locationFilter,
+                'custom_location': location,
+            };
+
+            if (customLocation) {
+                location = {
+                    latitude: customLocation.geometry?.location?.lat(),
+                    longitude: customLocation.geometry?.location?.lng(),
+                };
+            }
+
+            return fetchTrendingVenues(pageParam || 1, true, filters);
         },
         getNextPageParam: (lastPage: { total_pages: number, data: any[], limit: number; }, pages: any[]) => {
             if (lastPage.total_pages === 1) return undefined;

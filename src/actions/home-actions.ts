@@ -25,7 +25,7 @@ export const fetchTrendingEvents = async (page: number, paginate = false, filter
     return data;
 };
 
-export const fetchTrendingVenues = async (page: number, paginate = false) => {
+export const fetchTrendingVenues = async (page: number, paginate = false, filters?: any) => {
     let user;
     try {
         user = await getSessionUser();
@@ -39,7 +39,7 @@ export const fetchTrendingVenues = async (page: number, paginate = false) => {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user_id: user?.id, page, per_page: 10, paginate }),
+        body: JSON.stringify({ user_id: user?.id, page, per_page: 10, paginate, filters }),
     });
 
 
