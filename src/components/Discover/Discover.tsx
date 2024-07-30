@@ -4,52 +4,10 @@ import { Carousel } from "../Posts/Posts";
 import Link from "next/link";
 import { Events, TrendingEvents, TrendingVenues, Venues } from "../Home/Events";
 import { useUser } from "@/hooks/useUser";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { reverseGeocode } from "@/utils/utils";
-
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { DiscoverFilters } from "./Filters";
 import { DiscoverFilterProvider } from "@/app/context/DiscoverFilterContext";
-
-export const DateRangeSelect: React.FC = () => {
-    return (
-        <Dropdown>
-            <DropdownTrigger>
-                <Button
-                    variant="bordered"
-                >
-                    Open Menu
-                </Button>
-            </DropdownTrigger>
-            <DropdownMenu variant="flat" aria-label="Dropdown menu with shortcut">
-                <DropdownItem key="new" shortcut="⌘N">New file</DropdownItem>
-                <DropdownItem key="copy" shortcut="⌘C">Copy link</DropdownItem>
-                <DropdownItem key="edit" shortcut="⌘⇧E">Edit file</DropdownItem>
-                <DropdownItem key="delete" shortcut="⌘⇧D" className="text-danger" color="danger">
-                    Delete file
-                </DropdownItem>
-            </DropdownMenu>
-        </Dropdown>
-    );
-};
-
-const LocationInput: React.FC<{
-    defaultLocation: string | null;
-}> = ({
-    defaultLocation
-}) => {
-        return (
-            <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">Location</span>
-                <input
-                    type="text"
-                    value={defaultLocation || ""}
-                    placeholder="Enter your location"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                />
-            </div>
-        );
-    };
 
 const bannerData = [
     {
@@ -154,23 +112,5 @@ export const DiscoverPage: React.FC = () => {
                 </div>
             </div>
         </div>
-    );
-};
-
-const LoadingSkeleton = () => {
-    return (
-        Array.from({ length: 5 }).map((_, index) => (
-            <li className="list-group-item" key={index}>
-                <div className="flex items-center py-3 px-3">
-                    <div className="flex-shrink-0">
-                        <div className="animate-pulse rounded-lg h-16 w-16 bg-gray-300" />
-                    </div>
-                    <div className="ml-4 w-full flex flex-col gap-2">
-                        <div className="animate-pulse h-4 w-1/2 bg-gray-300 rounded" />
-                        <div className="animate-pulse h-4 w-1/4 bg-gray-300 rounded" />
-                    </div>
-                </div>
-            </li>
-        ))
     );
 };
