@@ -40,6 +40,20 @@ export const menuIconLessPaths = [
     '/notifications',
 ];
 
+export const footerLessPaths = [
+    '/store/product/',
+    '/post/',
+    '/cart',
+    '/checkout',
+    '/checkout/payment-success',
+    '/profile/edit/',
+    '/garage',
+    '/garage/edit/',
+    '/garage/add',
+    '/edit-post/',
+    '/notifications',
+];
+
 export const useTopNav = ({
     pathname
 }: TopNavProps): TopNavType => {

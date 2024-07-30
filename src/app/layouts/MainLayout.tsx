@@ -7,7 +7,7 @@ import { Footer } from "./includes/Footer";
 import PullToRefresh from 'react-simple-pull-to-refresh';
 import { getQueryClient } from "../context/QueryClientProvider";
 import { BiLoader } from "react-icons/bi";
-import { menuIconLessPaths } from "@/hooks/useTopNav";
+import { footerLessPaths, menuIconLessPaths } from "@/hooks/useTopNav";
 
 const queryClient = getQueryClient();
 
@@ -44,6 +44,14 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
 
     const showMenuIcon = () => {
         if (menuIconLessPaths.some((path) => pathname.includes(path))) {
+            return false;
+        }
+
+        return true;
+    };
+
+    const showFooter = () => {
+        if (footerLessPaths.some((path) => pathname.includes(path))) {
             return false;
         }
 
@@ -95,7 +103,7 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
                         </>
                     </PullToRefresh>
                 </div>
-                {showMenuIcon() && (
+                {showFooter() && (
                     <Footer />
                 )}
             </div>
