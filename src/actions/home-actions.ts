@@ -3,7 +3,7 @@
 import { API_URL } from "./api";
 import { getSessionUser } from "./auth-actions";
 
-export const fetchTrendingEvents = async (page: number) => {
+export const fetchTrendingEvents = async (page: number, paginate = false, filters?: any) => {
     let user;
     try {
         user = await getSessionUser();
@@ -17,7 +17,29 @@ export const fetchTrendingEvents = async (page: number) => {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user_id: user?.id, page, per_page: 10 }),
+        body: JSON.stringify({ user_id: user?.id, page, per_page: 10, paginate, filters }),
+    });
+
+
+    const data = await response.json();
+    return data;
+};
+
+export const fetchTrendingVenues = async (page: number, paginate = false) => {
+    let user;
+    try {
+        user = await getSessionUser();
+    } catch (e) {
+        console.error("Error fetching user, session not found");
+    }
+
+    const response = await fetch(`${API_URL}/wp-json/app/v1/get-venues-trending`, {
+        cache: "no-cache",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: user?.id, page, per_page: 10, paginate }),
     });
 
 

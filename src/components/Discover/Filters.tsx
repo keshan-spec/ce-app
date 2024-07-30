@@ -4,8 +4,42 @@ import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
 import { IonIcon } from "@ionic/react";
 import { DatePicker, NextUIProvider } from "@nextui-org/react";
 import clsx from "clsx";
-import { calendarOutline, caretDownOutline, closeCircle, locateOutline, locationOutline, mapOutline, pieChartOutline } from "ionicons/icons";
-import { useEffect, useState } from "react";
+import { calendarOutline, caretDownOutline, closeCircle, locationOutline, pieChartOutline } from "ionicons/icons";
+import { useEffect, useRef, useState } from "react";
+
+import { useJsApiLoader } from '@react-google-maps/api';
+
+const AutocompleteInput = () => {
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+        libraries: ['places', 'core'],
+    });
+
+    const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        if (isLoaded && inputRef.current) {
+            const autocomplete = new google.maps.places.Autocomplete(inputRef.current as HTMLInputElement);
+            setAutocomplete(autocomplete);
+        }
+    }, [isLoaded]);
+
+    useEffect(() => {
+        if (autocomplete) {
+            autocomplete.setFields(['address_components', 'geometry']);
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                console.log(place);
+            });
+        }
+    }, [autocomplete]);
+
+    return (
+        <input ref={inputRef} type="text" className="form-control" placeholder="Enter location" autoComplete="on" />
+    );
+};
+
 
 const formatFilterDate = (start: string, end: string | null) => {
     // format date Jul 23, 2021
@@ -111,7 +145,7 @@ const DateFilter: React.FC<{
                                             <div className="row align-items-center">
 
                                                 <div className="mb-2">
-                                                    <div className="input-wrapper">
+                                                    <div className="input-wrapper z-[9999]">
                                                         <DatePicker
                                                             label="Date From"
                                                             variant='underlined'
@@ -137,6 +171,7 @@ const DateFilter: React.FC<{
                                                     <div className="input-wrapper">
                                                         <label className="form-label"></label>
                                                         <DatePicker
+                                                            className="z-[9999]"
                                                             variant='underlined'
                                                             label="Date To"
                                                             showMonthAndYearPickers
@@ -190,7 +225,7 @@ const LocationFilter: React.FC<{
             <div className="form-group boxed px-2">
                 <div className="input-wrapper">
                     <label className="form-label" htmlFor="name5">Location</label>
-                    <input type="text" className="form-control" id="name5" placeholder="Enter location" autoComplete="off" />
+                    <AutocompleteInput />
                     <i className="clear-input">
                         <IonIcon icon={closeCircle} role="img" className="md hydrated" aria-label="close circle" />
                     </i>
@@ -272,10 +307,10 @@ const CategoryFilter: React.FC<{
     return (
         <div className="filter-panel h-full">
             <ul className="listview image-listview text mt-3 !border-none">
-                <li onClick={() => setLocalCategory('all')}>
+                <li onClick={() => setLocalCategory(0)}>
                     <div className={clsx(
                         "item",
-                        localCategory === "all" ? "active" : ""
+                        localCategory === 0 ? "active" : ""
                     )}>
                         <div className="in">
                             <div>All</div>
@@ -286,17 +321,17 @@ const CategoryFilter: React.FC<{
                 {/* if length of categories is 0, show skeleton */}
                 {categories.length === 0 && Array.from({ length: 5 }).map((_, index) => (
                     <li key={index}>
-                        <div className="w-3/4 bg-gray-200 h-7 rounded-sm mx-3 mb-3">
-                            <div className="in bg-slate-400 animate-pulse" />
+                        <div className="w-3/4 bg-gray-200 h-7 rounded-sm mx-3 mb-3 animate-pulse">
+                            <div className="in bg-slate-400" />
                         </div>
                     </li>
                 ))}
 
                 {categories.map((category, index) => (
-                    <li key={index} onClick={() => setLocalCategory(category.slug)}>
+                    <li key={index} onClick={() => setLocalCategory(category.id)}>
                         <div className={clsx(
                             "item",
-                            localCategory === category.slug ? "active" : ""
+                            localCategory === category.id ? "active" : ""
                         )}>
                             <div className="in">
                                 <div dangerouslySetInnerHTML={{
@@ -399,11 +434,11 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({
     };
 
     const renderCategoryTitle = () => {
-        if (categoryFilter === "all") {
+        if (categoryFilter === 0) {
             return "Categories";
         }
 
-        const category = categories.find(category => category.slug === categoryFilter);
+        const category = categories.find(category => category.id === categoryFilter);
 
         return <div dangerouslySetInnerHTML={{
             __html: category?.name
@@ -413,31 +448,33 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({
     return (
         <div className="overflow-x-scroll w-full">
             <div className="filter-bar flex  overflow-x-scroll mt-1 w-full pb-1">
-                <div className={clsx(
-                    "filter-item flex items-center gap-1 min-w-fit",
-                    dateFilter !== "anytime" ? "active" : ""
+                {type === 'events' && (
+                    <div className={clsx(
+                        "filter-item flex items-center gap-1 min-w-fit w-full justify-center",
+                        dateFilter !== "anytime" ? "active" : ""
+                    )}
+                        onClick={() => {
+                            setActiveFilter("date");
+                        }}
+                    >
+                        <IonIcon
+                            icon={calendarOutline}
+                            role="img"
+                            className="md hydrated mr-1 text-medium"
+                            aria-label="calendar outline"
+                        />
+                        {renderDateTitle()}
+                        <IonIcon
+                            icon={caretDownOutline}
+                            role="img"
+                            className="md hydrated"
+                            aria-label="caret down outline"
+                        />
+                    </div>
                 )}
-                    onClick={() => {
-                        setActiveFilter("date");
-                    }}
-                >
-                    <IonIcon
-                        icon={calendarOutline}
-                        role="img"
-                        className="md hydrated mr-1 text-medium"
-                        aria-label="calendar outline"
-                    />
-                    {renderDateTitle()}
-                    <IonIcon
-                        icon={caretDownOutline}
-                        role="img"
-                        className="md hydrated"
-                        aria-label="caret down outline"
-                    />
-                </div>
 
                 <div className={clsx(
-                    "filter-item flex items-center gap-1 min-w-fit",
+                    "filter-item flex items-center gap-1 min-w-fit w-full justify-center",
                     locationFilter !== "near-me" ? "active" : ""
                 )}
                     onClick={() => {
@@ -459,24 +496,26 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({
                     />
                 </div>
 
-                <div className={clsx(
-                    "filter-item flex items-center gap-1 min-w-fit",
-                    categoryFilter !== "all" ? "active" : ""
-                )}
-                    onClick={() => {
-                        setActiveFilter("category");
-                    }}
-                >
-                    <IonIcon icon={pieChartOutline} role="img" className="md hydrated mr-1 text-medium" aria-label="calendar outline" />
-                    {renderCategoryTitle()}
-                    <IonIcon
-                        icon={caretDownOutline}
-                        role="img"
-                        className="md hydrated"
-                        aria-label="caret down outline"
-                    />
-                </div>
+                {type === 'events' && (
 
+                    <div className={clsx(
+                        "filter-item flex items-center gap-1 min-w-fit w-full justify-center",
+                        categoryFilter !== 0 ? "active" : ""
+                    )}
+                        onClick={() => {
+                            setActiveFilter("category");
+                        }}
+                    >
+                        <IonIcon icon={pieChartOutline} role="img" className="md hydrated mr-1 text-medium" aria-label="calendar outline" />
+                        {renderCategoryTitle()}
+                        <IonIcon
+                            icon={caretDownOutline}
+                            role="img"
+                            className="md hydrated"
+                            aria-label="caret down outline"
+                        />
+                    </div>
+                )}
                 <SlideInFromBottomToTop
                     stickyScroll
                     isOpen={activeFilter !== null}

@@ -12,7 +12,7 @@ export interface DiscoverFilterContextType {
     } | null;
     locationFilter: 'near-me' | 'national' | '25-miles' | '50-miles' | '100-miles' | 'custom';
     customLocation?: string | null;
-    categoryFilter?: string | null;
+    categoryFilter?: number | null;
     // Actions
     onDateFilterChange: (filter: DiscoverFilterContextType['dateFilter'], customRange?: DiscoverFilterContextType['customDateRange']) => void;
     onLocationFilterChange: (filter: DiscoverFilterContextType['locationFilter'], customLocation?: DiscoverFilterContextType['customLocation']) => void;
@@ -37,7 +37,7 @@ const DiscoverFilterProvider: React.FC<{ children: ReactNode; }> = ({ children }
     });
     const [locationFilter, setLocationFilter] = useState<DiscoverFilterContextType['locationFilter']>('near-me');
     const [customLocation, setCustomLocation] = useState<DiscoverFilterContextType['customLocation']>(null);
-    const [categoryFilter, setCategoryFilter] = useState<DiscoverFilterContextType['categoryFilter']>('all');
+    const [categoryFilter, setCategoryFilter] = useState<DiscoverFilterContextType['categoryFilter']>(0);
     const [categoryType, setCategoryType] = useState<'events' | 'venues' | 'users' | null>(null);
     const [categories, setCategories] = useState<DefaultCategoryType[]>([]);
 

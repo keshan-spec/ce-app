@@ -17,6 +17,7 @@
     "@ionic/react": "^8.0.1",
     "@nextui-org/date-picker": "^2.1.2",
     "@nextui-org/react": "^2.4.2",
+    "@react-google-maps/api": "^2.19.3",
     "@splidejs/react-splide": "^0.7.12",
     "@splidejs/splide": "^4.1.4",
     "@stripe/react-stripe-js": "^2.7.3",

@@ -150,7 +150,7 @@ export const useTopNav = ({
         returnTo: () => returnTo(),
         title: getHeaderTitle(),
         subtitle: getSubtitle(),
-        mode: isGarageViewPage || isPostViewPage || isProfileEditView || isGarageEditView || isDiscoverPage ? 'view-page' : 'default',
+        mode: isGarageViewPage || isPostViewPage || isProfileEditView || isGarageEditView || isDiscoverPage ? 'view-page' : 'view-page',
         showMenuIcon: showMenuIcon(),
         showHeaderIcons: !isGarageViewPage && !isPostViewPage && !isProfileEditView && !isGarageEditView && !isDiscoverPage,
         showLogo: !isGarageViewPage && !isPostViewPage && !isProfileEditView && !isGarageEditView && !isDiscoverPage,

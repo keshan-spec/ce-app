@@ -7,7 +7,7 @@ import likeAnimation2 from "../lottie/lottie-2.json";
 
 import Lottie from "lottie-react";
 
-import { fetchTrendingEvents, maybeFavoriteEvent } from "@/actions/home-actions";
+import { fetchTrendingEvents, fetchTrendingVenues, maybeFavoriteEvent } from "@/actions/home-actions";
 import { Options } from "@splidejs/splide";
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
@@ -17,6 +17,7 @@ import { ViewEvent } from "./ViewPost";
 import { useUser } from "@/hooks/useUser";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { DiscoverFilters } from "../Discover/Filters";
+import { useDiscoverFilters } from "@/app/context/DiscoverFilterContext";
 
 const carouselOptions: Options = {
     perPage: 4,
@@ -163,8 +164,85 @@ export const CarEventCardSkeleton = () => {
     );
 };
 
+const VenueCard = ({ venue, onClick }: { venue: any; onClick: (id: string) => void; }) => {
+    return (
+        <>
+            <div className="news-list-home-slider-img-row relative">
+                <div className="news-list-home-slider-img"
+                    onClick={() => onClick(venue.id)}
+                    style={{
+                        backgroundImage: `url(${venue.cover_image ?? "https://via.placeholder.com/300"})`
+                    }}>
+                </div>
+                <img src={venue.logo} alt="venue" className="w-24 h-24 object-cover rounded-lg absolute top-7 left-11 border" />
+            </div>
+
+
+            <div className="card-body pt-2 cursor-pointer" onClick={() => onClick(venue.id)}>
+                <div className="news-list-slider-info flex flex-col justify-start h-full">
+                    <div className="flex flex-col">
+                        <h3 className="text-ellipsis truncate">
+                            {venue.title}
+                        </h3>
+                    </div>
+                    <p className="text-ellipsis truncate">{venue.venue_location}</p>
+                    {/* distance */}
+                    <p className="text-ellipsis truncate">Apprx. {venue.distance} miles away</p>
+                </div>
+            </div>
+        </>
+    );
+};
+
 interface EventProps {
 }
+
+export const TrendingVenues: React.FC<EventProps> = ({ }) => {
+    const { data, error, isFetching, isLoading } = useQuery<any[], Error>({
+        queryKey: ["trending-venues"],
+        queryFn: () => {
+            return fetchTrendingVenues(1);
+        },
+        retry: 1,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        // cacheTime: 1000,
+        staleTime: 1000,
+    });
+
+    const [activeVenue, setActiveVenue] = useState<string>();
+
+    return (
+        <>
+            <SlideInFromBottomToTop isOpen={activeVenue ? true : false} onClose={() => setActiveVenue(undefined)}>
+                {activeVenue && <ViewEvent eventId={activeVenue} />}
+            </SlideInFromBottomToTop>
+
+            <div className="header-large-title">
+                <h1 className="title">Trending Venues</h1>
+            </div>
+
+            <div className="section full mt-2 mb-3">
+                {error instanceof Error && <p className="px-3">Error: {error?.message ?? "An error occured"}</p>}
+                {(!isFetching && data?.length === 0) && <p className="px-3">No venues found</p>}
+
+                <Splide options={carouselOptions}>
+                    {(isLoading || isFetching) && (
+                        <SplideSlide>
+                            <CarEventCardSkeleton />
+                        </SplideSlide>
+                    )}
+
+                    {data && data?.map((venue: any, idx: number) => (
+                        <SplideSlide className="card" key={idx}>
+                            <VenueCard venue={venue} onClick={(id) => setActiveVenue(id)} />
+                        </SplideSlide>
+                    ))}
+                </Splide>
+            </div>
+        </>
+    );
+};
 
 export const TrendingEvents: React.FC<EventProps> = ({ }) => {
     const { data, error, isFetching, isLoading } = useQuery<any[], Error>({
@@ -257,12 +335,127 @@ export const NearYouEvents: React.FC<EventProps> = ({ }) => {
 };
 
 export const Events: React.FC<EventProps> = ({ }) => {
+    const { dateFilter, locationFilter, categoryFilter, customDateRange, customLocation } = useDiscoverFilters();
     const { isLoading, error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
-        queryKey: ["filtered-events"],
+        queryKey: ["filtered-events", dateFilter, locationFilter, categoryFilter, customDateRange, customLocation],
         queryFn: ({ pageParam }) => {
-            return fetchTrendingEvents(pageParam || 1);
+            const filters = {
+                'event_category': categoryFilter,
+                'event_location': locationFilter,
+                'custom_location': customLocation,
+                'event_date': dateFilter,
+                'event_start': customDateRange?.start,
+                'event_end': customDateRange?.end,
+            };
+
+            return fetchTrendingEvents(pageParam || 1, true, filters);
         },
         getNextPageParam: (lastPage: { total_pages: number, data: any[], limit: number; }, pages: any[]) => {
+            const maxPages = Math.ceil(lastPage.total_pages / lastPage.limit);
+            const nextPage = pages.length + 1;
+            return nextPage <= maxPages ? nextPage : undefined;
+        },
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        initialPageParam: null,
+    });
+
+    const [activeEvent, setActiveEvent] = useState<string>();
+
+    // Infinite scroll
+    useEffect(() => {
+        let fetching = false;
+
+        const onScroll = async (event: any) => {
+            // if elemt with class .nav-link data-bs-toggle="tab" href="#events" has aria-selected="true" then fetch events
+            const activeTab = document.querySelector(".nav-link[data-bs-toggle='tab'][href='#events']") as HTMLElement;
+            if (!activeTab || activeTab.getAttribute("aria-selected") !== "true") return;
+
+            if (isFetchingNextPage) return;
+
+            const { scrollHeight, scrollTop, clientHeight } =
+                event.target.scrollingElement;
+
+            if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.2) {
+                fetching = true;
+
+                if (hasNextPage && !isFetchingNextPage) {
+                    console.log("hasNextPage", fetching);
+                    await fetchNextPage();
+                };
+
+                fetching = false;
+            }
+        };
+
+        document.addEventListener("scroll", onScroll);
+        return () => {
+            document.removeEventListener("scroll", onScroll);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [hasNextPage, isFetchingNextPage]);
+
+    const hasRows = data?.pages && data.pages.length > 0 && data?.pages[0].data.length > 0;
+
+    return (
+        <>
+            <SlideInFromBottomToTop isOpen={activeEvent ? true : false} onClose={() => setActiveEvent(undefined)}>
+                {activeEvent && <ViewEvent eventId={activeEvent} />}
+            </SlideInFromBottomToTop>
+
+            <div className="section mt-2 mb-3">
+                {error instanceof Error && <p className="px-3">Error: {error?.message ?? "An error occured"}</p>}
+
+                {(!isFetching && !hasRows) && <p className="px-3">No events found</p>}
+
+                <div className="row">
+                    {data && data?.pages.map((page, idx) => page.data.map((event: any, idx: number) => (
+                        <div className="col-6">
+                            <div className="card mb-3">
+                                <CarEventCard event={event} onClick={(id) => setActiveEvent(id)} key={idx} />
+                            </div>
+                        </div>
+                    )))}
+
+                    {(isFetchingNextPage || isFetching) && (
+                        <>
+                            <div className="col-6">
+                                <div className="card mb-3">
+                                    <CarEventCardSkeleton />
+                                </div>
+                            </div>
+                            <div className="col-6">
+                                <div className="card mb-3">
+                                    <CarEventCardSkeleton />
+                                </div>
+                            </div>
+                            <div className="col-6">
+                                <div className="card mb-3">
+                                    <CarEventCardSkeleton />
+                                </div>
+                            </div>
+                            <div className="col-6">
+                                <div className="card mb-3">
+                                    <CarEventCardSkeleton />
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </div>
+            </div>
+        </>
+    );
+};
+
+export const Venues: React.FC<EventProps> = ({ }) => {
+    const { isLoading, error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
+        queryKey: ["filtered-venues"],
+        queryFn: ({ pageParam }) => {
+            return fetchTrendingVenues(pageParam || 1, true);
+        },
+        getNextPageParam: (lastPage: { total_pages: number, data: any[], limit: number; }, pages: any[]) => {
+            if (lastPage.total_pages === 1) return undefined;
+
             const maxPages = Math.ceil(lastPage.total_pages / lastPage.limit);
             const nextPage = pages.length + 1;
             return nextPage <= maxPages ? nextPage : undefined;
@@ -277,6 +470,9 @@ export const Events: React.FC<EventProps> = ({ }) => {
         let fetching = false;
 
         const onScroll = async (event: any) => {
+            const activeTab = document.querySelector(".nav-link[data-bs-toggle='tab'][href='#venues']") as HTMLElement;
+            if (!activeTab || activeTab.getAttribute("aria-selected") !== "true") return;
+
             if (isFetchingNextPage) return;
 
             const { scrollHeight, scrollTop, clientHeight } =
@@ -312,10 +508,10 @@ export const Events: React.FC<EventProps> = ({ }) => {
             <div className="section mt-2 mb-3">
                 {error instanceof Error && <p className="px-3">Error: {error?.message ?? "An error occured"}</p>}
                 <div className="row">
-                    {data && data?.pages.map((page, idx) => page.data.map((event: any, idx: number) => (
+                    {data && data?.pages.map((page, idx) => page.data.map((venue: any, idx: number) => (
                         <div className="col-6">
                             <div className="card mb-3">
-                                <CarEventCard event={event} onClick={(id) => setActiveEvent(id)} key={idx} />
+                                <VenueCard venue={venue} onClick={(id) => setActiveEvent(id)} key={idx} />
                             </div>
                         </div>
                     )))}

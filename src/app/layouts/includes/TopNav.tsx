@@ -8,7 +8,7 @@ import PopUp from '@/shared/Dialog';
 import { sendRNMessage } from '@/utils/nativeFeel';
 import { IonIcon } from '@ionic/react';
 import clsx from 'clsx';
-import { menuOutline, notifications, chevronBackOutline, qrCode, cartOutline } from 'ionicons/icons';
+import { menuOutline, notifications, chevronBackOutline, qrCode, cartOutline, qrCodeOutline } from 'ionicons/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -75,7 +75,7 @@ export const TopNav: React.FC = () => {
                 {showLogo && (
                     <div className="max-w-36 !mt-5">
                         <Link href="/">
-                            <img src="/assets/img/logo.png" alt="" />
+                            <img src="/assets/img/logo-dark.png" alt="" />
                         </Link>
                     </div>
                 )}
@@ -100,7 +100,7 @@ export const TopNav: React.FC = () => {
                             </Link>
                         ) : (
                             <button className="headerButton" onClick={() => setIsScanning(true)}>
-                                <IonIcon icon={qrCode} role="img" className="md hydrated" />
+                                <IonIcon icon={qrCodeOutline} role="img" className="md hydrated" />
                             </button>
                         )}
 

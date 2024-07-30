@@ -23,7 +23,7 @@ export const SidePanel: React.FC = () => {
     };
 
     return (
-        <div className="offcanvas offcanvas-start" tabIndex={-1} id="sidebarPanel">
+        <div className="offcanvas offcanvas-start !z-[99999]" tabIndex={-1} id="sidebarPanel">
             {loading && <Loader transulcent />}
             <div className="offcanvas-body">
                 <div className="profileBox">

@@ -2,12 +2,12 @@
 import { BiCaretRight } from "react-icons/bi";
 import { Carousel } from "../Posts/Posts";
 import Link from "next/link";
-import { Events } from "../Home/Events";
+import { Events, TrendingEvents, TrendingVenues, Venues } from "../Home/Events";
 import { useUser } from "@/hooks/useUser";
 import { use, useEffect, useState } from "react";
 import { reverseGeocode } from "@/utils/utils";
 
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, NextUIProvider, DatePicker } from "@nextui-org/react";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { DiscoverFilters } from "./Filters";
 import { DiscoverFilterProvider } from "@/app/context/DiscoverFilterContext";
 
@@ -117,7 +117,8 @@ export const DiscoverPage: React.FC = () => {
             <div className="tab-pane fade show active" id="top" role="tabpanel">
                 <div className="section full mt-1">
                     <Banner />
-                    <Events />
+                    <TrendingEvents />
+                    <TrendingVenues />
                 </div>
             </div>
 
@@ -140,6 +141,7 @@ export const DiscoverPage: React.FC = () => {
                         <DiscoverFilters defaultLocation={userLocation} key={'venues'} type="venues" />
 
                         <ul className="listview image-listview media search-result mb-2">
+                            <Venues />
                         </ul>
                     </div>
                 </div>
