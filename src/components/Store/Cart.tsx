@@ -3,6 +3,7 @@ import { FIXED_SHIPPING_COST } from '@/actions/api';
 import { cancelPaymentIntent } from '@/actions/store-actions';
 import { useCartStore } from '@/hooks/useCartStore';
 import { StoreQtyButton } from '@/shared/StoreQtyButton';
+import { convertToCurrency } from '@/utils/utils';
 import { IonIcon } from '@ionic/react';
 import { closeCircle } from 'ionicons/icons';
 import Link from 'next/link';
@@ -37,7 +38,7 @@ export const Cart: React.FC = () => {
                                         </Link>
                                         <p className="detail">{item.variationLabel}</p>
                                         <strong className="price">
-                                            £{item.price * item.qty}
+                                            {convertToCurrency(item.price * item.qty)}
                                         </strong>
                                     </div>
                                 </div>
@@ -97,9 +98,9 @@ export const Cart: React.FC = () => {
                 <div className="section mt-2 mb-2">
                     <div className="card">
                         <ul className="listview flush transparent simple-listview">
-                            <li>Subtotal <span className="text-muted">£{totalPrice}</span></li>
-                            <li>Shipping <span className="text-muted">£{FIXED_SHIPPING_COST}</span></li>
-                            <li>Total<span className="text-primary font-weight-bold">£{totalPrice + FIXED_SHIPPING_COST}</span></li>
+                            <li>Subtotal <span className="text-muted">{convertToCurrency(totalPrice)}</span></li>
+                            <li>Shipping <span className="text-muted">{convertToCurrency(FIXED_SHIPPING_COST)}</span></li>
+                            <li>Total<span className="text-primary font-weight-bold">{convertToCurrency(totalPrice + FIXED_SHIPPING_COST)}</span></li>
                         </ul>
                     </div>
                 </div>

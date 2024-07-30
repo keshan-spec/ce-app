@@ -368,8 +368,6 @@ export const Events: React.FC<EventProps> = ({ }) => {
         initialPageParam: null,
     });
 
-    console.log(data);
-
     const [activeEvent, setActiveEvent] = useState<string>();
 
     // Infinite scroll

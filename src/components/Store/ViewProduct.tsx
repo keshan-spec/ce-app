@@ -4,12 +4,13 @@ import { useCartStore } from '@/hooks/useCartStore';
 import { StoreQtyButton } from '@/shared/StoreQtyButton';
 import { ProductVariationTypes } from '@/types/store';
 import { IonIcon } from '@ionic/react';
-import { Splide, SplideSlide } from '@splidejs/react-splide';
-import { Options } from '@splidejs/splide';
 import { useQuery } from '@tanstack/react-query';
-import { bagRemoveOutline, cartOutline, reload, reloadCircle, reloadOutline } from 'ionicons/icons';
-import React, { use, useCallback, useEffect, useRef, useState } from 'react';
+import { cartOutline } from 'ionicons/icons';
+import React, { useEffect, useRef, useState } from 'react';
 import { BiLoader } from 'react-icons/bi';
+import { Options } from "@splidejs/splide";
+import { Splide, SplideSlide } from '@splidejs/react-splide';
+import '@splidejs/react-splide/css';
 
 const carouselOptions: Options = {
     perPage: 1,
@@ -139,7 +140,7 @@ export const ViewProduct: React.FC<ViewProductProps> = ({
 
             {!isFetching && data && (
                 <>
-                    <Splide options={carouselOptions} className="text-center carousel-full flex items-center justify-center">
+                    <Splide options={carouselOptions} >
                         {renderImages()}
                     </Splide>
 

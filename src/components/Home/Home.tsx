@@ -8,6 +8,7 @@ import clsx from "clsx";
 import { DiscoverPage } from "../Discover/Discover";
 import { useRouter, useSearchParams } from "next/navigation";
 import NcImage from "../Image/Image";
+import Link from "next/link";
 
 interface Event {
     id: number;
@@ -128,7 +129,7 @@ export const HomePage: React.FC = () => {
                     {(data && data.pages.map((page: CombinedData, index: number) => {
                         return page.events?.data.map((item: Event) => (
                             <li key={item.id}>
-                                <a href="#" className="item">
+                                <Link href="" className="item">
                                     <div className="imageWrapper">
                                         <NcImage
                                             src={item.thumbnail}
@@ -147,7 +148,7 @@ export const HomePage: React.FC = () => {
                                             }} />
                                         </div>
                                     </div>
-                                </a>
+                                </Link>
                             </li>
                         ));
                     }))}

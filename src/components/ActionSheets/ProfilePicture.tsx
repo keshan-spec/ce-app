@@ -131,6 +131,9 @@ export const EditProfilePicture: React.FC<EditProfilePictureProps> = ({
             const reader = new FileReader();
             reader.addEventListener('load', () => setSelectedImage(reader.result as string));
             reader.readAsDataURL(e.target.files[0]);
+
+            const file = e.target.files[0];
+            onUploadImage(file, type);
         }
     };
 
@@ -253,7 +256,7 @@ export const EditProfilePicture: React.FC<EditProfilePictureProps> = ({
                 </div>
             </div>
 
-            <Modal isOpen={!!selectedImage} onClose={() => setSelectedImage(null)}>
+            {/* <Modal isOpen={!!selectedImage} onClose={() => setSelectedImage(null)}>
                 {selectedImage && (
                     <div className="crop-container">
                         <ReactCrop
@@ -272,7 +275,7 @@ export const EditProfilePicture: React.FC<EditProfilePictureProps> = ({
                         </div>
                     </div>
                 )}
-            </Modal>
+            </Modal> */}
         </div>
     );
 };

@@ -36,56 +36,68 @@ export const ProfileLinksExternal: React.FC<ProfileLinksProps> = ({
 
     return (
         <div className="profile-links-external flex">
-            <div className={clsx(
-                "profile-link social-link",
-                !profileLinks.instagram && 'opacity-70'
+            {profileLinks.instagram && (
+                <div className={clsx(
+                    "profile-link social-link",
+                    !profileLinks.instagram && 'opacity-70'
+                )}
+                    onClick={() => {
+                        handleSocialLinkClick('instagram');
+                    }}>
+                    <IonIcon icon={logoInstagram} className="profile-icon md hydrated" role="img" aria-label="logo instagram" />
+                    <span>Instagram</span>
+                </div>
             )}
-                onClick={() => {
-                    handleSocialLinkClick('instagram');
-                }}>
-                <IonIcon icon={logoInstagram} className="profile-icon md hydrated" role="img" aria-label="logo instagram" />
-                <span>Instagram</span>
-            </div>
-            <div className={clsx(
-                "profile-link social-link",
-                !profileLinks.facebook && 'opacity-70'
-            )}
-                onClick={() => {
-                    handleSocialLinkClick('facebook');
-                }}>
-                <IonIcon icon={logoFacebook} className="profile-icon md hydrated" role="img" aria-label="logo facebook" />
+            {profileLinks.facebook && (
+                <div className={clsx(
+                    "profile-link social-link",
+                    !profileLinks.facebook && 'opacity-70'
+                )}
+                    onClick={() => {
+                        handleSocialLinkClick('facebook');
+                    }}>
+                    <IonIcon icon={logoFacebook} className="profile-icon md hydrated" role="img" aria-label="logo facebook" />
 
-                <span>Facebook</span>
-            </div>
-            <div className={clsx(
-                "profile-link social-link",
-                !profileLinks.tiktok && 'opacity-70'
+                    <span>Facebook</span>
+                </div>
             )}
-                onClick={() => {
-                    handleSocialLinkClick('tiktok');
-                }}>
-                <IonIcon icon={logoTiktok} className="profile-icon md hydrated" role="img" aria-label="logo tiktok" />
 
-                <span>Tiktok</span>
-            </div>
-            <div className={clsx(
-                "profile-link social-link",
-                !profileLinks.youtube && 'opacity-70'
+            {profileLinks.tiktok && (
+                <div className={clsx(
+                    "profile-link social-link",
+                    !profileLinks.tiktok && 'opacity-70'
+                )}
+                    onClick={() => {
+                        handleSocialLinkClick('tiktok');
+                    }}>
+                    <IonIcon icon={logoTiktok} className="profile-icon md hydrated" role="img" aria-label="logo tiktok" />
+
+                    <span>Tiktok</span>
+                </div>
             )}
-                onClick={() => {
-                    handleSocialLinkClick('youtube');
-                }}>
-                <IonIcon icon={logoYoutube} className="profile-icon md hydrated" role="img" aria-label="mail outline" />
-                <span>Youtube</span>
-            </div>
 
-            <div className={clsx(
-                "profile-link social-link",
-                externalLinks.length === 0 && 'opacity-70'
-            )} data-bs-toggle="offcanvas" data-bs-target="#moreLinks">
-                <IonIcon icon={linkOutline} className="profile-icon md hydrated" role="img" aria-label="link outline" />
-                <span>Links</span>
-            </div>
+            {profileLinks.youtube && (
+                <div className={clsx(
+                    "profile-link social-link",
+                    !profileLinks.youtube && 'opacity-70'
+                )}
+                    onClick={() => {
+                        handleSocialLinkClick('youtube');
+                    }}>
+                    <IonIcon icon={logoYoutube} className="profile-icon md hydrated" role="img" aria-label="mail outline" />
+                    <span>Youtube</span>
+                </div>
+            )}
+
+            {externalLinks.length > 0 && (
+                <div className={clsx(
+                    "profile-link social-link",
+                    externalLinks.length === 0 && 'opacity-70'
+                )} data-bs-toggle="offcanvas" data-bs-target="#moreLinks">
+                    <IonIcon icon={linkOutline} className="profile-icon md hydrated" role="img" aria-label="link outline" />
+                    <span>Links</span>
+                </div>
+            )}
 
             <div className="offcanvas offcanvas-bottom offcanvas-large action-sheet" tabIndex={-1} id="moreLinks">
                 <div className="offcanvas-body">
@@ -115,7 +127,6 @@ export const ProfileLinksExternal: React.FC<ProfileLinksProps> = ({
 
                 </div>
             </div>
-
         </div>
     );
 };

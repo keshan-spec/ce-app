@@ -30,8 +30,8 @@ const vehicleFormSchema = z.object({
     // ),
     make: z.string().min(1, 'Please select a make'),
     model: z.string().min(1, 'Model is required'),
-    variant: z.string().min(1, 'Variant is required'),
-    registration: z.string().min(1, 'Registration number is required').regex(REGISTRATION_FORMAT, 'Registration number is invalid'),
+    variant: z.string().optional(),
+    registration: z.string().min(1, 'Registration number is required'),//.regex(REGISTRATION_FORMAT, 'Registration number is invalid'),
     colour: z.string().optional(),
     ownedFrom: z.string().min(1, 'Owned from date is required'),
     ownedTo: z.string().optional(),
@@ -198,7 +198,7 @@ export const AddVehicle: React.FC<AddVehicleProps> = ({
 
                 if (response && response.success) {
                     reset();
-                    router.push(`/profile/garage/${response.id}`);
+                    router.push(`/profile/garage/${response.id}/?ref=garage`);
                 } else {
                     throw new Error('Failed to add vehicle.');
                 }

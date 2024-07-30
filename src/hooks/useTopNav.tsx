@@ -47,7 +47,6 @@ export const footerLessPaths = [
     '/checkout',
     '/checkout/payment-success',
     '/profile/edit/',
-    '/garage',
     '/garage/edit/',
     '/garage/add',
     '/edit-post/',
@@ -149,8 +148,19 @@ export const useTopNav = ({
     }, [isGarageViewPage, isPostViewPage, param, isDiscoverPage]);
 
     const returnTo = () => {
-        if (searchParam.get('ref') && searchParam.get('ref') === 'redirect') {
-            return router.push('/');
+        if (searchParam.get('ref')) {
+            const ref = searchParam.get('ref');
+            if (ref === 'redirect') {
+                return router.push('/');
+            }
+
+            if (ref === 'store') {
+                return router.push('/store');
+            }
+
+            if (ref === 'garage') {
+                return router.push('/garage');
+            }
         }
 
         if (pathname.includes('checkout/payment-success')) {

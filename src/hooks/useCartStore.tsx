@@ -39,10 +39,13 @@ export const useCartStore = create(persist<State & Actions>(
 
             if (existingItem) {
                 existingItem.qty += Item.qty;
+                set((state) => ({
+                    totalItems: state.totalItems + Item.qty,
+                }));
             } else {
                 set((state) => ({
                     cart: [...state.cart, Item],
-                    totalItems: state.totalItems + 1,
+                    totalItems: state.totalItems + Item.qty,
                     totalPrice: state.totalPrice + (Item.price * Item.qty),
                 }));
             }
