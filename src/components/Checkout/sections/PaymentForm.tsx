@@ -18,7 +18,8 @@ import { Loader } from "@/components/Loader";
 
 export const PaymentForm: React.FC = () => {
     const { cart, totalPrice, stripeIntent, setStripeIntent } = useCartStore();
-    const { shippingInfo } = useCheckout();
+
+    const { shippingInfo, isShippingInfoValid } = useCheckout();
     const { user } = useUser();
 
     const router = useRouter();
@@ -71,6 +72,11 @@ export const PaymentForm: React.FC = () => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        if (!isShippingInfoValid()) {
+            setErrorMessage("Please complete the shipping details.");
+            return;
+        }
+
         setLoading(true);
 
         if (!stripe || !elements) {

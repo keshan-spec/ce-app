@@ -32,7 +32,7 @@ const SelectedShippingDetails = () => {
     return (
         <div className="flex flex-col">
             <SlideInFromBottomToTop isOpen={editShippingInfo} onClose={() => {
-                isShippingInfoValid() && setEditShippingInfo(false);
+                setEditShippingInfo(false);
             }} title="Shipping Details">
                 <ShippingForm />
             </SlideInFromBottomToTop>
