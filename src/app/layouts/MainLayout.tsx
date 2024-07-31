@@ -42,14 +42,6 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
         return true;
     };
 
-    const showMenuIcon = () => {
-        if (menuIconLessPaths.some((path) => pathname.includes(path))) {
-            return false;
-        }
-
-        return true;
-    };
-
     const showFooter = () => {
         if (footerLessPaths.some((path) => pathname.includes(path))) {
             return false;
