@@ -652,27 +652,27 @@ window.addEventListener('offline', offlineMode);
 
 //-----------------------------------------------------------------------
 // Upload Input
-var uploadComponent = document.querySelectorAll('.custom-file-upload');
-uploadComponent.forEach(function (el) {
-    var fileUploadParent = '#' + el.id;
-    var fileInput = document.querySelector(fileUploadParent + ' input[type="file"]');
-    var fileLabel = document.querySelector(fileUploadParent + ' label');
-    var fileLabelText = document.querySelector(fileUploadParent + ' label span');
-    var filelabelDefault = fileLabelText.innerHTML;
-    fileInput.addEventListener('change', function (event) {
-        var name = this.value.split('\\').pop();
-        tmppath = URL.createObjectURL(event.target.files[0]);
-        if (name) {
-            fileLabel.classList.add('file-uploaded');
-            fileLabel.style.backgroundImage = "url(" + tmppath + ")";
-            fileLabelText.innerHTML = name;
-        }
-        else {
-            fileLabel.classList.remove("file-uploaded");
-            fileLabelText.innerHTML = filelabelDefault;
-        }
-    });
-});
+// var uploadComponent = document.querySelectorAll('.custom-file-upload');
+// uploadComponent.forEach(function (el) {
+//     var fileUploadParent = '#' + el.id;
+//     var fileInput = document.querySelector(fileUploadParent + ' input[type="file"]');
+//     var fileLabel = document.querySelector(fileUploadParent + ' label');
+//     var fileLabelText = document.querySelector(fileUploadParent + ' label span');
+//     var filelabelDefault = fileLabelText.innerHTML;
+//     fileInput.addEventListener('change', function (event) {
+//         var name = this.value.split('\\').pop();
+//         tmppath = URL.createObjectURL(event.target.files[0]);
+//         if (name) {
+//             fileLabel.classList.add('file-uploaded');
+//             fileLabel.style.backgroundImage = "url(" + tmppath + ")";
+//             fileLabelText.innerHTML = name;
+//         }
+//         else {
+//             fileLabel.classList.remove("file-uploaded");
+//             fileLabelText.innerHTML = filelabelDefault;
+//         }
+//     });
+// });
 //-----------------------------------------------------------------------
 
 

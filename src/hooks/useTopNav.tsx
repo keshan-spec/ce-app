@@ -150,6 +150,11 @@ export const useTopNav = ({
     const returnTo = () => {
         if (searchParam.get('ref')) {
             const ref = searchParam.get('ref');
+
+            if (ref === 'search') {
+                return window.history.length > 1 ? router.back() : router.push('/');
+            }
+
             if (ref === 'redirect') {
                 return router.push('/');
             }
@@ -161,6 +166,14 @@ export const useTopNav = ({
             if (ref === 'garage') {
                 return router.push('/garage');
             }
+        }
+
+        if (pathname.includes('/garage')) {
+            return router.push('/profile');
+        }
+
+        if (pathname.includes('/profile')) {
+            return router.push('/');
         }
 
         if (pathname.includes('checkout/payment-success')) {

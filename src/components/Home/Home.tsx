@@ -9,24 +9,41 @@ import { DiscoverPage } from "../Discover/Discover";
 import { useRouter, useSearchParams } from "next/navigation";
 import NcImage from "../Image/Image";
 import Link from "next/link";
+import { EventItem, UserItem, VenueItem } from "../Discover/SearchResult";
 
-interface Event {
+export interface SearchResultEvent {
     id: number;
     name: string;
     thumbnail: string;
 }
 
-interface User {
+export interface SearchResultUser {
     id: number;
     name: string;
     username: string;
     thumbnail: string;
+    type: 'user' | 'vehicle';
+    meta: {
+        make: string;
+        model: string;
+        colour?: string;
+        variant?: string;
+    };
 }
 
-interface Venue {
+export interface SearchResultVenue {
     id: number;
     name: string;
     thumbnail: string;
+    venue_location: string;
+    logo: string;
+    distance: number;
+}
+
+interface TopResults {
+    events: SearchResultEvent[];
+    users: SearchResultUser[];
+    venues: SearchResultVenue[];
 }
 
 interface PaginationData<T> {
@@ -36,16 +53,26 @@ interface PaginationData<T> {
     data: T[];
 }
 
-interface EventData extends PaginationData<Event> { }
-interface UserData extends PaginationData<User> { }
-interface VenueData extends PaginationData<Venue> { }
+interface EventData extends PaginationData<SearchResultEvent> { }
+interface UserData extends PaginationData<SearchResultUser> { }
+interface VenueData extends PaginationData<SearchResultVenue> { }
+
 
 interface CombinedData {
     events?: EventData;
     users?: UserData;
     venues?: VenueData;
+    top_results?: TopResults;
     success: boolean;
 }
+
+
+const resultViewUrl = {
+    events: "/event",
+    venues: "/venue",
+    users: "/profile",
+    vehicle: "/profile/garage"
+};
 
 export const HomePage: React.FC = () => {
     const [searchText, setSearchText] = useState("");
@@ -71,7 +98,7 @@ export const HomePage: React.FC = () => {
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         initialPageParam: null,
-        enabled: searchText.trim().length > 3,
+        enabled: searchText.trim().length >= 3,
     });
 
     // Infinite scroll
@@ -119,92 +146,136 @@ export const HomePage: React.FC = () => {
 
     const onSearchClick = () => {
         setSearchVisible(true);
-        router.push('/discover?dtype=search',);
+        router.push('/discover?dtype=search');
     };
 
-    const renderSearchResults = (type: SearchType) => {
-        if (type === "all") {
-            return (
-                <>
-                    {(data && data.pages.map((page: CombinedData, index: number) => {
-                        return page.events?.data.map((item: Event) => (
-                            <li key={item.id}>
-                                <Link href="" className="item">
-                                    <div className="imageWrapper">
-                                        <NcImage
-                                            src={item.thumbnail}
-                                            alt="image"
-                                            imageDimension={{
-                                                height: 60,
-                                                width: 100,
-                                            }}
-                                            className="max-w-20 object-cover w-full"
-                                        />
-                                    </div>
-                                    <div className="in">
-                                        <div>
-                                            <h4 className="mb-05" dangerouslySetInnerHTML={{
-                                                __html: item.name,
-                                            }} />
-                                        </div>
-                                    </div>
-                                </Link>
-                            </li>
-                        ));
-                    }))}
-
-                    {(isFetching || isFetchingNextPage) && <LoadingSkeleton />}
-
-                    {/* no data */}
-                    {data && data.pages[0].events?.data.length === 0 && (
-                        <div className="text-center py-5">No results found</div>
-                    )}
-                </>
-            );
-        }
-
+    const renderVenues = () => {
         return (
             <>
                 {(data && data.pages.map((page: CombinedData, index: number) => {
-                    return page[type]?.data.map((item: any) => (
+                    return page.venues?.data.map((item) => (
                         <li key={item.id}>
-                            <a href="#" className="item">
-                                <div className="imageWrapper">
-                                    <NcImage
-                                        src={item.thumbnail || PLACEHOLDER_PFP}
-                                        alt="image"
-                                        imageDimension={{
-                                            height: 60,
-                                            width: 100,
-                                        }}
-                                        className="max-w-20 object-cover w-full"
-                                    />
-                                </div>
-                                <div className="in">
-                                    <div>
-                                        <h4 className="mb-05 text-sm truncate max-w-60">
-                                            {type === "users" ? item.username : item.name}
-                                        </h4>
-                                    </div>
-                                </div>
-                            </a>
+                            <VenueItem item={item} />
                         </li>
                     ));
                 }))}
 
                 {(isFetching || isFetchingNextPage) && <LoadingSkeleton />}
 
-
                 {/* no data */}
-                {data && data.pages[0][type]?.data.length === 0 && (
+                {data && data.pages[0].venues?.data.length === 0 && (
                     <div className="text-center py-5">No results found</div>
                 )}
             </>
         );
     };
 
+    const renderUsersAndVehicles = () => {
+        return (
+            <>
+                {(data && data.pages?.map((page: CombinedData, index: number) => {
+                    return page.users?.data?.map((item) => (
+                        <li key={item.id}>
+                            <UserItem item={item} />
+                        </li>
+                    ));
+                }))}
+
+                {(isFetching || isFetchingNextPage) && <LoadingSkeleton />}
+
+                {/* no data */}
+                {data && data.pages[0].users?.data.length === 0 && (
+                    <div className="text-center py-5">No results found</div>
+                )}
+            </>
+        );
+    };
+
+    const renderEvents = () => {
+        return (
+            <>
+                {(data && data.pages.map((page: CombinedData, index: number) => {
+                    return page.events?.data.map((item) => (
+                        <li key={item.id}>
+                            <EventItem item={item} />
+                        </li>
+                    ));
+                }))}
+
+                {(isFetching || isFetchingNextPage) && <LoadingSkeleton />}
+
+                {/* no data */}
+                {data && data.pages[0].events?.data.length === 0 && (
+                    <div className="text-center py-5">No results found</div>
+                )}
+            </>
+        );
+    };
+
+    const renderTopResults = () => {
+        if (isFetching || isFetchingNextPage) return <LoadingSkeleton />;
+        if (!data || !data.pages || data.pages.length === 0) return null;
+        if (searchType !== "all") return null;
+
+        const hasEvents = data.pages.some((page: CombinedData) => page.top_results?.events && page.top_results.events.length > 0);
+        const hasVenues = data.pages.some((page: CombinedData) => page.top_results?.venues && page.top_results.venues.length > 0);
+        const hasUsers = data.pages.some((page: CombinedData) => page.top_results?.users && page.top_results.users.length > 0);
+
+        return (
+            <>
+                {hasEvents && (
+                    <>
+                        <div className="listview-title garage-sub-title">Top Events</div>
+                        <ul className="listview image-listview media search-result mb-2">
+                            {data.pages.map((page: CombinedData, index: number) => {
+                                return page.top_results?.events.map((item: SearchResultEvent) => (
+                                    <li key={item.id}>
+                                        <EventItem item={item} />
+                                    </li>
+                                ));
+                            })}
+                        </ul>
+                    </>
+                )}
+
+                {hasVenues && (
+                    <>
+                        <div className="listview-title garage-sub-title">Top Venues</div>
+                        <ul className="listview image-listview media search-result mb-2">
+                            {data.pages.map((page: CombinedData, index: number) => {
+                                return page.top_results?.venues.map((item: SearchResultVenue) => (
+                                    <li key={item.id}>
+                                        <VenueItem item={item} />
+                                    </li>
+                                ));
+                            })}
+                        </ul>
+                    </>
+                )}
+
+                {hasUsers && (
+                    <>
+                        <div className="listview-title garage-sub-title">Top Users & Vehicles</div>
+                        <ul className="listview image-listview media search-result mb-2">
+                            {data.pages.map((page: CombinedData, index: number) => {
+                                return page.top_results?.users.map((item: SearchResultUser) => (
+                                    <li key={item.id}>
+                                        <UserItem item={item} />
+                                    </li>
+                                ));
+                            })}
+                        </ul>
+                    </>
+                )}
+            </>
+        );
+
+    };
+
+    console.log(data);
+
     return (
-        <div className="home">
+        <div className="home min-h-screen">
             <div className={clsx(
                 "extraHeader p-0",
                 // searchVisible ? "!h-auto" : "!top-0"
@@ -274,16 +345,14 @@ export const HomePage: React.FC = () => {
                 <div className="tab-content pt-16 pb-10">
                     <div className="tab-pane fade show active" id="top" role="tabpanel">
                         <div className="section full mt-1">
-                            <ul className="listview image-listview media search-result mb-2">
-                                {renderSearchResults("all")}
-                            </ul>
+                            {renderTopResults()}
                         </div>
                     </div>
 
                     <div className="tab-pane fade" id="events" role="tabpanel">
                         <div className="section full mt-1">
                             <ul className="listview image-listview media search-result mb-2">
-                                {renderSearchResults("events")}
+                                {renderEvents()}
                             </ul>
                         </div>
                     </div>
@@ -292,7 +361,7 @@ export const HomePage: React.FC = () => {
                     <div className="tab-pane fade" id="venues" role="tabpanel">
                         <div className="section full mt-1">
                             <ul className="listview image-listview media search-result mb-2">
-                                {renderSearchResults("venues")}
+                                {renderVenues()}
                             </ul>
                         </div>
                     </div>
@@ -300,7 +369,7 @@ export const HomePage: React.FC = () => {
                     <div className="tab-pane fade" id="users" role="tabpanel">
                         <div className="section full mt-1">
                             <ul className="listview image-listview media search-result mb-2">
-                                {renderSearchResults("users")}
+                                {renderUsersAndVehicles()}
                             </ul>
                         </div>
                     </div>

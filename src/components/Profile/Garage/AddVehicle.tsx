@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 
 import { DatePicker, NextUIProvider } from "@nextui-org/react";
 import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
+import { useEffect, useRef, useState } from "react";
 
 
 // Zod schema for validation
@@ -131,6 +132,16 @@ export const AddVehicle: React.FC<AddVehicleProps> = ({
     const defaultFrom = vehicleValues?.ownedFrom ? parseDate(vehicleValues?.ownedFrom) : null;
     const defaultTo = vehicleValues?.ownedTo ? parseDate(vehicleValues?.ownedTo) : null;
 
+    const fileUploadRef = useRef<HTMLLabelElement>(null);
+    const [fileLabelText, setFileLabelText] = useState('');
+    const filelabelDefault = 'Tap to Upload';
+
+    useEffect(() => {
+        if (vehicleValues?.cover_photo?.length) {
+            setFileLabelText('Click to update image');
+        }
+    }, [vehicleValues]);
+
     const onSubmit: SubmitHandler<GarageFormType> = async (data) => {
         const isImageDirty = dirtyFields.cover_photo;
 
@@ -231,6 +242,23 @@ export const AddVehicle: React.FC<AddVehicleProps> = ({
         }
     };
 
+    const handleFileChange = (event: any) => {
+        if (!fileUploadRef.current) return;
+
+        const file = event.target.files[0];
+        const name = file ? file.name : '';
+        const tmppath = file ? URL.createObjectURL(file) : '';
+
+        if (name) {
+            fileUploadRef.current.classList.add('file-uploaded');
+            fileUploadRef.current.style.backgroundImage = `url(${tmppath})`;
+            setFileLabelText(name);
+        } else {
+            fileUploadRef.current.classList.remove('file-uploaded');
+            setFileLabelText(filelabelDefault);
+        }
+    };
+
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <div id="toast-16" className={clsx(
@@ -260,18 +288,25 @@ export const AddVehicle: React.FC<AddVehicleProps> = ({
                 <div className="section-title">Vehicle Photo</div>
                 <div className="wide-block pb-2 pt-2">
                     <div className="custom-file-upload" id="fileUpload1" >
-                        <input type="file" id="fileuploadInput" accept=".png, .jpg, .jpeg" {...register('cover_photo')} />
+                        <input type="file" id="fileuploadInput" accept=".png, .jpg, .jpeg"
+                            {...register('cover_photo')}
+                            onChange={(e) => {
+                                handleFileChange(e);
+                                register('cover_photo').onChange(e);
+                            }}
+                        />
                         <label htmlFor="fileuploadInput"
                             className={clsx(
                                 vehicleValues?.cover_photo?.length && "file-uploaded"
                             )}
                             style={{ backgroundImage: `url(${vehicleValues?.cover_photo[0].url})` }}
+                            ref={fileUploadRef}
                         >
                             <span>
-                                {vehicleValues?.cover_photo ? 'Click to update image' : (
+                                {fileLabelText || (
                                     <strong>
                                         <IonIcon icon={cloudUploadOutline} role="img" className="md hydrated" aria-label="cloud upload outline" />
-                                        <i>Tap to Upload</i>
+                                        <i>{filelabelDefault}</i>
                                     </strong>
                                 )}
                             </span>
@@ -365,7 +400,7 @@ export const AddVehicle: React.FC<AddVehicleProps> = ({
                                                         onChange={(date) => {
                                                             register(field.name as keyof GarageFormType).onChange({
                                                                 target: {
-                                                                    value: date.toString(),
+                                                                    value: date?.toString(),
                                                                     name: field.name
                                                                 },
                                                             });
@@ -416,8 +451,8 @@ export const AddVehicle: React.FC<AddVehicleProps> = ({
                     <button type="button" className="btn btn-danger btn-block me-1 mb-1" onClick={onDelete}>Delete Vehicle</button>
                 </div>
             ) : (
-                <div className="fixed bottom-1 w-full px-1 z-30">
-                    <button type="submit" className="btn btn-primary btn-block" disabled={isSubmitting || !isDirty}>
+                <div className="fixed bottom-1 w-full px-1 z-30 hidden">
+                    <button type="submit" className="btn btn-primary btn-block" id="garageAddForm" disabled={isSubmitting || !isDirty}>
                         {isSubmitting ? 'Adding vehicle...' : 'Add Vehicle'}
                     </button>
                 </div>

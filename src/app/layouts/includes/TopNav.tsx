@@ -8,7 +8,7 @@ import PopUp from '@/shared/Dialog';
 import { sendRNMessage } from '@/utils/nativeFeel';
 import { IonIcon } from '@ionic/react';
 import clsx from 'clsx';
-import { menuOutline, notifications, chevronBackOutline, qrCode, cartOutline, qrCodeOutline } from 'ionicons/icons';
+import { menuOutline, notifications, chevronBackOutline, cartOutline, qrCodeOutline, searchOutline } from 'ionicons/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -46,6 +46,27 @@ export const TopNav: React.FC = () => {
         showHeaderIcons,
         subtitle,
     } = useTopNav({ pathname });
+
+    const onHeaderSave = () => {
+        // press different submit buttons based on the page
+        let elementSelector = '';
+
+        if (pathname.includes('/profile/edit/')) {
+            elementSelector = '#profileForm';
+        } else if (pathname.includes('/garage/edit/')) {
+            elementSelector = '#garageForm';
+        } else if (pathname.includes('/garage/add')) {
+            elementSelector = '#garageAddForm';
+        }
+
+        if (elementSelector) {
+            const submitButton = document.querySelector(`button${elementSelector}`) as HTMLElement;
+            if (submitButton) {
+                // click the submit button
+                submitButton.click();
+            }
+        }
+    };
 
     return (
         <div className={clsx(
@@ -99,9 +120,13 @@ export const TopNav: React.FC = () => {
                                 )}
                             </Link>
                         ) : (
-                            <button className="headerButton" onClick={() => setIsScanning(true)}>
-                                <IonIcon icon={qrCodeOutline} role="img" className="md hydrated" />
-                            </button>
+                            <>
+                                {!pathname.includes('/profile') && (
+                                    <button className="headerButton" onClick={() => setIsScanning(true)}>
+                                        <IonIcon icon={qrCodeOutline} role="img" className="md hydrated" />
+                                    </button>
+                                )}
+                            </>
                         )}
 
                         {!pathname.includes('/notifications') && (
@@ -114,6 +139,12 @@ export const TopNav: React.FC = () => {
                                 )}
                             </Link>
                         )}
+
+                        {pathname.includes('/profile') && (
+                            <Link href="/discover?dtype=search" className="headerButton">
+                                <IonIcon icon={searchOutline} role="img" className="md hydrated" />
+                            </Link>
+                        )}
                     </div>
                 )}
 
@@ -124,56 +155,20 @@ export const TopNav: React.FC = () => {
                         </Link>
                     </div>
                 )}
-                {/* {pathname.includes('/profile/edit/') && (
+                {(/*pathname.includes('/profile/edit/') || pathname.includes('/garage/edit/') ||*/ pathname.includes('/garage/add')) && (
                     <div className="right">
-                        <button className='headerButton headerSave'>
+                        <button className='headerButton headerSave' onClick={onHeaderSave}>
                             Save
                         </button>
                     </div>
-                )} */}
+                )}
             </div>
-
-            {/* {pathname === '/' && (
-                <div className="social-tabs">
-                    <ul className="nav nav-tabs capsuled" role="tablist">
-                        <li className="nav-item">
-                            <a className="nav-link active" data-bs-toggle="tab" href="#latest-posts" role="tab" aria-selected="false">
-                                Latest</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" data-bs-toggle="tab" href="#following-posts" role="tab" aria-selected="true">
-                                Following</a>
-                        </li>
-                    </ul>
-                </div>
-            )} */}
-
-            {/* {pathname == '/discover' && (
-                <DiscoverTabs />
-            )} */}
 
             {pathname == '/store' && (
                 <StoreTabs />
             )}
 
             <SidePanel />
-        </div>
-    );
-};
-
-const DiscoverTabs = () => {
-    return (
-        <div className="social-tabs">
-            <ul className="nav nav-tabs capsuled" role="tablist">
-                <li className="nav-item"> <a className="nav-link active" data-bs-toggle="tab" href="#panels-tab1" role="tab" aria-selected="true">
-                    Events</a> </li>
-                <li className="nav-item"> <a className="nav-link" data-bs-toggle="tab" href="#panels-tab2" role="tab" aria-selected="false">
-                    Venues</a> </li>
-                <li className="nav-item"> <a className="nav-link" data-bs-toggle="tab" href="#panels-tab2" role="tab" aria-selected="false">
-                    Garages</a> </li>
-                <li className="nav-item"> <a className="nav-link" data-bs-toggle="tab" href="#panels-tab3" role="tab" aria-selected="false">
-                    Map</a> </li>
-            </ul>
         </div>
     );
 };
