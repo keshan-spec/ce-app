@@ -92,7 +92,7 @@ const NcImage: FC<NcImageProps> = ({
         return (
             <div
                 className={`w-full h-full flex items-center justify-center bg-theme-dark/70 dark:bg-custom-900 text-neutral-100 dark:text-neutral-500 ${placeholderClassName}`}
-                style={{ height: imageDimension.height, width: imageDimension.width }}
+                style={{ height: imageDimension.height, width: "100%" }}
             >
                 <BiLoader className="animate-spin text-xl w-full text-white" />
             </div>

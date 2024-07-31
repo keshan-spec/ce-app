@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import NcImage from "../Image/Image";
 import Link from "next/link";
 import { EventItem, UserItem, VenueItem } from "../Discover/SearchResult";
+import { NextPage } from "next";
 
 export interface SearchResultEvent {
     id: number;
@@ -66,7 +67,7 @@ interface CombinedData {
     success: boolean;
 }
 
-export const HomePage: React.FC = () => {
+export const HomePage: NextPage = () => {
     const [searchText, setSearchText] = useState("");
     const [searchType, setSearchType] = useState<SearchType>("all");
     const router = useRouter();

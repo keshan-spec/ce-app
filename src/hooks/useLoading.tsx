@@ -33,9 +33,7 @@ const useLoading = () => {
                     // split the href to get the pathname 
                     // split by first / to get the pathname
                     const pathname = target.pathname;
-                    console.log('Pathname> ', pathname);
                     router.prefetch(pathname);
-
                     setNextPage(pathname);
                     setLoading(true);
                 }

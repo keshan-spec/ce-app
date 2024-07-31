@@ -95,7 +95,8 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
                     <div id="appCapsule" className={
                         getAppCapsuleClass()
                     }>
-                        <Skeleton />;
+                        <Skeleton />
+                        {/* <Loader transulcent /> */}
                     </div>
                 );
             }
@@ -109,6 +110,7 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
             <TopNav />
 
             {renderLoadingSkeleton()}
+
             <div className={clsx(
                 `flex justify-between mx-auto w-full lg:px-2.5 px-0`,
                 pathname == '/' ? 'max-w-[1140px]' : '',

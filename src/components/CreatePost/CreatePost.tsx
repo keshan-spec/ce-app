@@ -7,7 +7,7 @@ import { Button } from '@/shared/Button';
 import { Options } from '@splidejs/splide';
 import { Splide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
-import { addPost, fetchTaggableEntites, fetchTagsForPost, PartialPostTag, PostTag, updatePost } from '@/actions/post-actions';
+import { addPost, fetchTaggableEntites, fetchTagsForPost, PostTag, updatePost } from '@/actions/post-actions';
 
 import Modal from '@/shared/Modal';
 import ImageCropModal from './ImageCrop';
@@ -17,7 +17,7 @@ import clsx from 'clsx';
 import { debounce } from '@/utils/utils';
 import { useQuery } from '@tanstack/react-query';
 import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
-import { DraggableTagEntity, TagEntity } from '../TagEntity/TagEntity';
+import { TagEntity } from '../TagEntity/TagEntity';
 import PostMediaSlider from './PostMediaSlider';
 import { useEditPost } from '@/app/context/EditPostProvider';
 import { BiLoader } from 'react-icons/bi';

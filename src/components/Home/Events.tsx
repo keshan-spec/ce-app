@@ -1,22 +1,21 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { BiHeart, BiSolidHeart } from "react-icons/bi";
-// import { useQuery } from "react-query";
 import likeAnimation2 from "../lottie/lottie-2.json";
-
 import Lottie from "lottie-react";
 
 import { fetchTrendingEvents, fetchTrendingVenues, maybeFavoriteEvent } from "@/actions/home-actions";
-import { Options } from "@splidejs/splide";
-import { Splide, SplideSlide } from '@splidejs/react-splide';
-import '@splidejs/react-splide/css';
+
 import { formatEventDate } from "@/utils/dateUtils";
 import SlideInFromBottomToTop from "@/shared/SlideIn";
 import { ViewEvent } from "./ViewPost";
 import { useUser } from "@/hooks/useUser";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useDiscoverFilters } from "@/app/context/DiscoverFilterContext";
+
+import { Options } from "@splidejs/splide";
+import { Splide, SplideSlide } from '@splidejs/react-splide';
+import '@splidejs/react-splide/css';
 
 export const carouselOptions: Options = {
     perPage: 4,
@@ -194,8 +193,7 @@ const VenueCard = ({ venue, onClick }: { venue: any; onClick: (id: string) => vo
     );
 };
 
-interface EventProps {
-}
+interface EventProps { }
 
 export const TrendingVenues: React.FC<EventProps> = ({ }) => {
     const { data, error, isFetching, isLoading } = useQuery<any[], Error>({
@@ -206,8 +204,6 @@ export const TrendingVenues: React.FC<EventProps> = ({ }) => {
         retry: 1,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
-        // cacheTime: 1000,
-        staleTime: 1000,
     });
 
     const [activeVenue, setActiveVenue] = useState<string>();
@@ -253,8 +249,6 @@ export const TrendingEvents: React.FC<EventProps> = ({ }) => {
         retry: 1,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
-        // cacheTime: 1000,
-        staleTime: 1000,
     });
 
     const [activeEvent, setActiveEvent] = useState<string>();
@@ -289,54 +283,9 @@ export const TrendingEvents: React.FC<EventProps> = ({ }) => {
     );
 };
 
-export const NearYouEvents: React.FC<EventProps> = ({ }) => {
-    const { data, error, isFetching, isLoading } = useQuery<any[], Error>({
-        queryKey: ["close-events"],
-        queryFn: () => {
-            return fetchTrendingEvents(1);
-        },
-        retry: 1,
-        refetchOnWindowFocus: false,
-        refetchOnMount: false,
-    });
-
-    const [activeEvent, setActiveEvent] = useState<string>();
-
-    return (
-        <div>
-            <SlideInFromBottomToTop isOpen={activeEvent ? true : false} onClose={() => setActiveEvent(undefined)}>
-                {activeEvent && <ViewEvent eventId={activeEvent} />}
-            </SlideInFromBottomToTop>
-
-            <div className="header-large-title">
-                <h1 className="title">Near Your</h1>
-            </div>
-
-            <div className="section full mt-2 mb-3">
-                {error instanceof Error && <p className="px-3">Error: {error?.message ?? "An error occured"}</p>}
-                <Splide options={carouselOptions}>
-                    {(isLoading || isFetching) && (
-                        <SplideSlide>
-                            <CarEventCardSkeleton />
-                        </SplideSlide>
-                    )}
-
-                    {data && data?.map((event: any, idx: number) => (
-                        <SplideSlide className="card" key={idx}>
-                            <CarEventCard event={event} onClick={
-                                (id) => setActiveEvent(id)
-                            } />
-                        </SplideSlide>
-                    ))}
-                </Splide>
-            </div>
-        </div>
-    );
-};
-
 export const Events: React.FC<EventProps> = ({ }) => {
     const { dateFilter, locationFilter, categoryFilter, customDateRange, customLocation } = useDiscoverFilters();
-    const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
+    const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
         queryKey: ["filtered-events", dateFilter, locationFilter, categoryFilter, customDateRange, customLocation],
         queryFn: ({ pageParam }) => {
             let location;
