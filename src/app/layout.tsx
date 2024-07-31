@@ -15,6 +15,12 @@ const inter = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"]
 export const metadata: Metadata = {
   title: "DriveLife",
   description: "Drive Life is a platform for car enthusiasts to share their passion for cars.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    startupImage: "/assets/img/icon/splash.png",
+    title: "DriveLife",
+  },
 };
 
 export default async function RootLayout({
