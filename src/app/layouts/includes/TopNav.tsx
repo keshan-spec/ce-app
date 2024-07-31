@@ -11,15 +11,26 @@ import clsx from 'clsx';
 import { menuOutline, notifications, chevronBackOutline, cartOutline, qrCodeOutline, searchOutline } from 'ionicons/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { getNotificationCount } from "@/actions/notification-actions";
+import useLoading from '@/hooks/useLoading';
 
 export const TopNav: React.FC = () => {
     const pathname = usePathname();
     const { user } = useUser();
     const { totalItems } = useCartStore();
     const [isScanning, setIsScanning] = useState(false);
+
+    const { loading, nextPage } = useLoading();
+
+    const activePath = useMemo(() => {
+        if (loading && nextPage) {
+            return nextPage;
+        }
+
+        return pathname;
+    }, [pathname, loading, nextPage]);
 
     const { data } = useQuery({
         queryKey: ["notification-count"],
@@ -45,7 +56,7 @@ export const TopNav: React.FC = () => {
         showMenuIcon,
         showHeaderIcons,
         subtitle,
-    } = useTopNav({ pathname });
+    } = useTopNav({ pathname: activePath });
 
     const onHeaderSave = () => {
         // press different submit buttons based on the page
@@ -110,7 +121,7 @@ export const TopNav: React.FC = () => {
 
                 {showHeaderIcons && (
                     <div className="right">
-                        {pathname.includes('/store') || pathname.includes('/cart') ? (
+                        {activePath.includes('/store') || activePath.includes('/cart') ? (
                             <Link href="/cart" className="headerButton mr-1">
                                 <IonIcon icon={cartOutline} role="img" className="md hydrated" />
                                 {totalItems > 0 && (
@@ -121,7 +132,7 @@ export const TopNav: React.FC = () => {
                             </Link>
                         ) : (
                             <>
-                                {!pathname.includes('/profile') && (
+                                {!activePath.includes('/profile') && (
                                     <button className="headerButton" onClick={() => setIsScanning(true)}>
                                         <IonIcon icon={qrCodeOutline} role="img" className="md hydrated" />
                                     </button>
@@ -129,7 +140,7 @@ export const TopNav: React.FC = () => {
                             </>
                         )}
 
-                        {!pathname.includes('/notifications') && (
+                        {!activePath.includes('/notifications') && (
                             <Link href="/notifications" className="headerButton relative">
                                 <IonIcon icon={notifications} role="img" className="md hydrated" />
                                 {data && data.count > 0 && (
@@ -140,7 +151,7 @@ export const TopNav: React.FC = () => {
                             </Link>
                         )}
 
-                        {pathname.includes('/profile') && (
+                        {activePath.includes('/profile') && (
                             <Link href="/discover?dtype=search" className="headerButton">
                                 <IonIcon icon={searchOutline} role="img" className="md hydrated" />
                             </Link>
@@ -148,14 +159,14 @@ export const TopNav: React.FC = () => {
                     </div>
                 )}
 
-                {pathname === '/garage' && (
+                {activePath === '/garage' && (
                     <div className="right">
                         <Link href={'/garage/add'} className='headerButton headerSave'>
                             Add +
                         </Link>
                     </div>
                 )}
-                {(/*pathname.includes('/profile/edit/') || pathname.includes('/garage/edit/') ||*/ pathname.includes('/garage/add')) && (
+                {(/*pathname.includes('/profile/edit/') || pathname.includes('/garage/edit/') ||*/ activePath.includes('/garage/add')) && (
                     <div className="right">
                         <button className='headerButton headerSave' onClick={onHeaderSave}>
                             Save
@@ -164,7 +175,7 @@ export const TopNav: React.FC = () => {
                 )}
             </div>
 
-            {pathname == '/store' && (
+            {activePath == '/store' && (
                 <StoreTabs />
             )}
 

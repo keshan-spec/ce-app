@@ -12,32 +12,30 @@ export const Wrapper = ({
     const pathname = usePathname();
 
     return (
-        <html lang="en">
-            <body>
-                <div className="appHeader no-border transparent position-absolute">
-                    <div className="left">
-                        <Link href="/auth" className="headerButton">
-                            <IonIcon icon={chevronBackOutline} role="img" className="md hydrated" aria-label="chevron back outline" />
-                        </Link>
-                    </div>
-                    <div className="pageTitle"></div>
-                    <div className="right">
-                        {pathname === "/auth/login" && (
-                            <Link href="/auth/register" className="headerButton">
-                                Sign up
-                            </Link>
-                        )}
-
-                        {pathname === "/auth/register" && (
-                            <Link href="/auth/login" className="headerButton">
-                                Login
-                            </Link>
-                        )}
-                    </div>
+        <>
+            <div className="appHeader no-border transparent position-absolute">
+                <div className="left">
+                    <Link href="/auth" className="headerButton">
+                        <IonIcon icon={chevronBackOutline} role="img" className="md hydrated" aria-label="chevron back outline" />
+                    </Link>
                 </div>
+                <div className="pageTitle"></div>
+                <div className="right">
+                    {pathname === "/auth/login" && (
+                        <Link href="/auth/register" className="headerButton">
+                            Sign up
+                        </Link>
+                    )}
 
-                {children}
-            </body>
-        </html>
+                    {pathname === "/auth/register" && (
+                        <Link href="/auth/login" className="headerButton">
+                            Login
+                        </Link>
+                    )}
+                </div>
+            </div>
+
+            {children}
+        </>
     );
 };

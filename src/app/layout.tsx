@@ -34,6 +34,7 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${inter.className}`} suppressHydrationWarning={true}>
         <NextTopLoader
+          zIndex={-1}
           color="#b89855"
           showSpinner={false}
         />

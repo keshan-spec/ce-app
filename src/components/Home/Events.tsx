@@ -18,7 +18,7 @@ import { useUser } from "@/hooks/useUser";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useDiscoverFilters } from "@/app/context/DiscoverFilterContext";
 
-const carouselOptions: Options = {
+export const carouselOptions: Options = {
     perPage: 4,
     rewind: true,
     type: "loop",

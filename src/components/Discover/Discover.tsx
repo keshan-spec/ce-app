@@ -55,6 +55,27 @@ const Banner = () => {
     );
 };
 
+export const BannerSkeleton = () => {
+    return (
+        <div className="section full mb-4 overflow-hidden px-3">
+            <div className="bg-gray-300 relative">
+                <div className="">
+                    <div className="bg-gray-200 rounded-md w-full h-56  animate-pulse"></div>
+                </div>
+                <div className="slider-home-info-row">
+                    <div className="slider-home-info-left">
+                        <div className="bg-gray-200 rounded-md h-8 w-3/4 mb-2  animate-pulse"></div>
+                        <div className="bg-gray-200 rounded-md h-4 w-1/2  animate-pulse"></div>
+                        <div className="slider-home-info-right">
+                            <div className="bg-gray-200 rounded-md h-8 w-24  animate-pulse"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 export const DiscoverPage: React.FC = () => {
     const { user } = useUser();
     const [userLocation, setUserLocation] = useState<string | undefined>(undefined);

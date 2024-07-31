@@ -1,5 +1,6 @@
 'use client';
 import { CreateActionSheet } from "@/components/ActionSheets/Create";
+import useLoading from "@/hooks/useLoading";
 import { useUser } from "@/hooks/useUser";
 import { sendRNMessage } from "@/utils/nativeFeel";
 import { IonIcon } from "@ionic/react";
@@ -7,11 +8,12 @@ import clsx from "clsx";
 import { homeOutline, searchOutline, addOutline, cartOutline } from "ionicons/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
 export const Footer: React.FC = () => {
     const pathname = usePathname();
     const { user } = useUser();
+    const { loading, nextPage } = useLoading();
 
     const onAddPost = () => {
         if (!user) return;
@@ -23,13 +25,21 @@ export const Footer: React.FC = () => {
         });
     };
 
+    const activePath = useMemo(() => {
+        if (loading && nextPage) {
+            return nextPage;
+        }
+
+        return pathname;
+    }, [pathname, loading, nextPage]);
+
     return (
         <>
             <div className={clsx(
                 "appBottomMenu",
             )}>
-                <Link href="/" className={`item ${pathname == '/' ? 'active' : ''}`} onClick={() => {
-                    pathname == '/' && window.scrollTo({ top: 0, behavior: 'smooth' });
+                <Link href="/" className={`item ${activePath == '/' ? 'active' : ''}`} onClick={() => {
+                    activePath == '/' && window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}>
                     <div className="col">
                         <IonIcon icon={homeOutline} />
@@ -37,7 +47,7 @@ export const Footer: React.FC = () => {
                     </div>
                 </Link>
 
-                <Link href="/discover" className={`item ${pathname == '/discover' ? 'active' : ''}`}>
+                <Link href="/discover" className={`item ${activePath == '/discover' ? 'active' : ''}`}>
                     <div className="col">
                         <IonIcon icon={searchOutline} />
                         <strong>Discover</strong>
@@ -51,14 +61,14 @@ export const Footer: React.FC = () => {
                     <CreateActionSheet onAddPost={onAddPost} />
                 </div>
 
-                <Link href="/store" className={`item ${pathname.includes('/store') ? 'active' : ''}`}>
+                <Link href="/store" className={`item ${activePath.includes('/store') ? 'active' : ''}`}>
                     <div className="col">
                         <IonIcon icon={cartOutline} />
                         <strong>Store</strong>
                     </div>
                 </Link>
 
-                <Link href="/profile" className={`item ${pathname.includes('/profile') ? 'active' : ''}`}>
+                <Link href="/profile" className={`item ${activePath.includes('/profile') ? 'active' : ''}`}>
                     <div className="col flex items-center flex-col ">
                         <img src="/assets/img/icon/f-profile7.svg" alt="profile" className="w-6 h-6" />
                         <strong>Profile</strong>
