@@ -66,21 +66,13 @@ interface CombinedData {
     success: boolean;
 }
 
-
-const resultViewUrl = {
-    events: "/event",
-    venues: "/venue",
-    users: "/profile",
-    vehicle: "/profile/garage"
-};
-
 export const HomePage: React.FC = () => {
     const [searchText, setSearchText] = useState("");
     const [searchType, setSearchType] = useState<SearchType>("all");
     const router = useRouter();
     const searchParam = useSearchParams();
 
-    const { isLoading, error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
+    const { isLoading, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
         queryKey: ["discover-search", searchText, searchType],
         queryFn: ({ pageParam }) => {
             return getDiscoverData(searchText, searchType, pageParam || 1);
@@ -96,7 +88,7 @@ export const HomePage: React.FC = () => {
             return nextPage <= maxPages ? nextPage : undefined;
         },
         refetchOnWindowFocus: false,
-        refetchOnMount: false,
+        refetchOnMount: true,
         initialPageParam: null,
         enabled: searchText.trim().length >= 3,
     });
@@ -271,8 +263,6 @@ export const HomePage: React.FC = () => {
         );
 
     };
-
-    console.log(data);
 
     return (
         <div className="home min-h-screen">

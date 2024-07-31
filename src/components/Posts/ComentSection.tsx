@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { IonIcon } from "@ionic/react";
 import clsx from "clsx";
 import { chatbubbleOutline, chevronUpCircleOutline, close, heart, heartOutline } from "ionicons/icons";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BiLoader } from "react-icons/bi";
 import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 import { debounce } from "@/utils/utils";
@@ -209,6 +209,7 @@ const CommentForm: React.FC<{
     const [error, setError] = useState<string | null>(null);
     const [rows, setRows] = useState(4);
     const [currentTag, setCurrentTag] = useState<string>("");
+    const commentInputRef = useRef<HTMLTextAreaElement>(null);
 
     const { data, isFetching, isLoading, refetch } = useQuery<any[], Error>({
         queryKey: ["taggable-entities"],
@@ -219,28 +220,33 @@ const CommentForm: React.FC<{
         enabled: currentTag.trim().length > 3,
     });
 
+    useEffect(() => {
+        if (isReplyingTo) {
+            // setComment(`@${isReplyingTo.user_login} `);
+            commentInputRef.current?.focus();
+        }
+    }, [isReplyingTo]);
 
     const handleTagInputChange = async (value: string) => {
-        if (value.includes("@")) {
-            const query = value.split("@").pop();
-            if (query && query.trim().length > 4) {
-                setCurrentTag(value);
+        // if (value.includes("@")) {
+        //     const query = value.split("@").pop();
+        //     if (query && query.trim().length > 4) {
+        //         setCurrentTag(value);
 
-                try {
-                    await refetch({
-                        cancelRefetch: isFetching || isLoading,
-                    });
-                } catch (e: any) {
-                    console.error('Error fetching taggable entities', e.message);
-                }
-            }
-        } else {
-            setCurrentTag("");
-        }
+        //         try {
+        //             await refetch({
+        //                 cancelRefetch: isFetching || isLoading,
+        //             });
+        //         } catch (e: any) {
+        //             console.error('Error fetching taggable entities', e.message);
+        //         }
+        //     }
+        // } else {
+        //     setCurrentTag("");
+        // }
     };
 
     const debouncedHandleTagInputChange = useCallback(debounce(handleTagInputChange, 500), []);
-
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -295,6 +301,7 @@ const CommentForm: React.FC<{
                     </button>
                 </div>
                 <textarea
+                    ref={commentInputRef}
                     className="form-control relative !text-sm z-20 !rounded-none !focus-within:ring-transparent !focus:ring-0 !focus:outline-none !ring-0"
                     rows={rows}
                     placeholder="Comment..."

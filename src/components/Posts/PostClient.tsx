@@ -56,8 +56,6 @@ const PostClient = ({ postId }: { postId: string; }) => {
                             onNewComment={incrementCommentCount}
                         />}
                     </SlideInFromBottomToTop>
-
-                    <CommentsSlider postId={parseInt(postId)} commentCount={getCommentCount()} />
                     <PostCard
                         post={data}
                         muted={muted}
@@ -77,11 +75,9 @@ const PostClient = ({ postId }: { postId: string; }) => {
 
     return (
         <div className="bg-white min-h-screen max-h-screen overflow-hidden">
-            {(isFetching || isLoading) && (
+            {(isFetching || isLoading) ? (
                 <PostCardSkeleton />
-            )}
-
-            {renderContent()}
+            ) : renderContent()}
 
             {error && <PostNotFound />}
         </div>

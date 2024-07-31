@@ -168,6 +168,10 @@ export const useTopNav = ({
             }
         }
 
+        if (pathname.includes('/profile/garage/')) {
+            return window.history.length > 1 ? router.back() : router.push('/');
+        }
+
         if (pathname.includes('/garage')) {
             return router.push('/profile');
         }

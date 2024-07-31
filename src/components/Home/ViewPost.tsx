@@ -100,10 +100,11 @@ export const ViewEvent: React.FC<ViewEventProps> = ({ eventId }) => {
     return (
         <>
             {(isLoading || isFetching) && <ViewEventSkeleton />}
-            {error && <div>{error.message}</div>}
-            {data && <>
-                <EmblaCarousel slides={craeteSlides()} />
 
+            {error && <div>{error.message}</div>}
+
+            {(data && !isFetching) && <>
+                <EmblaCarousel slides={craeteSlides()} />
                 <div className="product-details-section">
                     <div className="product-details-info-row">
                         <div className="product-details-title font-semibold max-w-sm mx-auto">{data.title}</div>
@@ -153,6 +154,7 @@ export const ViewEvent: React.FC<ViewEventProps> = ({ eventId }) => {
                         </div>
                     </div>
                 </div>
+
                 <div className="product-tab-section">
                     <div className="product-tab-wrapper">
 
