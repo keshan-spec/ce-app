@@ -41,7 +41,9 @@ export const ObservedQueryProvider = ({ children }: any) => {
         },
         refetchOnWindowFocus: false,
         refetchOnMount: false,
-        initialPageParam: null,
+        initialPageParam: 1,
+        retry: 1,
+        gcTime: 1000 * 60 * 30,
     });
 
     // Infinite scroll

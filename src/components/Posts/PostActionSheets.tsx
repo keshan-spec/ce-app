@@ -51,7 +51,7 @@ export const PostActionsSheet: React.FC<PostActionsProps> = ({
                 <div className="offcanvas-body">
                     <ul className="action-button-list">
                         <li>
-                            <Link href={`/edit-post/${postId}`} className="btn btn-list">
+                            <Link prefetch={false} href={`/edit-post/${postId}`} className="btn btn-list">
                                 <span>
                                     <IonIcon icon={createOutline} role="img" className="md hydrated" aria-label="create outline" />
                                     Edit Post

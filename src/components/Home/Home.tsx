@@ -283,10 +283,7 @@ const DiscoverAndSearchPage = () => {
 
     return (
         <div className="home min-h-screen">
-            <div className={clsx(
-                "extraHeader p-0",
-                // searchVisible ? "!h-auto" : "!top-0"
-            )}>
+            <div className={clsx("extraHeader p-0")}>
                 <div className="search-container">
                     <div className="search-box-top flex items-center gap-2">
                         <input type="text" placeholder="Search" defaultValue={searchText}

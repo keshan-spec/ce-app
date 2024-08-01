@@ -9,7 +9,6 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { PostTag, fetchTagsForPost, maybeLikePost } from "@/actions/post-actions";
 import { BiMapPin, BiVolumeFull, BiVolumeMute } from "react-icons/bi";
 import clsx from "clsx";
-import NcImage from "../Image/Image";
 import { NativeShare } from "../ActionSheets/Share";
 import { DotButton } from "./Posts";
 import { formatPostDate, isValidDate } from "@/utils/dateUtils";
@@ -20,9 +19,9 @@ import { IonIcon } from "@ionic/react";
 import { carOutline, chatboxOutline, heart, heartOutline } from "ionicons/icons";
 import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 import { TagEntity } from "../TagEntity/TagEntity";
-// import AssociatedCar from "../TagEntity/AssociateCar";
 
 const AssociatedCar = React.lazy(() => import('@/components/TagEntity/AssociateCar'));
+const NcImage = React.lazy(() => import('@/components/Image/Image'));
 
 const PostCard = ({ post, muted, setMuted, openComments }: {
     post: Post,
@@ -96,24 +95,24 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
         };
     }, []);
 
-    // when swipe to next slide, pause the video
-    useEffect(() => {
-        const video = videoRef.current;
+    // // when swipe to next slide, pause the video
+    // useEffect(() => {
+    //     const video = videoRef.current;
 
-        if (!video) return;
+    //     if (!video) return;
 
-        const onUserScroll = (e: any) => {
-            // const slidesInView = emblaApi?.slidesInView(); // <-- Pass true to the slidesInView method
-            // console.log(slidesInView);
-            video.pause();
-        };
+    //     const onUserScroll = (e: any) => {
+    //         // const slidesInView = emblaApi?.slidesInView(); // <-- Pass true to the slidesInView method
+    //         // console.log(slidesInView);
+    //         video.pause();
+    //     };
 
-        emblaApi?.on('select', onUserScroll);
+    //     emblaApi?.on('select', onUserScroll);
 
-        return () => {
-            emblaApi?.off('select', onUserScroll);
-        };
-    }, [emblaApi]);
+    //     return () => {
+    //         emblaApi?.off('select', onUserScroll);
+    //     };
+    // }, [emblaApi]);
 
 
     const onLikePost = async () => {
