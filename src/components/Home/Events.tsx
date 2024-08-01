@@ -1,8 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { BiHeart, BiSolidHeart } from "react-icons/bi";
-import likeAnimation2 from "../lottie/lottie-2.json";
-import Lottie from "lottie-react";
+// import likeAnimation2 from "../lottie/lottie-2.json";
+// import Lottie from "lottie-react";
 
 import { fetchTrendingEvents, fetchTrendingVenues, maybeFavoriteEvent } from "@/actions/home-actions";
 
@@ -42,7 +42,7 @@ export const CarEventCard = ({ event, onClick }: { event: any; onClick: (id: str
     const startDay = new Date(event.start_date).getDate();
 
     const [isLiked, setIsLiked] = useState<boolean>(event.is_liked ?? false);
-    const [isAnimationPlaying, setIsAnimationPlaying] = useState<boolean>(false);
+    // const [isAnimationPlaying, setIsAnimationPlaying] = useState<boolean>(false);
 
     const likePost = async (postId: string) => {
         if (!isLoggedIn) {
@@ -55,13 +55,13 @@ export const CarEventCard = ({ event, onClick }: { event: any; onClick: (id: str
         // Optimistic UI
         setIsLiked(!isLiked);
 
-        if (!prevStatus) {
-            setIsAnimationPlaying(true);
-        }
+        // if (!prevStatus) {
+        //     setIsAnimationPlaying(true);
+        // }
 
-        setTimeout(() => {
-            setIsAnimationPlaying(false);
-        }, 1500);
+        // setTimeout(() => {
+        //     setIsAnimationPlaying(false);
+        // }, 1500);
 
         try {
             // TODO: API call to like post
@@ -92,14 +92,14 @@ export const CarEventCard = ({ event, onClick }: { event: any; onClick: (id: str
                     }}
                 />
 
-                {(isAnimationPlaying) && (
+                {/* {(isAnimationPlaying) && (
                     <Lottie
                         autoPlay={isAnimationPlaying}
                         loop={false}
                         animationData={likeAnimation2}
                         className="w-14 h-14 absolute -top-2.5 -right-3.5 text-red-600"
                     />
-                )}
+                )} */}
 
                 <div className="heart-icon" onClick={() => likePost(event.id)}>
                     {renderLike()}
@@ -132,7 +132,7 @@ export const CarEventCard = ({ event, onClick }: { event: any; onClick: (id: str
     );
 };
 
-export const CarEventCardSkeleton = () => {
+export const CarEventCardSkeleton = memo(() => {
     return (
         <div className="card max-w-sm bg-slate-100 min-h-64 rounded-xl overflow-hidden">
             <div className="news-list-home-slider-img-row bg-gray-300 animate-pulse">
@@ -161,9 +161,9 @@ export const CarEventCardSkeleton = () => {
             </div>
         </div>
     );
-};
+});
 
-const VenueCard = ({ venue, onClick }: { venue: any; onClick: (id: string) => void; }) => {
+const VenueCard = memo(({ venue, onClick }: { venue: any; onClick: (id: string) => void; }) => {
     return (
         <>
             <div className="news-list-home-slider-img-row relative">
@@ -191,11 +191,9 @@ const VenueCard = ({ venue, onClick }: { venue: any; onClick: (id: string) => vo
             </div>
         </>
     );
-};
+});
 
-interface EventProps { }
-
-export const TrendingVenues: React.FC<EventProps> = ({ }) => {
+export const TrendingVenues = memo(() => {
     const { data, error, isFetching, isLoading } = useQuery<any[], Error>({
         queryKey: ["trending-venues"],
         queryFn: () => {
@@ -237,9 +235,9 @@ export const TrendingVenues: React.FC<EventProps> = ({ }) => {
             </div>
         </>
     );
-};
+});
 
-export const TrendingEvents: React.FC<EventProps> = ({ }) => {
+export const TrendingEvents = memo(() => {
     const { data, error, isFetching, isLoading } = useQuery<any[], Error>({
         queryKey: ["trending-events"],
         queryFn: () => {
@@ -279,9 +277,9 @@ export const TrendingEvents: React.FC<EventProps> = ({ }) => {
             </div>
         </>
     );
-};
+});
 
-export const Events: React.FC<EventProps> = ({ }) => {
+export const Events = memo(() => {
     const { dateFilter, locationFilter, categoryFilter, customDateRange, customLocation } = useDiscoverFilters();
     const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
         queryKey: ["filtered-events", dateFilter, locationFilter, categoryFilter, customDateRange, customLocation],
@@ -400,9 +398,9 @@ export const Events: React.FC<EventProps> = ({ }) => {
             </div>
         </>
     );
-};
+});
 
-export const Venues: React.FC<EventProps> = ({ }) => {
+export const Venues = memo(() => {
     const { locationFilter, customLocation } = useDiscoverFilters();
 
     const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
@@ -522,4 +520,4 @@ export const Venues: React.FC<EventProps> = ({ }) => {
             </div>
         </>
     );
-};
+});

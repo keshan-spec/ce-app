@@ -44,7 +44,7 @@ export const SidePanel: React.FC = () => {
 
                 <ul className="listview flush transparent no-line image-listview mt-2">
                     <li>
-                        <Link href="/" className="item">
+                        <Link prefetch={true} href="/" className="item">
                             <div className="icon-box bg-primary">
                                 <IonIcon icon={homeOutline} />
                             </div>
@@ -52,7 +52,7 @@ export const SidePanel: React.FC = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link href="/profile" className="item">
+                        <Link prefetch={true} href="/profile" className="item">
                             <div className="icon-box bg-primary">
                                 <IonIcon icon={cubeOutline} />
                             </div>

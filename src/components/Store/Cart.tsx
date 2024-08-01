@@ -33,7 +33,7 @@ export const Cart: React.FC = () => {
                                 <div className="in">
                                     <img src={item.thumbnail} alt="product" className="imaged" />
                                     <div className="text">
-                                        <Link href={`/store/product/${item.id.split('-')[0]}`}>
+                                        <Link prefetch={true} href={`/store/product/${item.id.split('-')[0]}`}>
                                             <h3 className="title">{item.title}</h3>
                                         </Link>
                                         <p className="detail">{item.variationLabel}</p>

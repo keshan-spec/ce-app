@@ -8,28 +8,28 @@ const ProfileEditPanel = () => {
 
                 <ul className="listview image-listview text flush pt-1">
                     <li>
-                        <Link href="/profile/edit/images" className="item">
+                        <Link prefetch={true} href="/profile/edit/images" className="item">
                             <div className="in">
                                 <div>Profile Images</div>
                             </div>
                         </Link>
                     </li>
                     <li>
-                        <Link href="/profile/edit/social-links" className="item">
+                        <Link prefetch={true} href="/profile/edit/social-links" className="item">
                             <div className="in">
                                 <div>Social Links</div>
                             </div>
                         </Link>
                     </li>
                     <li>
-                        <Link href="/profile/edit/details" className="item">
+                        <Link prefetch={true} href="/profile/edit/details" className="item">
                             <div className="in">
                                 <div>My Details</div>
                             </div>
                         </Link>
                     </li>
                     <li>
-                        <Link href="/profile/edit/username" className="item">
+                        <Link prefetch={true} href="/profile/edit/username" className="item">
                             <div className="in">
                                 <div>Change Username</div>
                             </div>

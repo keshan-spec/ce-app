@@ -114,16 +114,16 @@ const Posts = () => {
                     <li className="nav-item" onClick={() => {
                         setFollowingOnly(false);
                     }}>
-                        <Link className="nav-link active" data-bs-toggle="tab" href="#latest-posts" role="tab" aria-selected="false">
+                        <a className="nav-link active" data-bs-toggle="tab" href="#latest-posts" role="tab" aria-selected="false">
                             Latest
-                        </Link>
+                        </a>
                     </li>
                     <li className="nav-item" onClick={() => {
                         setFollowingOnly(true);
                     }}>
-                        <Link className="nav-link" data-bs-toggle="tab" href="#following-posts" role="tab" aria-selected="true">
+                        <a className="nav-link" data-bs-toggle="tab" href="#following-posts" role="tab" aria-selected="true">
                             Following
-                        </Link>
+                        </a>
                     </li>
                 </ul>
             </div>

@@ -54,7 +54,7 @@ export const Garage: React.FC<GarageProps> = ({
 
                 {garage.current?.map((garage) => (
                     <li key={garage.id}>
-                        <Link href={edit ? `/garage/edit/${garage.id}` : `/profile/garage/${garage.id}`} className="item">
+                        <Link prefetch={true} href={edit ? `/garage/edit/${garage.id}` : `/profile/garage/${garage.id}`} className="item">
                             <div className="imageWrapper">
                                 <img src={garage.cover_photo} alt="image" className="max-w-24 mr-3 object-contain h-full w-full" />
                             </div>
@@ -78,7 +78,7 @@ export const Garage: React.FC<GarageProps> = ({
 
                 {garage.past?.map((garage) => (
                     <li key={garage.id}>
-                        <Link href={garage.status === 'deleted' ? '' : `/profile/garage/${garage.id}`} className={clsx(
+                        <Link prefetch={true} href={garage.status === 'deleted' ? '' : `/profile/garage/${garage.id}`} className={clsx(
                             "item",
                             garage.status === 'deleted' ? "opacity-50" : ""
                         )}>

@@ -27,7 +27,7 @@ export const EventItem = ({ item }: { item: SearchResultEvent; }) => (
 );
 
 export const VenueItem = ({ item }: { item: SearchResultVenue; }) => (
-    <Link href={`/venue/${item.id}/?ref=search`} className="item" key={item.id}>
+    <Link prefetch={true} href={`/venue/${item.id}/?ref=search`} className="item" key={item.id}>
         <div className="imageWrapper">
             <NcImage
                 src={item.thumbnail}
@@ -62,7 +62,7 @@ export const UserItem = ({ item }: { item: SearchResultUser; }) => {
     }
 
     return (
-        <Link href={url} className="item" key={item.id}>
+        <Link prefetch={true} href={url} className="item" key={item.id}>
             <div className="imageWrapper">
                 <NcImage
                     src={item.thumbnail || PLACEHOLDER_PFP}

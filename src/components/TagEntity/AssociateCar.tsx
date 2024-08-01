@@ -33,7 +33,7 @@ export const AssociatedCar: React.FC<AssociatedCarProps> = ({
                             clsx(
                                 vehicle.media_id !== post.media[index].id && '!hidden',
                             )}>
-                            <Link href={`/profile/garage/${vehicle.entity_id}`} className="item">
+                            <Link prefetch={true} href={`/profile/garage/${vehicle.entity_id}`} className="item">
                                 <div className="imageWrapper">
                                     <img src={vehicle.entity.image} alt="image" className="max-w-24 mr-3 object-contain h-full" />
                                 </div>

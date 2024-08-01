@@ -1,4 +1,6 @@
+import { getUserNotifications } from "@/actions/notification-actions";
 import UserNotifications from "@/components/Notifications/Notifications";
+import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -6,9 +8,19 @@ export const metadata: Metadata = {
     description: "Notifications page",
 };
 
-const Page = () => {
+const queryClient = new QueryClient();
+
+const Page = async () => {
+    await queryClient.prefetchQuery({
+        queryKey: ["user-notifications"],
+        queryFn: () => getUserNotifications(),
+        staleTime: 1000 * 60 * 5,
+    });
+
     return (
-        <UserNotifications />
+        <HydrationBoundary state={dehydrate(queryClient)}>
+            <UserNotifications />
+        </HydrationBoundary>
     );
 };
 

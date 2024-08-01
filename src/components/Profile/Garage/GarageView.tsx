@@ -55,7 +55,7 @@ export const GarageView: React.FC<GarageViewProps> = ({
             <div className="vehicle-profile-background" style={{
                 backgroundImage: `url(${data?.cover_photo})`,
             }}>
-                <Link className="vehicle-profile-image"
+                <Link prefetch={true} className="vehicle-profile-image"
                     href={`/profile/${data?.owner_id}`}
                     style={{
                         backgroundImage: `url(${data?.owner?.profile_image || PLACEHOLDER_PFP})`,
@@ -83,7 +83,7 @@ export const GarageView: React.FC<GarageViewProps> = ({
 
                     <div className="flex justify-between gap-1">
                         {(user && user.id === data?.owner_id) && (
-                            <Link href={`/garage/edit/${garageId}`} className="profile-link w-fit">Edit Vehicle</Link>
+                            <Link prefetch={true} href={`/garage/edit/${garageId}`} className="profile-link w-fit">Edit Vehicle</Link>
                         )}
                         <div className="profile-link w-fit dark-bg" onClick={() => {
                             sendRNMessage({

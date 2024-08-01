@@ -24,7 +24,7 @@ export const CreateActionSheet: React.FC<CreateActionSheetProps> = ({ onAddPost 
                         </button>
                     </li>
                     <li>
-                        <Link href={'/garage/add'} className="btn btn-list" data-bs-dismiss="offcanvas" >
+                        <Link prefetch={true} href={'/garage/add'} className="btn btn-list" data-bs-dismiss="offcanvas" >
                             <span>
                                 <IonIcon icon={carSportOutline} role="img" className="md hydrated" aria-label="share outline" />
                                 Add Vehicle

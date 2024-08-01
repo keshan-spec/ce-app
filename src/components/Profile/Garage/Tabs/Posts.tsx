@@ -142,7 +142,7 @@ export const GaragePostsTab: React.FC<GaragePostsProps> = ({
                 <div className="grid grid-cols-3 gap-1">
                     {data && data.pages?.map((page: any) => (
                         page.data?.map((post: Post) => (
-                            <Link key={post.id} href={`/post/${post.id}`}>
+                            <Link prefetch={true} key={post.id} href={`/post/${post.id}`}>
                                 {renderMedia(post)}
                             </Link>
                         ))

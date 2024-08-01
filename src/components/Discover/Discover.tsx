@@ -1,4 +1,3 @@
-'use client';
 import { BiCaretRight } from "react-icons/bi";
 import { Carousel } from "../Posts/Posts";
 import Link from "next/link";

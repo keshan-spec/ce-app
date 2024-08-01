@@ -53,7 +53,7 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
 
         let observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
-                fetchTags();
+                // fetchTags();
             }
         }, { threshold: [0.6] });
 
@@ -332,7 +332,7 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
                     </div>
                 </Link>
                 {(post.garage_id && post.garage?.status === 'active') && (
-                    <Link href={`/profile/garage/${post.garage_id}`}
+                    <Link prefetch={false} href={`/profile/garage/${post.garage_id}`}
                         className="text-xs opacity-50">
                         {post.garage?.make} {post.garage?.model}, owned by @{post.garage?.owner?.username}
                     </Link>

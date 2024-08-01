@@ -90,7 +90,7 @@ const UserNotifications = () => {
                     item.is_read === "1" ? "bg-white" : "bg-gray-100"
                 )}
             >
-                <Link href={`/profile/${item.entity.initiator_data.id}`}>
+                <Link prefetch={true} href={`/profile/${item.entity.initiator_data.id}`}>
                     <Image
                         src={item.entity.initiator_data.profile_image || PLACEHOLDER_PFP}
                         alt="user profile picture"
@@ -119,7 +119,7 @@ const UserNotifications = () => {
                         </button>
                     )}
                     {item.entity.entity_data?.media && (
-                        <Link href={`/post/${item.entity.entity_data.post_id}`} passHref>
+                        <Link prefetch={true} href={`/post/${item.entity.entity_data.post_id}`} passHref>
                             <CommentPhoto src={item.entity.entity_data.media} />
                         </Link>
                     )}

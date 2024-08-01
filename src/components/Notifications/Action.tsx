@@ -28,7 +28,7 @@ const Action = ({ notifications }: { notifications: Notification; }) => {
     const renderActionButton = () => {
         if (notifications.type === 'post' && notifications.entity.entity_type === 'car') {
             return (
-                <Link href={`/profile/garage/${notifications.entity.entity_data?.garage?.id}`} className="font-semibold block hover:cursor-pointer">
+                <Link prefetch={true} href={`/profile/garage/${notifications.entity.entity_data?.garage?.id}`} className="font-semibold block hover:cursor-pointer">
                     Review this post
                 </Link>
             );
@@ -105,7 +105,7 @@ const Action = ({ notifications }: { notifications: Notification; }) => {
             {notifications.type === 'post' && (
                 <p className="relative inline">
                     has posted {notifications.entity.entity_type === 'car' ? "your car" : "a post"}{" "}
-                    <Link href={`/profile/garage/${notifications.entity.entity_data?.garage?.id}`} className="font-semibold hover:cursor-pointer hover:text-customblue">
+                    <Link prefetch={true} href={`/profile/garage/${notifications.entity.entity_data?.garage?.id}`} className="font-semibold hover:cursor-pointer hover:text-customblue">
                         {notifications.entity.entity_data?.garage?.make} {notifications.entity.entity_data?.garage?.model}
                     </Link>
                     <span
