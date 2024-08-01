@@ -1,13 +1,14 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
 import { getUserOrders } from '@/actions/store-actions';
-import { UserOrderData, UserOrderResponse } from '@/types/store';
+import { UserOrderData } from '@/types/store';
 import { formatPostDate } from '@/utils/dateUtils';
 import clsx from 'clsx';
 import { FIXED_SHIPPING_COST } from '@/actions/api';
+import { memo } from 'react';
 
-export const UserOrders: React.FC = () => {
-    const { data, isFetching, error } = useQuery({
+const UserOrders = () => {
+    const { data, isFetching } = useQuery({
         queryKey: ['user-orders'],
         queryFn: () => getUserOrders(),
         retry: 0,
@@ -86,3 +87,5 @@ const OrderCard: React.FC<UserOrderData> = ({ ...order }) => {
         </div>
     );
 };
+
+export default memo(UserOrders);

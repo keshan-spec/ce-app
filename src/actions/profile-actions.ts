@@ -6,7 +6,6 @@ import { UserSchema } from "@/zod-schemas/billing-form";
 
 export const getUserPosts = async (profileId: string, page: number, tagged = false, limit = 10) => {
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-user-posts`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -26,7 +25,6 @@ export const maybeFollowUser = async (profileId: string | number) => {
     if (!user) return;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/follow-user`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -55,7 +53,6 @@ export const addUserProfileLinks = async ({
     if (!user) return null;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/add-profile-links`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -72,7 +69,6 @@ export const updateSocialLinks = async (links: SocialMediaLinks) => {
     if (!user) return;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/update-social-links`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -89,7 +85,6 @@ export const removeProfileLink = async (linkId: string) => {
     if (!user) return;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/remove-profile-link`, {
-        cache: "no-cache",
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
@@ -110,7 +105,6 @@ export const updateProfileImage = async (image: string) => {
     if (!user) return;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/update-profile-image`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -127,7 +121,6 @@ export const updateCoverImage = async (image: string) => {
     if (!user) return;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/update-cover-image`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -144,7 +137,6 @@ export const removeProfileImage = async () => {
     if (!user) return;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/remove-profile-image`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -165,7 +157,6 @@ export const updateBillingInfo = async (info: UserSchema) => {
     }
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/update-billing-info`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",

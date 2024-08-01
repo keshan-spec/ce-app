@@ -7,7 +7,6 @@ import { getSessionUser } from "./auth-actions";
 
 export const getStoreProducts = async (page: number, limit = 10) => {
     const response = await fetch(`${STORE_API_URL}/wp-json/app/v1/get-products`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -26,7 +25,6 @@ export const getStoreProducts = async (page: number, limit = 10) => {
 
 export const getStoreProduct = async (id: number): Promise<StoreProductResponse | null> => {
     const response = await fetch(`${STORE_API_URL}/wp-json/app/v1/get-product`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -179,7 +177,6 @@ export const getUserOrders = async (): Promise<UserOrderResponse | null> => {
 
     try {
         const response = await fetch(`${STORE_API_URL}/wp-json/app/v1/get-user-orders`, {
-            cache: "no-cache",
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -198,7 +195,6 @@ export const getUserOrders = async (): Promise<UserOrderResponse | null> => {
 export const getOrder = async (order_id: number) => {
     try {
         const response = await fetch(`${STORE_API_URL}/wp-json/app/v1/get-order`, {
-            cache: "no-cache",
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

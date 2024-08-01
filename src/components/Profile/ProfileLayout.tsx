@@ -1,22 +1,20 @@
 'use client';
 import { Button } from '@/shared/Button';
-import { Tabs } from './Tabs';
 import { useUser } from '@/hooks/useUser';
 import { NoAuthWall } from '../Protected/NoAuthWall';
 import { getUserDetails } from '@/actions/auth-actions';
 import { UserNotFound } from './UserNotFound';
 import { UserProfileSkeleton } from './UserProfileSkeleton';
 import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
-import { maybeFollowUser, removeProfileImage, updateProfileImage } from '@/actions/profile-actions';
+import { maybeFollowUser } from '@/actions/profile-actions';
 import { redirect } from 'next/navigation';
-import { useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ProfileLinksExternal } from './ProfileLinks';
-import { EditProfilePicture } from '../ActionSheets/ProfilePicture';
-import { EditProfile } from './Settings/EditProfile';
 import Link from 'next/link';
-import { ProfileEditPanel } from './Settings/ProfileEditPanel';
-import { PopUpProfilePicture } from './PopUpProfilePicture';
+
+const Tabs = React.lazy(() => import('@/components/Profile/Tabs'));
+const ProfileEditPanel = React.lazy(() => import('@/components/Profile/Settings/ProfileEditPanel'));
 
 interface ProfileLayoutProps {
     profileId?: string;
@@ -49,7 +47,7 @@ const getUser = (profileId: string | undefined) => {
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         retryOnMount: false,
-        staleTime: 60 * 1000,
+        staleTime: 60 * 1000 * 10,
     });
 
     return {
@@ -62,7 +60,7 @@ const getUser = (profileId: string | undefined) => {
     };
 };
 
-export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
+const ProfileLayout: React.FC<ProfileLayoutProps> = ({
     currentUser,
     profileId
 }) => {
@@ -113,37 +111,6 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
         );
     }, [user]);
 
-    const onRemoveImage = async () => {
-        try {
-            const response = await removeProfileImage();
-            if (response.error) {
-                throw new Error(response.error);
-            }
-
-            refetch?.();
-        } catch (error: any) {
-            alert(`Error: ${error.message}`);
-        }
-    };
-
-    const onUploadImage = async (image: File) => {
-        try {
-            // convert image to base64
-            let base64: string = '';
-            const reader = new FileReader();
-            reader.readAsDataURL(image);
-            reader.onload = async () => {
-                base64 = reader.result as string;
-
-                // upload image
-                await updateProfileImage(base64);
-                refetch?.();
-            };
-        } catch (error: any) {
-            alert(`Error: ${error.message}`);
-        }
-    };
-
     if (!isLoggedIn && currentUser) {
         return <NoAuthWall redirectTo="/profile" />;
     }
@@ -169,7 +136,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
             />
             <div className="section mt-3">
                 <div className="profile-head">
-                    <PopUpProfilePicture image={user.profile_image || PLACEHOLDER_PFP} />
+                    <img src={user.profile_image || PLACEHOLDER_PFP} alt="avatar" className="profile-image object-cover" />
                     <div className="in">
                         <h3 className="name profile-username">@{user.username}</h3>
                         <h5 className="subtext profile-name">{user.first_name} {user.last_name}</h5>
@@ -199,7 +166,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                         <div className='flex gap-2'>
                             <div className="profile-link" data-bs-toggle="offcanvas" data-bs-target="#profileActions">Edit Profile</div>
                             <ProfileEditPanel />
-                            <Link href={'/garage'} className="profile-link dark-bg">Edit Garage</Link>
+                            <Link prefetch={true} href={'/garage'} className="profile-link dark-bg">Edit Garage</Link>
                         </div>
                     )}
 
@@ -216,3 +183,5 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
         </>
     );
 };
+
+export default memo(ProfileLayout);

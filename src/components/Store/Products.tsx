@@ -3,14 +3,13 @@ import { getStoreProducts } from '@/actions/store-actions';
 import { StoreProduct } from '@/types/store';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import React, { memo, useEffect, useMemo } from 'react';
+import React, { memo, useEffect } from 'react';
 import NcImage from '../Image/Image';
 
-export const Products: React.FC = () => {
+const Products = () => {
     const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
         queryKey: ['store-products'],
         queryFn: ({ pageParam }) => {
-            console.log("pageParam", pageParam);
             return getStoreProducts(pageParam || 1);
         },
         getNextPageParam: (lastPage: { total_pages: number, data: StoreProduct[], limit: number; }, pages: any[]) => {
@@ -86,7 +85,6 @@ export const Products: React.FC = () => {
     );
 };
 
-
 const ProductSkeleton: React.FC = memo(() => {
     return (
         Array.from({ length: 5 }).map((_, i) => (
@@ -104,3 +102,5 @@ const ProductSkeleton: React.FC = memo(() => {
         ))
     );
 });
+
+export default memo(Products);

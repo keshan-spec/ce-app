@@ -7,7 +7,6 @@ import { GarageFormType } from "@/components/Profile/Garage/AddVehicle";
 
 export const getGarageById = async (garageId: string): Promise<Garage | null> => {
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-garage`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -24,7 +23,6 @@ export const getGarageById = async (garageId: string): Promise<Garage | null> =>
 
 export const getUserGarage = async (profileId: string) => {
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-user-garage`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -41,7 +39,6 @@ export const getUserGarage = async (profileId: string) => {
 
 export const getGaragePosts = async (garageId: string, tagged: boolean, page: number, limit = 10,) => {
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-garage-posts`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -62,7 +59,6 @@ export const addVehicleToGarage = async (data: GarageFormType) => {
     if (!user) return;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/add-vehicle-to-garage`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -82,7 +78,6 @@ export const updateVehicleInGarage = async (data: GarageFormType, garageId: stri
     if (!user) return;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/update-garage`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -103,7 +98,6 @@ export const deleteVehicleFromGarage = async (garageId: string) => {
     if (!user) return;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/delete-garage`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",

@@ -8,9 +8,9 @@ import clsx from "clsx";
 import { homeOutline, searchOutline, addOutline, cartOutline } from "ionicons/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 
-export const Footer: React.FC = () => {
+const Footer = () => {
     const pathname = usePathname();
     const { user } = useUser();
     const { loading, nextPage } = useLoading();
@@ -38,7 +38,7 @@ export const Footer: React.FC = () => {
             <div className={clsx(
                 "appBottomMenu",
             )}>
-                <Link href="/" className={`item ${activePath == '/' ? 'active' : ''}`} onClick={() => {
+                <Link prefetch={true} href="/" className={`item ${activePath == '/' ? 'active' : ''}`} onClick={() => {
                     activePath == '/' && window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}>
                     <div className="col">
@@ -47,7 +47,7 @@ export const Footer: React.FC = () => {
                     </div>
                 </Link>
 
-                <Link href="/discover" className={`item ${activePath == '/discover' ? 'active' : ''}`}>
+                <Link prefetch={true} href="/discover" className={`item ${activePath == '/discover' ? 'active' : ''}`}>
                     <div className="col">
                         <IonIcon icon={searchOutline} />
                         <strong>Discover</strong>
@@ -61,14 +61,14 @@ export const Footer: React.FC = () => {
                     <CreateActionSheet onAddPost={onAddPost} />
                 </div>
 
-                <Link href="/store" className={`item ${activePath.includes('/store') ? 'active' : ''}`}>
+                <Link prefetch={true} href="/store" className={`item ${activePath.includes('/store') ? 'active' : ''}`}>
                     <div className="col">
                         <IonIcon icon={cartOutline} />
                         <strong>Store</strong>
                     </div>
                 </Link>
 
-                <Link href="/profile" className={`item ${activePath.includes('/profile') ? 'active' : ''}`}>
+                <Link prefetch={true} href="/profile" className={`item ${activePath.includes('/profile') ? 'active' : ''}`}>
                     <div className="col flex items-center flex-col ">
                         <img src="/assets/img/icon/f-profile7.svg" alt="profile" className="w-6 h-6" />
                         <strong>Profile</strong>
@@ -78,3 +78,5 @@ export const Footer: React.FC = () => {
         </>
     );
 };
+
+export default memo(Footer);

@@ -8,7 +8,6 @@ export const getUserNotifications = async () => {
     if (!user) return null;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-notifications`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -25,7 +24,6 @@ export const getNotificationCount = async () => {
     if (!user) return null;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-new-notifications-count`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -42,7 +40,6 @@ export const markNotificationAsRead = async (notificationId: string) => {
     if (!user) return null;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/mark-notification-read`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -59,7 +56,6 @@ export const markMultipleNotificationsAsRead = async (notificationIds: string[])
     if (!user) return null;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/bulk-notifications-read`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",

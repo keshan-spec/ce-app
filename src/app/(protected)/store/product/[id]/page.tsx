@@ -1,5 +1,3 @@
-import { getUserDetails } from "@/actions/auth-actions";
-import { ProfileLayout } from "@/components/Profile/ProfileLayout";
 import { Metadata, ResolvingMetadata } from "next";
 
 import {
@@ -58,6 +56,7 @@ const Page = async ({ params }: { params: { id: number; }; }) => {
     await queryClient.prefetchQuery({
         queryKey: ['view-product', params.id],
         queryFn: () => getStoreProduct(params.id),
+        staleTime: 1000 * 60 * 5,
     });
 
     return (

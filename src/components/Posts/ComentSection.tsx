@@ -6,19 +6,18 @@ import { useQuery } from "@tanstack/react-query";
 import { IonIcon } from "@ionic/react";
 import clsx from "clsx";
 import { chatbubbleOutline, chevronUpCircleOutline, close, heart, heartOutline } from "ionicons/icons";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BiLoader } from "react-icons/bi";
 import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 import { debounce } from "@/utils/utils";
 import { TComment } from "@/types/comments";
-// import { useQuery } from "react-query";
 
 interface ComentsSectionProps {
     postId: number;
     onNewComment?: () => void;
 }
 
-export const ComentsSection: React.FC<ComentsSectionProps> = ({
+const ComentsSection: React.FC<ComentsSectionProps> = ({
     postId,
     onNewComment,
 }) => {
@@ -395,3 +394,5 @@ const CommentLoadingSkeleton = () => {
         </div>
     );
 };
+
+export default memo(ComentsSection);

@@ -8,7 +8,6 @@ export const maybeLikePost = async (postId: number) => {
     const user = await getSessionUser();
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/toggle-like-post`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -23,7 +22,6 @@ export const maybeBookmarkPost = async (postId: number) => {
     const user = await getSessionUser();
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/bookmark-post`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -45,7 +43,6 @@ export const fetchPosts = async (page: number, following_only = false) => {
     }
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-posts?page=${page}&limit=10`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -61,7 +58,6 @@ export const addComment = async (postId: number, comment: string, comment_id?: s
     const user = await getSessionUser();
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/add-post-comment`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -82,7 +78,6 @@ export const fetchPostComments = async (postId: number) => {
     }
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-post-comments`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -95,12 +90,8 @@ export const fetchPostComments = async (postId: number) => {
 };
 
 export const addPost = async (mediaList: ImageMeta, caption?: string, location?: string, associatedCars?: string) => {
-    let user;
-    try {
-        user = await getSessionUser();
-    } catch (e) {
-        throw new Error("User session expired. Please login again.");
-    }
+    const user = await getSessionUser();
+    if (!user) return;
 
     const formData = new FormData();
     formData.append("user_id", user?.id);
@@ -110,7 +101,6 @@ export const addPost = async (mediaList: ImageMeta, caption?: string, location?:
 
     try {
         const response = await fetch(`${API_URL}/wp-json/app/v1/save-media`, {
-            cache: "no-cache",
             method: "POST",
             body: formData,
         });
@@ -140,7 +130,6 @@ export const fetchPost = async (postId: string): Promise<Post | null> => {
     }
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-post`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -161,7 +150,6 @@ export const deletePost = async (postId: number) => {
     try {
         const user = await getSessionUser();
         const response = await fetch(`${API_URL}/wp-json/app/v1/delete-post`, {
-            cache: "no-cache",
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -189,7 +177,6 @@ export const maybeLikeComment = async (commentId: string, ownerId: string) => {
         if (!user || !user.id) throw new Error("User session expired. Please login again.");
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/toggle-like-comment`, {
-            cache: "no-cache",
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -215,7 +202,6 @@ export const addTagsForPost = async (postId: number, tags: Tag[]) => {
         if (!user || !user.id) throw new Error("User session expired. Please login again.");
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/add-tags`, {
-            cache: "no-cache",
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -264,7 +250,6 @@ export interface PartialPostTag {
 export const fetchTagsForPost = async (postId: number): Promise<PostTag[] | null> => {
     try {
         const response = await fetch(`${API_URL}/wp-json/app/v1/get-post-tags`, {
-            cache: "no-cache",
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -291,7 +276,6 @@ export const fetchTaggableEntites = async (search: string, tagged_entities: Part
         if (!user || !user.id) throw new Error("User session expired. Please login again.");
 
         const response = await fetch(url, {
-            cache: "no-cache",
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -326,7 +310,6 @@ export const updatePost = async (data: UpdateTagRequest) => {
         if (!user || !user.id) throw new Error("User session expired. Please login again.");
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/edit-post`, {
-            cache: "no-cache",
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

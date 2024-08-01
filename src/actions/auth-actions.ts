@@ -14,7 +14,7 @@ export const getSessionUser = async () => {
     const session = await auth();
 
     if (!session) {
-        throw new Error("No session found");
+        return null;
     }
 
     return session.user;
@@ -27,7 +27,6 @@ export const verifyUser = async (credentials: { email: string; password: string;
             headers: {
                 "Content-Type": "application/json",
             },
-            cache: "no-cache",
             body: JSON.stringify(credentials),
         });
 
@@ -53,7 +52,6 @@ export const getUserDetails = async (id: string): Promise<UserResponse | null> =
         headers: {
             "Content-Type": "application/json",
         },
-        cache: "no-cache",
         body: JSON.stringify({ user_id: id }),
     });
 
@@ -146,7 +144,6 @@ export const updatePassword = async (new_password: string, old_password: string)
     if (!user) return;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/update-password`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",

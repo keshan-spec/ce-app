@@ -1,7 +1,7 @@
 'use client';
 
 import { PostCardSkeleton } from "./PostCardSkeleton";
-import { useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 
 import useEmblaCarousel from 'embla-carousel-react';
 
@@ -16,9 +16,12 @@ import { useObservedQuery } from "@/app/context/ObservedQuery";
 
 import clsx from "clsx";
 
-import { PostCard } from "./PostCard";
-import { ComentsSection } from "./ComentSection";
-import SlideInFromBottomToTop from "@/shared/SlideIn";
+// lazy load
+const PostCard = React.lazy(() => import('@/components/Posts/PostCard'));
+const ComentsSection = React.lazy(() => import('@/components/Posts/ComentSection'));
+const SlideInFromBottomToTop = React.lazy(() => import('@/shared/SlideIn'));
+
+import Link from "next/link";
 
 type DotButtonPropType = PropsWithChildren<
     React.DetailedHTMLProps<
@@ -60,12 +63,11 @@ export const DotButton: React.FC<DotButtonPropType> = (props) => {
     );
 };
 
-export const Posts: React.FC = () => {
+const Posts = () => {
     const { data, isFetching, setFollowingOnly } = useObservedQuery();
     const [muted, setMuted] = useState(true); // State to track muted state
 
     const [activeSection, setActiveSection] = useState<number | undefined>();
-    const [activeTab, setActiveTab] = useState<"latest" | "following">("latest");
 
     const handleOpenComments = useCallback((postId: number) => {
         if (activeSection) {
@@ -110,20 +112,18 @@ export const Posts: React.FC = () => {
             <div className="fixed w-full social-tabs !mt-0 z-50">
                 <ul className="nav nav-tabs capsuled" role="tablist">
                     <li className="nav-item" onClick={() => {
-                        setActiveTab("latest");
                         setFollowingOnly(false);
                     }}>
-                        <a className="nav-link active" data-bs-toggle="tab" href="#latest-posts" role="tab" aria-selected="false">
+                        <Link className="nav-link active" data-bs-toggle="tab" href="#latest-posts" role="tab" aria-selected="false">
                             Latest
-                        </a>
+                        </Link>
                     </li>
                     <li className="nav-item" onClick={() => {
-                        setActiveTab("following");
                         setFollowingOnly(true);
                     }}>
-                        <a className="nav-link" data-bs-toggle="tab" href="#following-posts" role="tab" aria-selected="true">
+                        <Link className="nav-link" data-bs-toggle="tab" href="#following-posts" role="tab" aria-selected="true">
                             Following
-                        </a>
+                        </Link>
                     </li>
                 </ul>
             </div>
@@ -181,3 +181,5 @@ export const Posts: React.FC = () => {
         </div>
     );
 };
+
+export default memo(Posts);

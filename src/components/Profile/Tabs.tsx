@@ -12,7 +12,7 @@ interface TabsProps {
     thirdPersionView: boolean;
 }
 
-export const Tabs: React.FC<TabsProps> = ({
+const Tabs: React.FC<TabsProps> = ({
     profileId,
     thirdPersionView = false
 }) => {
@@ -79,3 +79,5 @@ export const Tabs: React.FC<TabsProps> = ({
         </>
     );
 };
+
+export default Tabs;

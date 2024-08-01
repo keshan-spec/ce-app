@@ -1,7 +1,7 @@
-'use client';
 import Link from "next/link";
+import { memo } from "react";
 
-export const ProfileEditPanel: React.FC = () => {
+const ProfileEditPanel = () => {
     return (
         <div className="offcanvas offcanvas-bottom action-sheet" tabIndex={-1} id="profileActions" style={{ visibility: 'visible' }} aria-modal="true" role="dialog">
             <div className="offcanvas-body">
@@ -46,3 +46,5 @@ export const ProfileEditPanel: React.FC = () => {
         </div>
     );
 };
+
+export default memo(ProfileEditPanel);

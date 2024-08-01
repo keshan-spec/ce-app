@@ -1,5 +1,5 @@
 import { getUserDetails } from "@/actions/auth-actions";
-import { ProfileLayout } from "@/components/Profile/ProfileLayout";
+import ProfileLayout from "@/components/Profile/ProfileLayout";
 import { Metadata, ResolvingMetadata } from "next";
 
 import {
@@ -11,6 +11,8 @@ import {
 type Props = {
     params: { id: string; };
 };
+
+const queryClient = new QueryClient();
 
 export async function generateMetadata(
     { params }: Props,
@@ -55,7 +57,6 @@ export async function generateMetadata(
 }
 
 const Page = async ({ params }: { params: { id: string; }; }) => {
-    const queryClient = new QueryClient();
 
     await queryClient.prefetchQuery({
         queryKey: ['user', params.id],

@@ -9,6 +9,7 @@ import "../../public/assets/css/custom.css";
 
 import Script from "next/script";
 import Providers from "./context/QueryClientProvider";
+import { Suspense } from "react";
 
 const inter = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
@@ -28,7 +29,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
+  // const session = await auth();
 
   return (
     <html lang="en">
@@ -39,11 +40,13 @@ export default async function RootLayout({
           showSpinner={false}
         />
 
-        <Providers>
-          <SessionProvider session={session}>
-            {children}
-          </SessionProvider>
-        </Providers>
+        <Suspense>
+          <Providers>
+            <SessionProvider>
+              {children}
+            </SessionProvider>
+          </Providers>
+        </Suspense>
 
         <Script src="/assets/js/lib/bootstrap.min.js" strategy="beforeInteractive" />
         <Script src="/assets/js/lib/jquery-3.7.1.min.js" strategy="beforeInteractive" />

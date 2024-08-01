@@ -1,28 +1,32 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Suspense, useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { TopNav } from "@/app/layouts/includes/TopNav";
-import { Footer } from "./includes/Footer";
 import PullToRefresh from 'react-simple-pull-to-refresh';
-import { getQueryClient } from "../context/QueryClientProvider";
+import clsx from "clsx";
 import { BiLoader } from "react-icons/bi";
+
+
+import { getQueryClient } from "../context/QueryClientProvider";
 import { footerLessPaths } from "@/hooks/useTopNav";
+import { usePullToRefresh } from "@/hooks/usePullToRefresh";
+import useLoading from "@/hooks/useLoading";
 
 import { Loader } from "@/components/Loader";
-import useLoading from "@/hooks/useLoading";
-import clsx from "clsx";
+
+const TopNav = React.lazy(() => import('@/app/layouts/includes/TopNav'));
+const Footer = React.lazy(() => import('@/app/layouts/includes/Footer'));
 
 const ROUTE_TO_SKELETON_MAP = {
-    '/': React.lazy(() => import('@/components/Skeletons/Home')),
-    '/discover': React.lazy(() => import('@/components/Skeletons/Discover')),
+    '/': React.lazy(() => import('@/components/Posts/Posts')),
+    // '/discover': React.lazy(() => import('@/components/Home/Home')),
 };
 
 const queryClient = getQueryClient();
 
 export default function MainLayout({ children }: { children: React.ReactNode; }) {
     const pathname = usePathname();
-    const [pullEnabled, setPullEnabled] = useState(true);
+    // const pullEnabled = usePullToRefresh();
 
     const { loading, nextPage } = useLoading();
 
@@ -33,24 +37,6 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
 
         return pathname;
     }, [pathname, loading, nextPage]);
-
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY === 0) {
-                setPullEnabled(true);
-            } else {
-                setPullEnabled(false);
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-
-        // Clean up event listener on component unmount
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
 
     const allowPullToRefresh = () => {
         if (pathname.includes('/checkout') || pathname.includes('/checkout/payment-success')
@@ -87,7 +73,7 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
         await queryClient.resetQueries();
     };
 
-    const renderLoadingSkeleton = () => {
+    const renderLoadingSkeleton = useCallback(() => {
         if (loading) {
             if (nextPage && ROUTE_TO_SKELETON_MAP[nextPage as keyof typeof ROUTE_TO_SKELETON_MAP]) {
                 const Skeleton = ROUTE_TO_SKELETON_MAP[nextPage as keyof typeof ROUTE_TO_SKELETON_MAP];
@@ -103,7 +89,9 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
 
             return <Loader transulcent />;
         }
-    };
+
+        return null;
+    }, [loading, nextPage]);
 
     return (
         <>
@@ -121,11 +109,11 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
                 )}>
                     <PullToRefresh
                         onRefresh={handleRefresh}
-                        resistance={pullEnabled ? 3 : 1}
+                        resistance={true ? 3 : 1}
                         pullDownThreshold={100}
                         maxPullDownDistance={110}
                         className="w-full h-full overflow-auto"
-                        isPullable={pullEnabled && allowPullToRefresh()}
+                        isPullable={true && allowPullToRefresh()}
                         pullingContent={
                             <div className="text-center flex items-center text-black w-full mt-2">
                                 <BiLoader className="text-3xl w-full" />
@@ -138,7 +126,9 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
                         }
                     >
                         <>
-                            {children}
+                            <Suspense fallback={<Loader />}>
+                                {children}
+                            </Suspense>
                         </>
                     </PullToRefresh>
                 </div>

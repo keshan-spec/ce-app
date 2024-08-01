@@ -1,16 +1,17 @@
 "use client";
-import { useCallback, useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 
 import { Post } from "@/types/posts";
 import { PostNotFound } from '@/components/Posts/PostNotFound';
 
 import { fetchPost } from "@/actions/post-actions";
 import { PostCardSkeleton } from "@/components/Posts/PostCardSkeleton";
-import { PostCard } from "@/components/Posts/PostCard";
 import { useQuery } from "@tanstack/react-query";
-import { CommentsSlider } from "./CommentsSlider";
-import SlideInFromBottomToTop from "@/shared/SlideIn";
-import { ComentsSection } from "./ComentSection";
+
+// lazy load
+const PostCard = React.lazy(() => import('@/components/Posts/PostCard'));
+const ComentsSection = React.lazy(() => import('@/components/Posts/ComentSection'));
+const SlideInFromBottomToTop = React.lazy(() => import('@/shared/SlideIn'));
 
 const PostClient = ({ postId }: { postId: string; }) => {
     const { data, error, isLoading, isFetching } = useQuery<Post | null, Error>({
@@ -84,4 +85,4 @@ const PostClient = ({ postId }: { postId: string; }) => {
     );
 };
 
-export default PostClient;
+export default memo(PostClient);

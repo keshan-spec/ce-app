@@ -11,12 +11,12 @@ import clsx from 'clsx';
 import { menuOutline, notifications, chevronBackOutline, cartOutline, qrCodeOutline, searchOutline } from 'ionicons/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { getNotificationCount } from "@/actions/notification-actions";
 import useLoading from '@/hooks/useLoading';
 
-export const TopNav: React.FC = () => {
+const TopNav = () => {
     const pathname = usePathname();
     const { user } = useUser();
     const { totalItems } = useCartStore();
@@ -106,7 +106,7 @@ export const TopNav: React.FC = () => {
 
                 {showLogo && (
                     <div className="max-w-36 !mt-5">
-                        <Link href="/">
+                        <Link prefetch={true} href="/">
                             <img src="/assets/img/logo-dark.png" alt="" />
                         </Link>
                     </div>
@@ -122,7 +122,7 @@ export const TopNav: React.FC = () => {
                 {showHeaderIcons && (
                     <div className="right">
                         {activePath.includes('/store') || activePath.includes('/cart') ? (
-                            <Link href="/cart" className="headerButton mr-1">
+                            <Link prefetch={true} href="/cart" className="headerButton mr-1">
                                 <IonIcon icon={cartOutline} role="img" className="md hydrated" />
                                 {totalItems > 0 && (
                                     <span className="badge badge-primary absolute !top-0 !-right-1">
@@ -141,7 +141,7 @@ export const TopNav: React.FC = () => {
                         )}
 
                         {!activePath.includes('/notifications') && (
-                            <Link href="/notifications" className="headerButton relative">
+                            <Link prefetch={true} href="/notifications" className="headerButton relative">
                                 <IonIcon icon={notifications} role="img" className="md hydrated" />
                                 {data && data.count > 0 && (
                                     <span className="badge badge-primary absolute !-top-1 !-right-1">
@@ -152,7 +152,7 @@ export const TopNav: React.FC = () => {
                         )}
 
                         {activePath.includes('/profile') && (
-                            <Link href="/discover?dtype=search" className="headerButton">
+                            <Link prefetch={true} href="/discover?dtype=search" className="headerButton">
                                 <IonIcon icon={searchOutline} role="img" className="md hydrated" />
                             </Link>
                         )}
@@ -161,7 +161,7 @@ export const TopNav: React.FC = () => {
 
                 {activePath === '/garage' && (
                     <div className="right">
-                        <Link href={'/garage/add'} className='headerButton headerSave'>
+                        <Link prefetch={true} href={'/garage/add'} className='headerButton headerSave'>
                             Add +
                         </Link>
                     </div>
@@ -188,11 +188,17 @@ const StoreTabs = () => {
     return (
         <div className="social-tabs">
             <ul className="nav nav-tabs capsuled" role="tablist">
-                <li className="nav-item"> <a className="nav-link active" data-bs-toggle="tab" href="#panels-tab1" role="tab">
-                    Products</a> </li>
-                <li className="nav-item"> <a className="nav-link" data-bs-toggle="tab" href="#panels-tab2" role="tab">
-                    My Orders</a> </li>
+                <li className="nav-item">
+                    <Link className="nav-link active" data-bs-toggle="tab" href="#panels-tab1" role="tab">
+                        Products
+                    </Link> </li>
+                <li className="nav-item">
+                    <Link className="nav-link" data-bs-toggle="tab" href="#panels-tab2" role="tab">
+                        My Orders
+                    </Link> </li>
             </ul>
         </div>
     );
 };
+
+export default memo(TopNav);

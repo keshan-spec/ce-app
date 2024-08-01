@@ -2,12 +2,12 @@
 
 import { useUser } from "@/hooks/useUser";
 import { Post } from "@/types/posts";
-import { use, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useDotButton } from "../Carousel/EmbalDotButtons";
 import useEmblaCarousel from 'embla-carousel-react';
-import AutoHeight from 'embla-carousel-auto-height';
-import { PostTag, fetchTagsForPost, maybeBookmarkPost, maybeLikePost } from "@/actions/post-actions";
-import { BiBookmark, BiMapPin, BiSolidBookmark, BiVolumeFull, BiVolumeMute } from "react-icons/bi";
+// import AutoHeight from 'embla-carousel-auto-height';
+import { PostTag, fetchTagsForPost, maybeLikePost } from "@/actions/post-actions";
+import { BiMapPin, BiVolumeFull, BiVolumeMute } from "react-icons/bi";
 import clsx from "clsx";
 import NcImage from "../Image/Image";
 import { NativeShare } from "../ActionSheets/Share";
@@ -22,7 +22,7 @@ import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 import { TagEntity } from "../TagEntity/TagEntity";
 import { AssociatedCar } from "../TagEntity/AssociateCar";
 
-export const PostCard = ({ post, muted, setMuted, openComments }: {
+const PostCard = ({ post, muted, setMuted, openComments }: {
     post: Post,
     muted: boolean,
     setMuted: React.Dispatch<React.SetStateAction<boolean>>;
@@ -146,37 +146,6 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
         );
     };
 
-    const handleBookMark = async () => {
-        if (!isLoggedIn) {
-            alert("Please login to bookmark post");
-            return;
-        }
-
-        const prevStatus = bookMarked;
-
-        // Optimistic UI
-        setBookMarked(!bookMarked);
-        post.is_bookmarked = bookMarked;
-
-        try {
-            await maybeBookmarkPost(post.id);
-        } catch (error) {
-            // Rollback
-            setBookMarked(prevStatus);
-            alert("Oops! Unable to bookmark post");
-            post.is_bookmarked = prevStatus;
-            console.log(error);
-        }
-    };
-
-    const renderBookmark = () => {
-        return (
-            <div className="flex flex-col items-center justify-start">
-                {!bookMarked ? <BiBookmark className="w-5 h-5 text-black" onClick={handleBookMark} /> : <BiSolidBookmark className="w-5 h-5 text-black" onClick={handleBookMark} />}
-            </div>
-        );
-    };
-
     const handleTagClick = (tag: PostTag) => {
         switch (tag.type) {
             case 'user':
@@ -226,7 +195,6 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
             </>
         );
     };
-
 
     const renderAssociatedCarTags = (index: number) => {
         const vehicleTags = tags.filter(tag => tag.type === 'car');
@@ -355,7 +323,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
     return (
         <div className="media-post-content relative mb-6 text-black" id={`PostMain-${post.id}`}>
             <div className="media-post-header">
-                <Link href={`/profile/${post.user_id}`} passHref>
+                <Link prefetch={false} href={`/profile/${post.user_id}`} passHref>
                     <div className="media-post-avatar border-black border-2" style={{
                         backgroundImage: `url(${post.user_profile_image || PLACEHOLDER_PFP})`
                     }} />
@@ -364,8 +332,7 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
                     </div>
                 </Link>
                 {(post.garage_id && post.garage?.status === 'active') && (
-                    <Link
-                        href={`/profile/garage/${post.garage_id}`}
+                    <Link href={`/profile/garage/${post.garage_id}`}
                         className="text-xs opacity-50">
                         {post.garage?.make} {post.garage?.model}, owned by @{post.garage?.owner?.username}
                     </Link>
@@ -436,7 +403,6 @@ export const PostCard = ({ post, muted, setMuted, openComments }: {
     );
 };
 
-
 const MediaPostDescription = (post: Post) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -469,3 +435,5 @@ const MediaPostDescription = (post: Post) => {
         </div>
     );
 };
+
+export default memo(PostCard);

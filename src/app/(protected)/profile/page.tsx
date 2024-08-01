@@ -1,5 +1,7 @@
-import { ProfileLayout } from "@/components/Profile/ProfileLayout";
+import React from "react";
 import { Metadata } from "next";
+
+const ProfileLayout = React.lazy(() => import('@/components/Profile/ProfileLayout'));
 
 export const metadata: Metadata = {
     title: 'Profile | Drive Life',

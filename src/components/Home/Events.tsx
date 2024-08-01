@@ -201,7 +201,6 @@ export const TrendingVenues: React.FC<EventProps> = ({ }) => {
         queryFn: () => {
             return fetchTrendingVenues(1);
         },
-        retry: 1,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
     });
@@ -246,7 +245,6 @@ export const TrendingEvents: React.FC<EventProps> = ({ }) => {
         queryFn: () => {
             return fetchTrendingEvents(1);
         },
-        retry: 1,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
     });

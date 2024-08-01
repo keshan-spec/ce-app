@@ -12,7 +12,6 @@ export const fetchTrendingEvents = async (page: number, paginate = false, filter
     }
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-events-trending`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -34,7 +33,6 @@ export const fetchTrendingVenues = async (page: number, paginate = false, filter
     }
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-venues-trending`, {
-        cache: "no-cache",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -123,7 +121,6 @@ export const getDiscoverData = async (search: string, type: SearchType, page: nu
 
 export const getEventCategories = async () => {
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-event-categories`, {
-        cache: "no-cache",
         method: "GET",
     });
 

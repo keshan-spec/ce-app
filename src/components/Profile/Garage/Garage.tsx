@@ -1,10 +1,10 @@
 'use client';
-import { getUserGarage } from "@/actions/garage-actions";
+import { getGarageById, getUserGarage } from "@/actions/garage-actions";
 import { Garage as GarageType } from "@/types/garage";
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 interface GarageProps {
     profileId: string;
@@ -15,13 +15,13 @@ export const Garage: React.FC<GarageProps> = ({
     profileId,
     edit = false
 }) => {
-
     const { data, error, isLoading, isFetching } = useQuery<GarageType[] | null, Error>({
         queryKey: ["user-garage", profileId],
         queryFn: () => getUserGarage(profileId),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         retry: 1,
+        staleTime: 60 * 1000 * 10,
     });
 
     const garage = useMemo(() => {

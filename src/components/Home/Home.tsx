@@ -1,16 +1,12 @@
 'use client';
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useState } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { memo, useCallback, useEffect, useState } from "react";
 import { getDiscoverData, SearchType } from "@/actions/home-actions";
 import { debounce } from "@/utils/utils";
-import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 import clsx from "clsx";
-import { DiscoverPage } from "../Discover/Discover";
 import { useRouter, useSearchParams } from "next/navigation";
-import NcImage from "../Image/Image";
-import Link from "next/link";
 import { EventItem, UserItem, VenueItem } from "../Discover/SearchResult";
-import { NextPage } from "next";
+import DiscoverPage from "../Discover/Discover";
 
 export interface SearchResultEvent {
     id: number;
@@ -58,7 +54,6 @@ interface EventData extends PaginationData<SearchResultEvent> { }
 interface UserData extends PaginationData<SearchResultUser> { }
 interface VenueData extends PaginationData<SearchResultVenue> { }
 
-
 interface CombinedData {
     events?: EventData;
     users?: UserData;
@@ -67,9 +62,29 @@ interface CombinedData {
     success: boolean;
 }
 
-export const HomePage: NextPage = () => {
+const LoadingSkeleton = () => {
+    return (
+        Array.from({ length: 5 }).map((_, index) => (
+            <li className="list-group-item" key={index}>
+                <div className="flex items-center py-3 px-3">
+                    <div className="flex-shrink-0">
+                        <div className="animate-pulse rounded-lg h-16 w-16 bg-gray-300" />
+                    </div>
+                    <div className="ml-4 w-full flex flex-col gap-2">
+                        <div className="animate-pulse h-4 w-1/2 bg-gray-300 rounded" />
+                        <div className="animate-pulse h-4 w-1/4 bg-gray-300 rounded" />
+                    </div>
+                </div>
+            </li>
+        ))
+    );
+};
+
+const DiscoverAndSearchPage = () => {
     const [searchText, setSearchText] = useState("");
     const [searchType, setSearchType] = useState<SearchType>("all");
+    const [searchVisible, setSearchVisible] = useState(false);
+
     const router = useRouter();
     const searchParam = useSearchParams();
 
@@ -115,6 +130,19 @@ export const HomePage: NextPage = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hasNextPage]);
 
+    // on params change
+    useEffect(() => {
+        if (searchParam.get('dtype') && searchParam.get('dtype') === 'search') {
+            setSearchVisible(true);
+        } else {
+            if (searchVisible) {
+                setSearchVisible(false);
+                setSearchText("");
+                setSearchType("all");
+            }
+        }
+    }, [searchParam]);
+
     const handleInputChange = async (search: string) => {
         setSearchText(search);
 
@@ -124,18 +152,6 @@ export const HomePage: NextPage = () => {
     };
 
     const debouncedHandleTagInputChange = useCallback(debounce(handleInputChange, 500), []);
-    const [searchVisible, setSearchVisible] = useState(false);
-
-    // on params change
-    useEffect(() => {
-        if (searchParam.get('dtype') && searchParam.get('dtype') === 'search') {
-            setSearchVisible(true);
-        } else {
-            setSearchVisible(false);
-            setSearchText("");
-            setSearchType("all");
-        }
-    }, [searchParam]);
 
     const onSearchClick = () => {
         setSearchVisible(true);
@@ -365,27 +381,9 @@ export const HomePage: NextPage = () => {
                         </div>
                     </div>
                 </div>
-            ) :
-                <DiscoverPage />
-            }
+            ) : <DiscoverPage />}
         </div>
     );
 };
 
-const LoadingSkeleton = () => {
-    return (
-        Array.from({ length: 5 }).map((_, index) => (
-            <li className="list-group-item" key={index}>
-                <div className="flex items-center py-3 px-3">
-                    <div className="flex-shrink-0">
-                        <div className="animate-pulse rounded-lg h-16 w-16 bg-gray-300" />
-                    </div>
-                    <div className="ml-4 w-full flex flex-col gap-2">
-                        <div className="animate-pulse h-4 w-1/2 bg-gray-300 rounded" />
-                        <div className="animate-pulse h-4 w-1/4 bg-gray-300 rounded" />
-                    </div>
-                </div>
-            </li>
-        ))
-    );
-};
+export default memo(DiscoverAndSearchPage);

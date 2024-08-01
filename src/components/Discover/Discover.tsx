@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Events, TrendingEvents, TrendingVenues, Venues } from "../Home/Events";
 import { DiscoverFilters } from "./Filters";
 import { DiscoverFilterProvider } from "@/app/context/DiscoverFilterContext";
+import { memo } from "react";
 
 const bannerData = [
     {
@@ -73,7 +74,7 @@ export const BannerSkeleton = () => {
     );
 };
 
-export const DiscoverPage: React.FC = () => {
+const DiscoverPage = () => {
     return (
         <div className="tab-content pt-14 pb-10">
             <div className="tab-pane fade show active" id="top" role="tabpanel">
@@ -117,3 +118,5 @@ export const DiscoverPage: React.FC = () => {
         </div>
     );
 };
+
+export default memo(DiscoverPage);

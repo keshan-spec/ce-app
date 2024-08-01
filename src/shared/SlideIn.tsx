@@ -2,7 +2,7 @@
 import { addBackgroundOverlay, removeBackgroundOverlay } from '@/utils/utils';
 import { Transition } from '@headlessui/react';
 import clsx from 'clsx';
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import { useSwipeable } from 'react-swipeable';
 
 interface SlideInFromBottomToTopProps {
@@ -134,4 +134,4 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
     );
 };
 
-export default SlideInFromBottomToTop;
+export default memo(SlideInFromBottomToTop);
