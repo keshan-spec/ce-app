@@ -2,9 +2,10 @@ import { getStoreProducts } from "@/actions/store-actions";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { Metadata } from "next";
 import React from "react";
+import dynamic from 'next/dynamic';
 
-const Products = React.lazy(() => import('@/components/Store/Products'));
-const UserOrders = React.lazy(() => import('@/components/Store/UserOrders'));
+const Products = dynamic(() => import('@/components/Store/Products'));
+const UserOrders = dynamic(() => import('@/components/Store/UserOrders'));
 
 export const metadata: Metadata = {
     title: 'Store | Drive Life',

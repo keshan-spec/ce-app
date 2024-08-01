@@ -5,6 +5,7 @@ import { useCheckout } from '@/app/context/CheckoutContext';
 import { PaymentForm } from './sections/PaymentForm';
 import { ShippingForm } from './sections/ShippingDetailsForm';
 import SlideInFromBottomToTop from '@/shared/SlideIn';
+import { convertToCurrency } from '@/utils/utils';
 
 
 const OrderTotals = () => {
@@ -16,7 +17,7 @@ const OrderTotals = () => {
                 <div className="section-title mb-1">Order Totals</div>
                 <div className="card mb-2">
                     <ul className="listview flush transparent simple-listview">
-                        <li>Subtotal <span className="text-muted">{`£${totalPrice}`}</span></li>
+                        <li>Subtotal <span className="text-muted">{convertToCurrency(totalPrice)}</span></li>
                         <li>Shipping <span className="text-muted">£{FIXED_SHIPPING_COST}</span></li>
                         <li>Total <span className="text-primary font-weight-bold">£{totalPrice + FIXED_SHIPPING_COST}</span></li>
                     </ul>

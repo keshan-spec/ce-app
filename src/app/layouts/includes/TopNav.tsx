@@ -107,7 +107,7 @@ const TopNav = () => {
                 {showLogo && (
                     <div className="max-w-36 !mt-5">
                         <Link prefetch={true} href="/">
-                            <img src="/assets/img/logo-dark.png" alt="" />
+                            <img src="/assets/img/logo-dark.png" alt="Logo" />
                         </Link>
                     </div>
                 )}
@@ -152,7 +152,7 @@ const TopNav = () => {
                         )}
 
                         {activePath.includes('/profile') && (
-                            <Link prefetch={true} href="/discover?dtype=search" className="headerButton">
+                            <Link prefetch={true} href="/search" className="headerButton">
                                 <IonIcon icon={searchOutline} role="img" className="md hydrated" />
                             </Link>
                         )}

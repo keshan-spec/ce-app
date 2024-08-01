@@ -50,13 +50,13 @@ export async function generateMetadata(
     };
 }
 
+const queryClient = new QueryClient();
+
 const Page = async ({ params }: { params: { id: number; }; }) => {
-    const queryClient = new QueryClient();
 
     await queryClient.prefetchQuery({
         queryKey: ['view-product', params.id],
         queryFn: () => getStoreProduct(params.id),
-        staleTime: 1000 * 60 * 5,
     });
 
     return (

@@ -4,7 +4,7 @@ import { EditProfilePicture } from "@/components/ActionSheets/ProfilePicture";
 import { Loader } from "@/components/Loader";
 import { useUser } from "@/hooks/useUser";
 import { useMutation } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { memo, useRef, useState } from "react";
 
 interface ImageUploadResponse {
     success: boolean;
@@ -12,7 +12,7 @@ interface ImageUploadResponse {
     error?: string;
 }
 
-export const EditImages: React.FC = () => {
+const EditImages = () => {
     const { user, isLoggedIn } = useUser();
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -135,3 +135,5 @@ export const EditImages: React.FC = () => {
         </>
     );
 };
+
+export default memo(EditImages);

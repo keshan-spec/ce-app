@@ -8,7 +8,7 @@ import { IonIcon } from '@ionic/react';
 import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { closeCircleOutline, linkOutline } from 'ionicons/icons';
-import React, { useCallback, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -167,7 +167,7 @@ const AddLinkSheet: React.FC<{
         );
     };
 
-export const EditSocialLinks: React.FC = () => {
+const EditSocialLinks: React.FC = () => {
     const { user, isLoggedIn } = useUser();
     const [externalLinks, setExternalLinks] = useState(user?.profile_links.external_links || []);
 
@@ -248,3 +248,5 @@ export const EditSocialLinks: React.FC = () => {
         </>
     );
 };
+
+export default memo(EditSocialLinks);

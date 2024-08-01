@@ -1,7 +1,24 @@
-import DiscoverAndSearchPage from "@/components/Home/Home";
+import { fetchTrendingEvents, fetchTrendingVenues } from "@/actions/home-actions";
+import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import dynamic from "next/dynamic";
+
+const DiscoverPage = dynamic(() => import("@/components/Discover/DiscoverPage"));
+const queryClient = new QueryClient();
 
 export default async function Page() {
+    await queryClient.prefetchQuery({
+        queryKey: ["trending-events"],
+        queryFn: () => fetchTrendingEvents(1),
+    });
+
+    await queryClient.prefetchQuery({
+        queryKey: ["trending-venues"],
+        queryFn: () => fetchTrendingVenues(1),
+    });
+
     return (
-        <DiscoverAndSearchPage />
+        <HydrationBoundary state={dehydrate(queryClient)}>
+            <DiscoverPage />
+        </HydrationBoundary>
     );
 }

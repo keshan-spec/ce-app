@@ -1,13 +1,14 @@
 import type { Metadata, ResolvingMetadata } from 'next';
 import { fetchPost } from '@/actions/post-actions';
-import PostClient from '@/components/Posts/PostClient';
 
+const PostClient = dynamic(() => import('@/components/Posts/PostClient'));
 
 import {
     dehydrate,
     HydrationBoundary,
     QueryClient,
 } from '@tanstack/react-query';
+import dynamic from 'next/dynamic';
 
 type Props = {
     params: { id: string; };

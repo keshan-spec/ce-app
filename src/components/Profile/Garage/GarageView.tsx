@@ -8,6 +8,7 @@ import { GaragePosts } from "./GaragePosts";
 import { MiniPostSkeleton } from "../Sections/Feed";
 import { PLACEHOLDER_PFP, sendRNMessage } from "@/utils/nativeFeel";
 import { isValidDate } from "@/utils/dateUtils";
+import { memo } from "react";
 
 interface GarageViewProps {
     garageId: string;
@@ -20,7 +21,7 @@ const formatOwnership = (ownedSince: string, ownedUntil: string | null) => {
     return `Owned from ${ownedSinceDate.getFullYear()} - ${ownedUntilDate}`;
 };
 
-export const GarageView: React.FC<GarageViewProps> = ({
+const GarageView: React.FC<GarageViewProps> = ({
     garageId
 }) => {
     const { user } = useUser();
@@ -143,3 +144,5 @@ const GarageViewSkeleton: React.FC = () => {
         </>
     );
 };
+
+export default memo(GarageView);

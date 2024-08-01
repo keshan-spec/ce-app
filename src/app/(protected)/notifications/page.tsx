@@ -1,7 +1,10 @@
 import { getUserNotifications } from "@/actions/notification-actions";
-import UserNotifications from "@/components/Notifications/Notifications";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
+
+
+const UserNotifications = dynamic(() => import('@/components/Notifications/Notifications'));
 
 export const metadata: Metadata = {
     title: "Notifications",
@@ -14,7 +17,6 @@ const Page = async () => {
     await queryClient.prefetchQuery({
         queryKey: ["user-notifications"],
         queryFn: () => getUserNotifications(),
-        staleTime: 1000 * 60 * 5,
     });
 
     return (

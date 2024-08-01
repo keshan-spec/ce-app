@@ -3,14 +3,14 @@ import { updatePassword, updateUserDetails } from '@/actions/auth-actions';
 import { useUser } from '@/hooks/useUser';
 import { IonIcon } from '@ionic/react';
 import { caretForwardOutline, closeCircle } from 'ionicons/icons';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import clsx from 'clsx';
 import { PasswordForm, passwordSchema, UserDetailsForm, userDetailsSchema } from '@/zod-schemas/profile';
 
-export const EditProfile: React.FC = () => {
+const EditProfile = () => {
     const { user, isLoggedIn } = useUser();
 
     if (!isLoggedIn || !user) return null;
@@ -254,3 +254,5 @@ const UpdatePasswordForm: React.FC = () => {
         </div>
     );
 };
+
+export default memo(EditProfile);

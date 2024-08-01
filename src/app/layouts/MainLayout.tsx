@@ -1,19 +1,16 @@
 'use client';
 
-import React, { Suspense, useCallback, useMemo } from "react";
+import React, { Suspense, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import PullToRefresh from 'react-simple-pull-to-refresh';
 import clsx from "clsx";
 import { BiLoader } from "react-icons/bi";
-
-
 import { getQueryClient } from "../context/QueryClientProvider";
 import { footerLessPaths } from "@/hooks/useTopNav";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import useLoading from "@/hooks/useLoading";
 
 import { Loader } from "@/components/Loader";
-import SlideInFromRight from "@/shared/SlideInFromRight";
 
 const TopNav = React.lazy(() => import('@/app/layouts/includes/TopNav'));
 const Footer = React.lazy(() => import('@/app/layouts/includes/Footer'));
@@ -28,7 +25,6 @@ const queryClient = getQueryClient();
 
 export default function MainLayout({ children }: { children: React.ReactNode; }) {
     const pathname = usePathname();
-    // const pullEnabled = usePullToRefresh();
 
     const { loading, nextPage } = useLoading();
 
@@ -63,6 +59,7 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
             case '/':
                 return 'social';
             case '/discover':
+            case '/search':
                 return 'extra-header-active';
             case '/store':
                 return 'store';

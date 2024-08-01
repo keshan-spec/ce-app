@@ -1,7 +1,10 @@
-import { EditImages } from "@/components/Profile/Settings/EditImages";
-import { EditProfile } from "@/components/Profile/Settings/EditProfile";
-import { EditSocialLinks } from "@/components/Profile/Settings/EditSocialLinks";
-import { EditUsername } from "@/components/Profile/Settings/EditUsername";
+import dynamic from 'next/dynamic';
+
+const EditImages = dynamic(() => import('@/components/Profile/Settings/EditImages'));
+const EditProfile = dynamic(() => import('@/components/Profile/Settings/EditProfile'));
+const EditSocialLinks = dynamic(() => import('@/components/Profile/Settings/EditSocialLinks'));
+const EditUsername = dynamic(() => import('@/components/Profile/Settings/EditUsername'));
+
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,8 +17,6 @@ export const metadata: Metadata = {
 };
 
 const Page = ({ params }: { params: { type: string; }; }) => {
-    console.log(params.type);
-
     const renderEditSection = () => {
         switch (params.type) {
             case 'images':

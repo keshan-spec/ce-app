@@ -38,6 +38,7 @@ export const menuIconLessPaths = [
     '/garage/add',
     '/edit-post/',
     '/notifications',
+    '/search',
 ];
 
 export const footerLessPaths = [

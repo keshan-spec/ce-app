@@ -1,10 +1,12 @@
+import { fetchPosts } from "@/actions/post-actions";
 import ProtectedLayout from "./(protected)/layout";
 import { ObservedQueryProvider } from "@/app/context/ObservedQuery";
-// import Posts from "@/components/Posts/Posts";
+import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { Metadata } from "next";
 import React from "react";
+import dynamic from 'next/dynamic';
 
-const Posts = React.lazy(() => import('@/components/Posts/Posts'));
+const Posts = dynamic(() => import('@/components/Posts/Posts'));
 
 export const metadata: Metadata = {
   title: 'Social | Drive Life',
@@ -15,11 +17,23 @@ export const metadata: Metadata = {
   },
 };
 
-const Page = () => {
+const queryClient = new QueryClient();
+
+const Page = async () => {
+  await queryClient.prefetchInfiniteQuery({
+    queryKey: ['latest-posts'],
+    queryFn: ({ pageParam }) => {
+      return fetchPosts(pageParam || 1, false);
+    },
+    initialPageParam: 1,
+  });
+
   return (
     <ProtectedLayout>
       <ObservedQueryProvider>
-        <Posts />
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <Posts />
+        </HydrationBoundary>
       </ObservedQueryProvider>
     </ProtectedLayout>
   );

@@ -1,26 +1,12 @@
 "use client";
 import { IonIcon } from "@ionic/react";
-import { calendarClearOutline, heart, location, shareSocial, ticketOutline } from "ionicons/icons";
-// import { useQuery } from "react-query";
+import { calendarClearOutline, location, shareSocial, ticketOutline } from "ionicons/icons";
 import { fetchEvent, maybeFavoriteEvent } from "@/actions/home-actions";
 import EmblaCarousel, { IGallery } from "../Carousel/Embla";
 import { useUser } from "@/hooks/useUser";
 import { useEffect, useState } from "react";
 import { BiHeart, BiSolidHeart } from "react-icons/bi";
 import { useQuery } from "@tanstack/react-query";
-
-const bannerData = [
-    {
-        title: "Great British Motor Show",
-        date: "17th – 20th August",
-        img: "assets/img/sample/photo/home-slider-1.jpg",
-    },
-    {
-        title: "Great British Motor Show",
-        date: "17th – 20th August",
-        img: "assets/img/sample/photo/home-slider-2.jpg",
-    },
-];
 
 interface ViewEventProps {
     eventId: string;

@@ -1,12 +1,13 @@
 import { Metadata, ResolvingMetadata } from "next";
-
 import {
     dehydrate,
     HydrationBoundary,
     QueryClient,
 } from '@tanstack/react-query';
 import { getGarageById } from "@/actions/garage-actions";
-import { GarageView } from "@/components/Profile/Garage/GarageView";
+import dynamic from "next/dynamic";
+
+const GarageView = dynamic(() => import('@/components/Profile/Garage/GarageView'));
 
 type Props = {
     params: { id: string; };
@@ -45,9 +46,8 @@ export async function generateMetadata(
     };
 }
 
+const queryClient = new QueryClient();
 const Page = async ({ params }: { params: { id: string; }; }) => {
-    const queryClient = new QueryClient();
-
     await queryClient.prefetchQuery({
         queryKey: ['view-garage', params.id],
         queryFn: () => getGarageById(params.id),

@@ -4,9 +4,7 @@ import { memo, useCallback, useEffect, useState } from "react";
 import { getDiscoverData, SearchType } from "@/actions/home-actions";
 import { debounce } from "@/utils/utils";
 import clsx from "clsx";
-import { useRouter, useSearchParams } from "next/navigation";
-import { EventItem, UserItem, VenueItem } from "../Discover/SearchResult";
-import DiscoverPage from "../Discover/Discover";
+import { EventItem, UserItem, VenueItem } from "./SearchResult";
 
 export interface SearchResultEvent {
     id: number;
@@ -80,13 +78,9 @@ const LoadingSkeleton = () => {
     );
 };
 
-const DiscoverAndSearchPage = () => {
+const DiscoverSearchPage = () => {
     const [searchText, setSearchText] = useState("");
     const [searchType, setSearchType] = useState<SearchType>("all");
-    const [searchVisible, setSearchVisible] = useState(false);
-
-    const router = useRouter();
-    const searchParam = useSearchParams();
 
     const { isLoading, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
         queryKey: ["discover-search", searchText, searchType],
@@ -130,19 +124,6 @@ const DiscoverAndSearchPage = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hasNextPage]);
 
-    // on params change
-    useEffect(() => {
-        if (searchParam.get('dtype') && searchParam.get('dtype') === 'search') {
-            setSearchVisible(true);
-        } else {
-            if (searchVisible) {
-                setSearchVisible(false);
-                setSearchText("");
-                setSearchType("all");
-            }
-        }
-    }, [searchParam]);
-
     const handleInputChange = async (search: string) => {
         setSearchText(search);
 
@@ -152,11 +133,6 @@ const DiscoverAndSearchPage = () => {
     };
 
     const debouncedHandleTagInputChange = useCallback(debounce(handleInputChange, 500), []);
-
-    const onSearchClick = () => {
-        setSearchVisible(true);
-        router.push('/discover?dtype=search');
-    };
 
     const renderVenues = () => {
         return (
@@ -286,8 +262,11 @@ const DiscoverAndSearchPage = () => {
             <div className={clsx("extraHeader p-0")}>
                 <div className="search-container">
                     <div className="search-box-top flex items-center gap-2">
-                        <input type="text" placeholder="Search" defaultValue={searchText}
-                            onClick={onSearchClick}
+                        <input
+                            type="text"
+                            autoFocus
+                            placeholder="Search"
+                            defaultValue={searchText}
                             onChange={(e) => debouncedHandleTagInputChange(e.target.value)}
                         />
                     </div>
@@ -296,7 +275,7 @@ const DiscoverAndSearchPage = () => {
                 <ul className="nav nav-tabs lined" role="tablist">
                     <li className="nav-item">
                         <a className="nav-link active" data-bs-toggle="tab" href="#top" role="tab" onClick={() => setSearchType("all")}>
-                            {searchVisible ? 'Top' : 'Featured'}
+                            Top
                         </a>
                     </li>
                     <li className="nav-item">
@@ -317,42 +296,40 @@ const DiscoverAndSearchPage = () => {
                 </ul>
             </div>
 
-            {searchVisible ? (
-                <div className="tab-content pt-16 pb-10">
-                    <div className="tab-pane fade show active" id="top" role="tabpanel">
-                        <div className="section full mt-1">
-                            {renderTopResults()}
-                        </div>
-                    </div>
-
-                    <div className="tab-pane fade" id="events" role="tabpanel">
-                        <div className="section full mt-1">
-                            <ul className="listview image-listview media search-result mb-2">
-                                {renderEvents()}
-                            </ul>
-                        </div>
-                    </div>
-
-
-                    <div className="tab-pane fade" id="venues" role="tabpanel">
-                        <div className="section full mt-1">
-                            <ul className="listview image-listview media search-result mb-2">
-                                {renderVenues()}
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div className="tab-pane fade" id="users" role="tabpanel">
-                        <div className="section full mt-1">
-                            <ul className="listview image-listview media search-result mb-2">
-                                {renderUsersAndVehicles()}
-                            </ul>
-                        </div>
+            <div className="tab-content pt-16 pb-10">
+                <div className="tab-pane fade show active" id="top" role="tabpanel">
+                    <div className="section full mt-1">
+                        {renderTopResults()}
                     </div>
                 </div>
-            ) : <DiscoverPage activeTab={searchType} />}
+
+                <div className="tab-pane fade" id="events" role="tabpanel">
+                    <div className="section full mt-1">
+                        <ul className="listview image-listview media search-result mb-2">
+                            {renderEvents()}
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div className="tab-pane fade" id="venues" role="tabpanel">
+                    <div className="section full mt-1">
+                        <ul className="listview image-listview media search-result mb-2">
+                            {renderVenues()}
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="tab-pane fade" id="users" role="tabpanel">
+                    <div className="section full mt-1">
+                        <ul className="listview image-listview media search-result mb-2">
+                            {renderUsersAndVehicles()}
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
 
-export default memo(DiscoverAndSearchPage);
+export default memo(DiscoverSearchPage);

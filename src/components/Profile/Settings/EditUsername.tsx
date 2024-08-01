@@ -6,12 +6,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { IonIcon } from '@ionic/react';
 import clsx from 'clsx';
 import { closeCircleOutline } from 'ionicons/icons';
-import React from 'react';
+import React, { memo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 
-export const EditUsername: React.FC = () => {
+const EditUsername = () => {
     const { user, isLoggedIn } = useUser();
 
     const { register, handleSubmit, reset, setError, formState: { errors, isDirty, isSubmitting } } = useForm<UsernameFormValues>({
@@ -85,3 +84,5 @@ export const EditUsername: React.FC = () => {
         </div>
     );
 };
+
+export default memo(EditUsername);

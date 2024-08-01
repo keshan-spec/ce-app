@@ -1,5 +1,4 @@
 import { getUserDetails } from "@/actions/auth-actions";
-import ProfileLayout from "@/components/Profile/ProfileLayout";
 import { Metadata, ResolvingMetadata } from "next";
 
 import {
@@ -7,6 +6,10 @@ import {
     HydrationBoundary,
     QueryClient,
 } from '@tanstack/react-query';
+
+import dynamic from "next/dynamic";
+
+const ProfileLayout = dynamic(() => import('@/components/Profile/ProfileLayout'));
 
 type Props = {
     params: { id: string; };
@@ -57,7 +60,6 @@ export async function generateMetadata(
 }
 
 const Page = async ({ params }: { params: { id: string; }; }) => {
-
     await queryClient.prefetchQuery({
         queryKey: ['user', params.id],
         queryFn: () => getUserDetails(params.id),

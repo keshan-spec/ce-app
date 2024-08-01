@@ -1,6 +1,6 @@
 import Link from "next/link";
 import NcImage from "../Image/Image";
-import { SearchResultEvent, SearchResultUser, SearchResultVenue } from "../Home/Home";
+import { SearchResultEvent, SearchResultUser, SearchResultVenue } from "./DiscoverSearchPage";
 import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 
 export const EventItem = ({ item }: { item: SearchResultEvent; }) => (

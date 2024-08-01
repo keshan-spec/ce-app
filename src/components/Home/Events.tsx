@@ -311,7 +311,6 @@ export const Events = memo(() => {
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         initialPageParam: null,
-        enabled: false,
     });
 
     const [activeEvent, setActiveEvent] = useState<string>();
@@ -404,7 +403,7 @@ export const Events = memo(() => {
 export const Venues = memo(() => {
     const { locationFilter, customLocation } = useDiscoverFilters();
 
-    const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
+    const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
         queryKey: ["filtered-venues", locationFilter, customLocation],
         queryFn: ({ pageParam }) => {
             let location;
@@ -440,7 +439,6 @@ export const Venues = memo(() => {
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         initialPageParam: null,
-        enabled: false,
     });
 
     // Infinite scroll

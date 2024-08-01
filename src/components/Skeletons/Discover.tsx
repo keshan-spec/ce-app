@@ -1,5 +1,5 @@
 import React from 'react';
-import { BannerSkeleton } from '../Discover/Discover';
+import { BannerSkeleton } from '../Discover/DiscoverPage';
 import clsx from 'clsx';
 import { CarEventCardSkeleton, carouselOptions } from '../Home/Events';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
