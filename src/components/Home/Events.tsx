@@ -311,6 +311,7 @@ export const Events = memo(() => {
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         initialPageParam: null,
+        enabled: false,
     });
 
     const [activeEvent, setActiveEvent] = useState<string>();
@@ -439,6 +440,7 @@ export const Venues = memo(() => {
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         initialPageParam: null,
+        enabled: false,
     });
 
     // Infinite scroll

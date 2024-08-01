@@ -1,5 +1,4 @@
 'use client';
-import { fetchTaggableEntites } from '@/actions/post-actions';
 import { addUserProfileLinks, removeProfileLink, updateSocialLinks } from '@/actions/profile-actions';
 import { ExternalLinkType } from '@/auth';
 import { useUser } from '@/hooks/useUser';
@@ -12,8 +11,6 @@ import { closeCircleOutline, linkOutline } from 'ionicons/icons';
 import React, { useCallback, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
-
-
 
 const fields = [
     { name: "instagram", label: "Instagram" },
@@ -29,8 +26,6 @@ const AddSocialMediaLinks: React.FC<{ user: { profile_links: SocialMediaLinks; }
         resolver: zodResolver(socialMediaSchema),
         defaultValues: user.profile_links
     });
-    const [custodianSearch, setCustodianSearch] = useState([]);
-
     const onSubmit: SubmitHandler<SocialMediaLinks> = async (data) => {
         try {
             const response = await updateSocialLinks(data);
@@ -40,16 +35,6 @@ const AddSocialMediaLinks: React.FC<{ user: { profile_links: SocialMediaLinks; }
             console.error("Error adding links:", error);
         }
     };
-
-    const onCustodianChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        try {
-            const response = await fetchTaggableEntites(value, [], false);
-            console.log("Custodian search results:", response);
-        } catch (error) {
-            console.log("Error searching for custodian:", error);
-        }
-    }, []);
 
     return (
         <div className="wide-block pb-1 pt-1">
