@@ -4,12 +4,7 @@ import { API_URL } from "./api";
 import { getSessionUser } from "./auth-actions";
 
 export const fetchTrendingEvents = async (page: number, paginate = false, filters?: any) => {
-    let user;
-    try {
-        user = await getSessionUser();
-    } catch (e) {
-        console.error("Error fetching user, session not found");
-    }
+    const user = await getSessionUser();
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-events-trending`, {
         method: "POST",
@@ -25,12 +20,7 @@ export const fetchTrendingEvents = async (page: number, paginate = false, filter
 };
 
 export const fetchTrendingVenues = async (page: number, paginate = false, filters?: any) => {
-    let user;
-    try {
-        user = await getSessionUser();
-    } catch (e) {
-        console.error("Error fetching user, session not found");
-    }
+    const user = await getSessionUser();
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-venues-trending`, {
         method: "POST",
@@ -99,12 +89,7 @@ export const maybeFavoriteEvent = async (eventId: string) => {
 export type SearchType = 'users' | 'events' | 'venues' | 'all';
 
 export const getDiscoverData = async (search: string, type: SearchType, page: number) => {
-    let user;
-    try {
-        user = await getSessionUser();
-    } catch (e) {
-        console.error("Error fetching user no session");
-    }
+    const user = await getSessionUser();
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/discover-search`, {
         cache: "no-cache",
