@@ -35,12 +35,7 @@ export const maybeBookmarkPost = async (postId: number) => {
 };
 
 export const fetchPosts = async (page: number, following_only = false) => {
-    let user;
-    try {
-        user = await getSessionUser();
-    } catch (e) {
-        console.error("Error fetching user");
-    }
+    const user = await getSessionUser();
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-posts?page=${page}&limit=10`, {
         method: "POST",
@@ -70,12 +65,7 @@ export const addComment = async (postId: number, comment: string, comment_id?: s
 };
 
 export const fetchPostComments = async (postId: number) => {
-    let user;
-    try {
-        user = await getSessionUser();
-    } catch (e) {
-        console.error("Error fetching user");
-    }
+    const user = await getSessionUser();
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-post-comments`, {
         method: "POST",
@@ -122,12 +112,7 @@ export const addPost = async (mediaList: ImageMeta, caption?: string, location?:
 };
 
 export const fetchPost = async (postId: string): Promise<Post | null> => {
-    let user;
-    try {
-        user = await getSessionUser();
-    } catch (e) {
-        console.error("Error fetching user");
-    }
+    const user = await getSessionUser();
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-post`, {
         method: "POST",

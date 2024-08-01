@@ -5,12 +5,8 @@ import { getSessionUser } from "./auth-actions";
 import { API_URL } from "./api";
 
 export const verifyScan = async (decodedText: string): Promise<ScanResponse | null> => {
-    let user;
-    try {
-        user = await getSessionUser();
-    } catch (e) {
-        console.error("Error fetching user", e);
-    }
+    const user = await getSessionUser();
+
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/verify-qr-code`, {
         cache: "no-cache",
@@ -26,13 +22,7 @@ export const verifyScan = async (decodedText: string): Promise<ScanResponse | nu
 };
 
 export const linkProfile = async (decodedText: string): Promise<any | null> => {
-    let user;
-
-    try {
-        user = await getSessionUser();
-    } catch (e) {
-        console.error("Error fetching user", e);
-    }
+    const user = await getSessionUser();
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/link-qr-code-entity`, {
         cache: "no-cache",
