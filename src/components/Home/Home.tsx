@@ -294,54 +294,26 @@ const DiscoverAndSearchPage = () => {
                 </div>
 
                 <ul className="nav nav-tabs lined" role="tablist">
-                    {searchVisible ? (
-                        <>
-                            <li className="nav-item">
-                                <a className="nav-link active" data-bs-toggle="tab" href="#top" role="tab" onClick={() => setSearchType("all")}>
-                                    Top
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" data-bs-toggle="tab" href="#events" role="tab" onClick={() => setSearchType("events")}>
-                                    Events
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" data-bs-toggle="tab" href="#venues" role="tab" onClick={() => setSearchType("venues")}>
-                                    Venues
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" data-bs-toggle="tab" href="#users" role="tab" onClick={() => setSearchType("users")}>
-                                    Users & Vehicles
-                                </a>
-                            </li>
-                        </>
-                    ) : (
-                        <>
-                            <li className="nav-item">
-                                <a className="nav-link active" data-bs-toggle="tab" href="#top" role="tab">
-                                    Featured
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" data-bs-toggle="tab" href="#events" role="tab">
-                                    Events
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" data-bs-toggle="tab" href="#venues" role="tab">
-                                    Venues
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" data-bs-toggle="tab" href="#users" role="tab">
-                                    Users & Vehicles
-                                </a>
-                            </li>
-                        </>
-
-                    )}
+                    <li className="nav-item">
+                        <a className="nav-link active" data-bs-toggle="tab" href="#top" role="tab" onClick={() => setSearchType("all")}>
+                            {searchVisible ? 'Top' : 'Featured'}
+                        </a>
+                    </li>
+                    <li className="nav-item">
+                        <a className="nav-link" data-bs-toggle="tab" href="#events" role="tab" onClick={() => setSearchType("events")}>
+                            Events
+                        </a>
+                    </li>
+                    <li className="nav-item">
+                        <a className="nav-link" data-bs-toggle="tab" href="#venues" role="tab" onClick={() => setSearchType("venues")}>
+                            Venues
+                        </a>
+                    </li>
+                    <li className="nav-item">
+                        <a className="nav-link" data-bs-toggle="tab" href="#users" role="tab" onClick={() => setSearchType("users")}>
+                            Users & Vehicles
+                        </a>
+                    </li>
                 </ul>
             </div>
 
@@ -378,7 +350,7 @@ const DiscoverAndSearchPage = () => {
                         </div>
                     </div>
                 </div>
-            ) : <DiscoverPage />}
+            ) : <DiscoverPage activeTab={searchType} />}
         </div>
     );
 };

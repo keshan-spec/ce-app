@@ -5,6 +5,7 @@ import { Events, TrendingEvents, TrendingVenues, Venues } from "../Home/Events";
 import { DiscoverFilters } from "./Filters";
 import { DiscoverFilterProvider } from "@/app/context/DiscoverFilterContext";
 import { memo } from "react";
+import { SearchType } from "@/actions/home-actions";
 
 const bannerData = [
     {
@@ -73,7 +74,11 @@ export const BannerSkeleton = () => {
     );
 };
 
-const DiscoverPage = () => {
+const DiscoverPage = ({
+    activeTab = 'all'
+}: {
+    activeTab: SearchType;
+}) => {
     return (
         <div className="tab-content pt-14 pb-10">
             <div className="tab-pane fade show active" id="top" role="tabpanel">
@@ -89,9 +94,11 @@ const DiscoverPage = () => {
                     <div className="section full mt-1">
                         <DiscoverFilters key={'events'} type="events" />
 
-                        <ul className="listview image-listview media search-result mb-2 !border-none">
-                            <Events />
-                        </ul>
+                        {activeTab === 'events' && (
+                            <ul className="listview image-listview media search-result mb-2 !border-none">
+                                <Events />
+                            </ul>
+                        )}
                     </div>
                 </div>
             </DiscoverFilterProvider>
@@ -101,17 +108,22 @@ const DiscoverPage = () => {
                     <div className="section full mt-1">
                         <DiscoverFilters key={'venues'} type="venues" />
 
-                        <ul className="listview image-listview media search-result mb-2">
-                            <Venues />
-                        </ul>
+                        {activeTab === 'venues' && (
+                            <ul className="listview image-listview media search-result mb-2">
+                                <Venues />
+                            </ul>
+                        )}
+
                     </div>
                 </div>
             </DiscoverFilterProvider>
 
             <div className="tab-pane fade" id="users" role="tabpanel">
                 <div className="section full mt-1">
-                    <ul className="listview image-listview media search-result mb-2">
-                    </ul>
+                    {activeTab === 'users' && (
+                        <ul className="listview image-listview media search-result mb-2">
+                        </ul>
+                    )}
                 </div>
             </div>
         </div>
