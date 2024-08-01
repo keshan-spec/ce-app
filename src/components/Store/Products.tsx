@@ -7,7 +7,7 @@ import React, { memo, useEffect } from 'react';
 import NcImage from '../Image/Image';
 
 const Products = () => {
-    const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+    const { data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
         queryKey: ['store-products'],
         queryFn: ({ pageParam }) => {
             return getStoreProducts(pageParam || 1);
@@ -20,7 +20,7 @@ const Products = () => {
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         retry: 1,
-        initialPageParam: null,
+        initialPageParam: 1,
     });
 
     // Infinite scroll
@@ -52,7 +52,7 @@ const Products = () => {
                         <React.Fragment key={i}>
                             {page.data.map((product: StoreProduct, j: number) => (
                                 <div className="col-6 mb-3" key={j}>
-                                    <div className="card product-card min-h-[310px] flex justify-between">
+                                    <div className="card product-card min-h-[310px] h-full flex justify-between">
                                         <div className="card-body">
                                             {/* <div className="card-img-box" style={{
                                                 backgroundImage: `url('${product.thumb}')`,
@@ -67,6 +67,7 @@ const Products = () => {
                                         </div>
                                         <div className="card-body">
                                             <Link
+                                                prefetch={true}
                                                 href={`/store/product/${product.id}`}
                                                 className="btn btn-sm btn-primary btn-block">
                                                 View

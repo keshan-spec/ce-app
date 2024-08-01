@@ -13,14 +13,16 @@ import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import useLoading from "@/hooks/useLoading";
 
 import { Loader } from "@/components/Loader";
+import SlideInFromRight from "@/shared/SlideInFromRight";
 
 const TopNav = React.lazy(() => import('@/app/layouts/includes/TopNav'));
 const Footer = React.lazy(() => import('@/app/layouts/includes/Footer'));
 
-const ROUTE_TO_SKELETON_MAP = {
-    '/': React.lazy(() => import('@/components/Posts/Posts')),
-    // '/discover': React.lazy(() => import('@/components/Home/Home')),
-};
+// const ROUTE_TO_SKELETON_MAP = {
+//     '/': React.lazy(() => import('@/components/Posts/Posts')),
+//     '/discover': React.lazy(() => import('@/components/Home/Home')),
+//     '/profile': React.lazy(() => import('@/components/Profile/ProfileLayout')),
+// };
 
 const queryClient = getQueryClient();
 
@@ -73,31 +75,31 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
         await queryClient.resetQueries();
     };
 
-    const renderLoadingSkeleton = useCallback(() => {
-        if (loading) {
-            if (nextPage && ROUTE_TO_SKELETON_MAP[nextPage as keyof typeof ROUTE_TO_SKELETON_MAP]) {
-                const Skeleton = ROUTE_TO_SKELETON_MAP[nextPage as keyof typeof ROUTE_TO_SKELETON_MAP];
-                return (
-                    <div id="appCapsule" className={
-                        getAppCapsuleClass()
-                    }>
-                        <Skeleton />
-                        {/* <Loader transulcent /> */}
-                    </div>
-                );
-            }
+    // const renderLoadingSkeleton = useCallback(() => {
+    //     if (loading) {
+    //         if (nextPage && ROUTE_TO_SKELETON_MAP[nextPage as keyof typeof ROUTE_TO_SKELETON_MAP]) {
+    //             const Skeleton = ROUTE_TO_SKELETON_MAP[nextPage as keyof typeof ROUTE_TO_SKELETON_MAP];
+    //             return (
+    //                 <div id="appCapsule" className={
+    //                     getAppCapsuleClass()
+    //                 }>
+    //                     <Skeleton />
+    //                     {/* <Loader transulcent /> */}
+    //                 </div>
+    //             );
+    //         }
 
-            return <Loader transulcent />;
-        }
+    //         return <Loader transulcent />;
+    //     }
 
-        return null;
-    }, [loading, nextPage]);
+    //     return null;
+    // }, [loading, nextPage]);
 
     return (
         <>
             <TopNav />
 
-            {renderLoadingSkeleton()}
+            {/* {renderLoadingSkeleton()} */}
 
             <div className={clsx(
                 `flex justify-between mx-auto w-full lg:px-2.5 px-0`,
@@ -105,7 +107,7 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
             )}>
                 <div id="appCapsule" className={clsx(
                     getAppCapsuleClass(),
-                    loading ? '!-z-10 relative' : '',
+                    // loading ? '!-z-10 relative' : '',
                 )}>
                     <PullToRefresh
                         onRefresh={handleRefresh}

@@ -176,7 +176,7 @@ export const useTopNav = ({
             return router.push('/profile');
         }
 
-        if (pathname.includes('/profile')) {
+        if (pathname === '/profile') {
             return router.push('/');
         }
 

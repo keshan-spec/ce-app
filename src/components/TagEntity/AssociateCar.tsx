@@ -12,7 +12,7 @@ interface AssociatedCarProps {
     index: number;
 }
 
-export const AssociatedCar: React.FC<AssociatedCarProps> = ({
+const AssociatedCar: React.FC<AssociatedCarProps> = ({
     post,
     tags,
     index
@@ -59,3 +59,5 @@ export const AssociatedCar: React.FC<AssociatedCarProps> = ({
         </div>
     );
 };
+
+export default AssociatedCar;

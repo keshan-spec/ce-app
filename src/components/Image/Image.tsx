@@ -33,16 +33,15 @@ const NcImage: FC<NcImageProps> = ({
     },
     ...args
 }) => {
-    let isMounted = false;
-    const _containerRef = useRef(null);
-    let _imageEl: HTMLImageElement | null = null;
-    // const darkmodeState = useAppSelector(selectDarkmodeState);
+    const isMountedRef = useRef(false);
+    const _containerRef = useRef<HTMLDivElement | null>(null);
+    const _imageElRef = useRef<HTMLImageElement | null>(null);
+    const abortControllerRef = useRef<AbortController | null>(null);
 
     const [__src, set__src] = useState("");
     const [imageLoaded, setImageLoaded] = useState(false);
 
-    const _initActions = async () => {
-        // set__src(placeholderImage);
+    const _initActions = () => {
         _checkInViewPort();
     };
 
@@ -65,28 +64,49 @@ const NcImage: FC<NcImageProps> = ({
             _handleImageLoaded();
             return true;
         }
-        _imageEl = new Image();
-        if (_imageEl) {
-            _imageEl.src = src;
-            _imageEl.addEventListener("load", _handleImageLoaded);
+
+        // Abort any previous image load
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
         }
-        return true;
+
+        const abortController = new AbortController();
+        abortControllerRef.current = abortController;
+
+        const imageEl = new Image();
+        _imageElRef.current = imageEl;
+        imageEl.src = src;
+        imageEl.addEventListener("load", _handleImageLoaded);
+        imageEl.addEventListener("error", _handleImageError);
+
+        return () => {
+            // Clean up listeners on component unmount
+            imageEl.removeEventListener("load", _handleImageLoaded);
+            imageEl.removeEventListener("error", _handleImageError);
+        };
     };
 
     const _handleImageLoaded = () => {
-        if (!isMounted) return;
+        if (!isMountedRef.current) return;
         setImageLoaded(true);
         set__src(src);
     };
 
+    const _handleImageError = () => {
+        if (!isMountedRef.current) return;
+        console.error("Image failed to load:", src);
+    };
+
     useEffect(() => {
-        isMounted = true;
+        isMountedRef.current = true;
         _initActions();
         return () => {
-            isMounted = false;
+            isMountedRef.current = false;
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+            }
         };
     }, [src]);
-
 
     const renderLoadingPlaceholder = () => {
         return (
@@ -109,7 +129,6 @@ const NcImage: FC<NcImageProps> = ({
             data-nc-id="NcImage"
             ref={_containerRef}
         >
-            {/* {renderLoadingPlaceholderMemo} */}
             {__src && imageLoaded ? (
                 <img src={__src} className={`w-full ${className}`} alt={alt} {...args} loading="lazy" />
             ) : renderLoadingPlaceholderMemo}

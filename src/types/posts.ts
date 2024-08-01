@@ -16,6 +16,7 @@ export type Post = {
     garage_id: number | null;
     updated_at: string;
     garage: Garage | null;
+    has_tags: boolean;
 };
 
 export interface PostMedia {

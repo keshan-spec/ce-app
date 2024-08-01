@@ -2,7 +2,7 @@
 
 import { useUser } from "@/hooks/useUser";
 import { Post } from "@/types/posts";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useDotButton } from "../Carousel/EmbalDotButtons";
 import useEmblaCarousel from 'embla-carousel-react';
 // import AutoHeight from 'embla-carousel-auto-height';
@@ -20,7 +20,9 @@ import { IonIcon } from "@ionic/react";
 import { carOutline, chatboxOutline, heart, heartOutline } from "ionicons/icons";
 import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 import { TagEntity } from "../TagEntity/TagEntity";
-import { AssociatedCar } from "../TagEntity/AssociateCar";
+// import AssociatedCar from "../TagEntity/AssociateCar";
+
+const AssociatedCar = React.lazy(() => import('@/components/TagEntity/AssociateCar'));
 
 const PostCard = ({ post, muted, setMuted, openComments }: {
     post: Post,
@@ -36,11 +38,12 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
     const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi);
 
     const [isLiked, setIsLiked] = useState<boolean>(post.is_liked);
-    const [bookMarked, setBookMarked] = useState<boolean>(post.is_bookmarked);
     const [tags, setTags] = useState<PostTag[]>([]);
     const [showTags, setShowTags] = useState(false);
 
     const fetchTags = async () => {
+        if (!post || !post.has_tags) return;
+
         const data = await fetchTagsForPost(post.id);
         if (data) {
             setTags(data);
@@ -49,11 +52,13 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
 
     // intersection observer to fetch tags
     useEffect(() => {
+        if (!post || !post.has_tags) return;
+
         const postMainElement = document.getElementById(`PostMain-${post.id}`);
 
         let observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
-                // fetchTags();
+                fetchTags();
             }
         }, { threshold: [0.6] });
 
@@ -254,38 +259,35 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
                                             />
                                         )}
 
-                                        {renderTags(index)}
-
                                         {item.media_type === 'video' && (
-                                            <>
-                                                <div
-                                                    className={`w-full h-full flex items-center justify-center`}
-                                                    style={{ width: item.media_width, height: 'auto' }}
-                                                    id={`video-${item.id}`}
-                                                    onClick={() => videoRef.current?.paused ? videoRef.current?.play() : videoRef.current?.pause()}
-                                                >
-                                                    <video
-                                                        playsInline
-                                                        loop
-                                                        muted={muted}
-                                                        className="object-contain w-full cursor-pointer"
-                                                        ref={videoRef}
-                                                        style={{
-                                                            width: parseInt(item.media_width) || 400,
-                                                            height: maxHeight || 400
-                                                        }}
-                                                        src={item.media_url}
-                                                        width={parseInt(item.media_width) || 400}
-                                                        height={'auto'}
-                                                    />
-                                                    <button className="absolute bottom-3 left-3 text-white hidden group-hover:block p-2 bg-black/40 rounded-full" onClick={() => setMuted(prevMuted => !prevMuted)}>
-                                                        {muted ? <BiVolumeMute /> : <BiVolumeFull />}
-                                                    </button>
-                                                </div>
-                                            </>
+                                            <div
+                                                className={`w-full h-full flex items-center justify-center`}
+                                                style={{ width: item.media_width, height: 'auto' }}
+                                                id={`video-${item.id}`}
+                                                onClick={() => videoRef.current?.paused ? videoRef.current?.play() : videoRef.current?.pause()}
+                                            >
+                                                <video
+                                                    playsInline
+                                                    loop
+                                                    muted={muted}
+                                                    className="object-contain w-full cursor-pointer"
+                                                    ref={videoRef}
+                                                    style={{
+                                                        width: parseInt(item.media_width) || 400,
+                                                        height: maxHeight || 400
+                                                    }}
+                                                    src={item.media_url}
+                                                    width={parseInt(item.media_width) || 400}
+                                                    height={'auto'}
+                                                />
+                                                <button className="absolute bottom-3 left-3 text-white hidden group-hover:block p-2 bg-black/40 rounded-full" onClick={() => setMuted(prevMuted => !prevMuted)}>
+                                                    {muted ? <BiVolumeMute /> : <BiVolumeFull />}
+                                                </button>
+                                            </div>
                                         )}
-                                    </div>
 
+                                        {renderTags(index)}
+                                    </div>
                                 </div>
                             );
                         })}
@@ -318,7 +320,7 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
                 </div>
             </div>
         );
-    }, [post.id, muted, isLiked, selectedIndex, scrollSnaps, bookMarked, showTags, tags]);
+    }, [post.id, muted, isLiked, selectedIndex, scrollSnaps, showTags, tags]);
 
     return (
         <div className="media-post-content relative mb-6 text-black" id={`PostMain-${post.id}`}>
@@ -347,11 +349,7 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
                     {renderLike()}
                 </div>
 
-                <div
-                    className="media-post-comment"
-                    onClick={() => openComments(post.id)}
-                // data-bs-toggle="offcanvas" data-bs-target="#postComments"
-                >
+                <div className="media-post-comment" onClick={() => openComments(post.id)}>
                     <IonIcon icon={chatboxOutline} role="img" className="md hydrated" aria-label="chatbox outline" />
                 </div>
 
