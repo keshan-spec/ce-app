@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 const Feed = dynamic(() => import('@/components/Profile/Sections/Feed'), { ssr: false });
 const Bookmarks = dynamic(() => import('@/components/Profile/Sections/Bookmarks'), { ssr: false });
 const Settings = dynamic(() => import('@/components/Profile/Sections/Settings'), { ssr: false });
-const Garage = dynamic(() => import('@/components/Profile/Garage/Garage'), { ssr: false });
+const Garage = dynamic(() => import('@/components/Profile/Garage/Garage'));
 
 interface TabsProps {
     profileId: string;

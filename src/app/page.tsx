@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import dynamic from 'next/dynamic';
 
 const ProtectedLayout = dynamic(() => import('@/app/(protected)/layout'));
-const Posts = dynamic(() => import('@/components/Posts/Posts'));
+const Posts = dynamic(() => import('@/components/Posts/Posts'), { ssr: false });
 const ObservedQueryProvider = dynamic(() => import('@/app/context/ObservedQuery'));
 
 export const metadata: Metadata = {
