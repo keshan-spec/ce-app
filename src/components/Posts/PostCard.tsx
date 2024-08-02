@@ -1,16 +1,13 @@
 "use client";
-
 import { useUser } from "@/hooks/useUser";
 import { Post } from "@/types/posts";
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDotButton } from "../Carousel/EmbalDotButtons";
 import useEmblaCarousel from 'embla-carousel-react';
 // import AutoHeight from 'embla-carousel-auto-height';
 import { PostTag, fetchTagsForPost, maybeLikePost } from "@/actions/post-actions";
 import { BiMapPin, BiVolumeFull, BiVolumeMute } from "react-icons/bi";
 import clsx from "clsx";
-import { NativeShare } from "../ActionSheets/Share";
-import { DotButton } from "./Posts";
 import { formatPostDate, isValidDate } from "@/utils/dateUtils";
 import Link from "next/link";
 import { useObservedQuery } from "@/app/context/ObservedQuery";
@@ -18,10 +15,13 @@ import { PostActionsSheet } from "./PostActionSheets";
 import { IonIcon } from "@ionic/react";
 import { carOutline, chatboxOutline, heart, heartOutline } from "ionicons/icons";
 import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
-import { TagEntity } from "../TagEntity/TagEntity";
+import dynamic from "next/dynamic";
+import { DotButton } from "@/shared/Carousel";
 
-const AssociatedCar = React.lazy(() => import('@/components/TagEntity/AssociateCar'));
-const NcImage = React.lazy(() => import('@/components/Image/Image'));
+const AssociatedCar = dynamic(() => import('@/components/TagEntity/AssociateCar'), { ssr: false });
+const NcImage = dynamic(() => import('@/components/Image/Image'), { ssr: false });
+const TagEntity = dynamic(() => import('@/components/TagEntity/TagEntity'), { ssr: false });
+const NativeShare = dynamic(() => import('@/components/ActionSheets/Share'), { ssr: false });
 
 const PostCard = ({ post, muted, setMuted, openComments }: {
     post: Post,

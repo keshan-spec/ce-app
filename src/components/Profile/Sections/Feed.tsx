@@ -1,16 +1,18 @@
 import { getUserPosts } from "@/actions/profile-actions";
-import NcImage from "@/components/Image/Image";
 import { Post } from "@/types/posts";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useMemo } from "react";
+
+const NcImage = dynamic(() => import('@/components/Image/Image'), { ssr: false });
 
 interface FeedProps {
     tagged?: boolean;
     profileId: string;
 }
 
-export const Feed: React.FC<FeedProps> = ({
+const Feed: React.FC<FeedProps> = ({
     tagged = false,
     profileId
 }) => {
@@ -166,3 +168,5 @@ export const MiniPostSkeleton = () => {
         </div>
     );
 };
+
+export default Feed;

@@ -9,7 +9,7 @@ interface ScanResultProps {
     callback: (result: null) => void;
 }
 
-export const ScanResult: React.FC<ScanResultProps> = ({
+const ScanResult: React.FC<ScanResultProps> = ({
     result,
     callback
 }) => {
@@ -148,3 +148,5 @@ export const ScanResult: React.FC<ScanResultProps> = ({
         )}
     </>;
 };
+
+export default ScanResult;

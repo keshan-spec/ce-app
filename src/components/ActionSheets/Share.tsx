@@ -2,7 +2,7 @@
 import { BiShareAlt } from 'react-icons/bi';
 import { IonIcon } from '@ionic/react';
 import { logoFacebook, logoTwitter, logoWhatsapp, closeOutline, logoInstagram, copyOutline, shareSocialOutline } from 'ionicons/icons';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 interface ShareProps {
     shareImage: string;
@@ -13,7 +13,7 @@ interface ShareProps {
     id: string | number;
 }
 
-export const NativeShare: React.FC<ShareProps> = ({
+const NativeShare: React.FC<ShareProps> = ({
     shareImage,
     shareTags,
     shareText,
@@ -129,3 +129,5 @@ export const NativeShare: React.FC<ShareProps> = ({
         </div>
     );
 };
+
+export default memo(NativeShare);

@@ -1,14 +1,14 @@
 import { Options } from "@splidejs/splide";
-import { Splide, SplideSlide } from '@splidejs/react-splide';
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { Splide } from '@splidejs/react-splide';
+import { forwardRef, useRef, useState } from "react";
 
 import { useDotButton } from "../Carousel/EmbalDotButtons";
 import useEmblaCarousel from 'embla-carousel-react';
-import { DotButton } from "../Posts/Posts";
 import clsx from "clsx";
 import { BiVolumeFull, BiVolumeMute } from "react-icons/bi";
 import NcImage from "../Image/Image";
 import { PostMedia } from "@/types/posts";
+import { DotButton } from "@/shared/Carousel";
 
 const carouselOptions: Options = {
     perPage: 1,

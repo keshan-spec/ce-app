@@ -11,8 +11,8 @@ import dynamic from "next/dynamic";
 
 // lazy load
 const PostCard = dynamic(() => import('@/components/Posts/PostCard'), { ssr: false });
-const ComentsSection = dynamic(() => import('@/components/Posts/ComentSection'));
-const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'));
+const ComentsSection = dynamic(() => import('@/components/Posts/ComentSection'), { ssr: false });
+const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'), { ssr: false });
 
 const PostClient = ({ postId }: { postId: string; }) => {
     const { data, error, isLoading, isFetching } = useQuery<Post | null, Error>({

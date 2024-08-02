@@ -48,7 +48,7 @@ const createConfig = (props?: Html5QrcodeScannerConfig): Html5QrcodeScannerConfi
     return config;
 };
 
-export const Html5QRScanner: React.FC<Html5QRScannerProps> = ({
+const Html5QRScanner: React.FC<Html5QRScannerProps> = ({
     onScanSuccess,
     handleError,
     startScanning = false,
@@ -227,3 +227,5 @@ export const Html5QRScanner: React.FC<Html5QRScannerProps> = ({
         </div>
     );
 };
+
+export default Html5QRScanner;

@@ -6,15 +6,16 @@ const DiscoverPage = dynamic(() => import("@/components/Discover/DiscoverPage"))
 const queryClient = new QueryClient();
 
 export default async function Page() {
-    await queryClient.prefetchQuery({
-        queryKey: ["trending-events"],
-        queryFn: () => fetchTrendingEvents(1),
-    });
-
-    await queryClient.prefetchQuery({
-        queryKey: ["trending-venues"],
-        queryFn: () => fetchTrendingVenues(1),
-    });
+    await Promise.all([
+        queryClient.prefetchQuery({
+            queryKey: ["trending-events"],
+            queryFn: () => fetchTrendingEvents(1),
+        }),
+        queryClient.prefetchQuery({
+            queryKey: ["trending-venues"],
+            queryFn: () => fetchTrendingVenues(1),
+        }),
+    ]);
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>

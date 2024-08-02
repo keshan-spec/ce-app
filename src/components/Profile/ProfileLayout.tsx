@@ -12,9 +12,10 @@ import React, { memo, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ProfileLinksExternal } from './ProfileLinks';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 
-const Tabs = React.lazy(() => import('@/components/Profile/Tabs'));
-const ProfileEditPanel = React.lazy(() => import('@/components/Profile/Settings/ProfileEditPanel'));
+const Tabs = dynamic(() => import('@/components/Profile/Tabs'), { ssr: false });
+const ProfileEditPanel = dynamic(() => import('@/components/Profile/Settings/ProfileEditPanel'), { ssr: false });
 
 interface ProfileLayoutProps {
     profileId?: string;

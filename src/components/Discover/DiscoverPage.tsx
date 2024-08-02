@@ -1,12 +1,19 @@
 'use client';
-import { BiCaretRight } from "react-icons/bi";
-import { Carousel } from "../Posts/Posts";
 import Link from "next/link";
-import { Events, TrendingEvents, TrendingVenues, Venues } from "../Home/Events";
-import { DiscoverFilters } from "./Filters";
+import { BiCaretRight } from "react-icons/bi";
 import { DiscoverFilterProvider } from "@/app/context/DiscoverFilterContext";
 import { memo, useState } from "react";
 import { SearchType } from "@/actions/home-actions";
+
+import dynamic from "next/dynamic";
+
+const Carousel = dynamic(() => import('@/shared/Carousel'), { ssr: false });
+const Venues = dynamic(() => import('@/components/Home/Cards/Venue'), { ssr: false });
+const Events = dynamic(() => import('@/components/Home/Cards/Events'), { ssr: false });
+const TrendingVenues = dynamic(() => import('@/components/Home/Cards/TrendingVenues'), { ssr: false });
+const TrendingEvents = dynamic(() => import('@/components/Home/Cards/TrendingEvents'), { ssr: false });
+
+const DiscoverFilters = dynamic(() => import('./Filters'), { ssr: false });
 
 const bannerData = [
     {
@@ -124,30 +131,29 @@ const DiscoverPage = () => {
 
                 <DiscoverFilterProvider>
                     <div className="tab-pane fade" id="events" role="tabpanel">
-                        <div className="section full mt-1">
-                            <DiscoverFilters key={'events'} type="events" />
+                        {searchType === 'events' && (
+                            <div className="section full mt-1">
+                                <DiscoverFilters key={'events'} type="events" />
 
-                            {searchType === 'events' && (
                                 <ul className="listview image-listview media search-result mb-2 !border-none">
                                     <Events />
                                 </ul>
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </div>
                 </DiscoverFilterProvider>
 
                 <DiscoverFilterProvider>
                     <div className="tab-pane fade" id="venues" role="tabpanel">
-                        <div className="section full mt-1">
-                            <DiscoverFilters key={'venues'} type="venues" />
+                        {searchType === 'venues' && (
+                            <div className="section full mt-1">
+                                <DiscoverFilters key={'venues'} type="venues" />
 
-                            {searchType === 'venues' && (
                                 <ul className="listview image-listview media search-result mb-2">
                                     <Venues />
                                 </ul>
-                            )}
-
-                        </div>
+                            </div>
+                        )}
                     </div>
                 </DiscoverFilterProvider>
 

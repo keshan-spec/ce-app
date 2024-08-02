@@ -1,11 +1,13 @@
 'use client';
-import { Feed } from './Sections/Feed';
-import { Bookmarks } from './Sections/Bookmarks';
 import { useCallback, useState } from 'react';
-import { Garage } from './Garage/Garage';
-import { Settings } from './Sections/Settings';
 import { IonIcon } from '@ionic/react';
 import { settingsOutline } from 'ionicons/icons';
+import dynamic from 'next/dynamic';
+
+const Feed = dynamic(() => import('@/components/Profile/Sections/Feed'), { ssr: false });
+const Bookmarks = dynamic(() => import('@/components/Profile/Sections/Bookmarks'), { ssr: false });
+const Settings = dynamic(() => import('@/components/Profile/Sections/Settings'), { ssr: false });
+const Garage = dynamic(() => import('@/components/Profile/Garage/Garage'), { ssr: false });
 
 interface TabsProps {
     profileId: string;

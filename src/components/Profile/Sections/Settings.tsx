@@ -1,6 +1,4 @@
-import React from 'react';
-
-export const Settings: React.FC = () => {
+const Settings: React.FC = () => {
     return (
         <div className="fade show" id="settings" role="tabpanel">
             <ul className="listview image-listview text flush transparent pt-1">
@@ -71,3 +69,5 @@ export const Settings: React.FC = () => {
         </div>
     );
 };
+
+export default Settings;

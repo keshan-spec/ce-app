@@ -17,7 +17,6 @@ import clsx from 'clsx';
 import { debounce } from '@/utils/utils';
 import { useQuery } from '@tanstack/react-query';
 import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
-import { TagEntity } from '../TagEntity/TagEntity';
 import PostMediaSlider from './PostMediaSlider';
 import { useEditPost } from '@/app/context/EditPostProvider';
 import { BiLoader } from 'react-icons/bi';
@@ -27,6 +26,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Loader } from '../Loader';
+import TagEntity from '../TagEntity/TagEntity';
 
 const carouselOptions: Options = {
     perPage: 1,

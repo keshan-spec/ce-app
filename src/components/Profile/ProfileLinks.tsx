@@ -8,7 +8,7 @@ import { useState } from "react";
 
 interface ProfileLinksProps {
     profileLinks: ProfileLinks;
-    isOwner: boolean;
+    isOwner?: boolean;
 }
 
 const socialLinks = {
@@ -20,9 +20,8 @@ const socialLinks = {
 
 export const ProfileLinksExternal: React.FC<ProfileLinksProps> = ({
     profileLinks,
-    isOwner
 }) => {
-    const [externalLinks, setExternalLinks] = useState(profileLinks.external_links || []);
+    const externalLinks = profileLinks.external_links || [];
 
     const handleSocialLinkClick = (type: 'instagram' | 'tiktok' | 'facebook' | 'youtube') => {
         if (!profileLinks[type]) return;

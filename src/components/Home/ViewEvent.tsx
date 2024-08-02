@@ -2,17 +2,20 @@
 import { IonIcon } from "@ionic/react";
 import { calendarClearOutline, location, shareSocial, ticketOutline } from "ionicons/icons";
 import { fetchEvent, maybeFavoriteEvent } from "@/actions/home-actions";
-import EmblaCarousel, { IGallery } from "../Carousel/Embla";
+import { IGallery } from "../Carousel/Embla";
 import { useUser } from "@/hooks/useUser";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { BiHeart, BiSolidHeart } from "react-icons/bi";
 import { useQuery } from "@tanstack/react-query";
+import dynamic from "next/dynamic";
 
 interface ViewEventProps {
     eventId: string;
 }
 
-export const ViewEvent: React.FC<ViewEventProps> = ({ eventId }) => {
+const EmblaCarousel = dynamic(() => import('../Carousel/Embla'), { ssr: false });
+
+const ViewEvent: React.FC<ViewEventProps> = ({ eventId }) => {
     const { isLoggedIn } = useUser();
 
     const { data, error, isFetching, isLoading } = useQuery<any, Error>({
@@ -177,7 +180,6 @@ export const ViewEvent: React.FC<ViewEventProps> = ({ eventId }) => {
     );
 };
 
-
 const ViewEventSkeleton = () => {
     return (
         <div>
@@ -249,3 +251,5 @@ const ViewEventSkeleton = () => {
         </div>
     );
 };
+
+export default memo(ViewEvent);

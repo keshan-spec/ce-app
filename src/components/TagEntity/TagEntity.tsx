@@ -1,5 +1,6 @@
 import { Tag } from "@/app/context/CreatePostContext";
 import clsx from "clsx";
+import { memo } from "react";
 
 export interface TagEntityProps extends Tag {
     onClick?: () => void;
@@ -8,7 +9,7 @@ export interface TagEntityProps extends Tag {
     onDragEnd?: () => void;
 }
 
-export const TagEntity = ({
+const TagEntity = ({
     x,
     y,
     label,
@@ -33,3 +34,5 @@ export const TagEntity = ({
         </div>
     );
 };
+
+export default memo(TagEntity);

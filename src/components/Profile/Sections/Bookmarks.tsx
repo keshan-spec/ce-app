@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Bookmarks: React.FC = () => {
+const Bookmarks: React.FC = () => {
     return (
         <div className="tab-pane fade" id="bookmarks" role="tabpanel">
             <ul className="listview image-listview media flush transparent pt-1">
@@ -22,3 +22,5 @@ export const Bookmarks: React.FC = () => {
         </div>
     );
 };
+
+export default Bookmarks;

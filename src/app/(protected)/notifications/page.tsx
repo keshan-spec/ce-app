@@ -3,7 +3,6 @@ import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
-
 const UserNotifications = dynamic(() => import('@/components/Notifications/Notifications'));
 
 export const metadata: Metadata = {

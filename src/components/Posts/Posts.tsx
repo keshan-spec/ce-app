@@ -1,67 +1,18 @@
 'use client';
-
-import PostCardSkeleton from "./PostCardSkeleton";
 import { memo, useMemo, useState } from 'react';
-
-import useEmblaCarousel from 'embla-carousel-react';
-
 import React, {
-    PropsWithChildren,
     useCallback,
 } from 'react';
 
-import { EmblaOptionsType } from 'embla-carousel';
 import { Post } from "@/types/posts";
 import { useObservedQuery } from "@/app/context/ObservedQuery";
 
-import clsx from "clsx";
 import dynamic from "next/dynamic";
 
-// lazy load
 const PostCard = dynamic(() => import('@/components/Posts/PostCard'), { ssr: false });
-const ComentsSection = dynamic(() => import('@/components/Posts/ComentSection'));
-const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'));
-
-
-type DotButtonPropType = PropsWithChildren<
-    React.DetailedHTMLProps<
-        React.ButtonHTMLAttributes<HTMLButtonElement>,
-        HTMLButtonElement
-    >
->;
-
-interface CarouselProps {
-    children: React.ReactNode;
-    settings?: EmblaOptionsType;
-    className?: string;
-}
-
-export const Carousel = ({ children, className, settings = { loop: false } }: CarouselProps) => {
-    const [emblaRef, emblaApi] = useEmblaCarousel(settings);
-
-    return (
-        <div className={clsx(
-            "embla",
-            className
-        )} ref={emblaRef}>
-            <div className="embla__container">
-                {children}
-            </div>
-        </div>
-    );
-};
-
-export const DotButton: React.FC<DotButtonPropType> = (props) => {
-    const { children, ...restProps } = props;
-
-    return (
-        <button type="button" {...restProps}
-            className={`${restProps.className} cursor-pointer`}
-            aria-label="Go to slide">
-            {children}
-        </button>
-    );
-};
+const ComentsSection = dynamic(() => import('@/components/Posts/ComentSection'), { ssr: false });
+const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'), { ssr: false });
+const PostCardSkeleton = dynamic(() => import('./PostCardSkeleton'), { ssr: false });
 
 const Posts = () => {
     const { data, isFetching, setFollowingOnly } = useObservedQuery();
@@ -143,9 +94,7 @@ const Posts = () => {
                 />}
             </SlideInFromBottomToTop>
 
-            <ul className={clsx(
-                "listview flush transparent no-line image-listview max-w-md mx-auto !pt-16",
-            )}>
+            <ul className={"listview flush transparent no-line image-listview max-w-md mx-auto !pt-16"}>
                 <div className="tab-content">
                     <div className="tab-pane fade active show" id="latest-posts" role="tabpanel">
                         {data && data.pages.map((page: any) => (
@@ -159,6 +108,7 @@ const Posts = () => {
                                 />
                             ))
                         ))}
+
                         {isFetching && memoizedSkeleton}
                     </div>
 
@@ -174,6 +124,7 @@ const Posts = () => {
                                 />
                             ))
                         ))}
+
                         {isFetching && memoizedSkeleton}
                     </div>
                 </div>

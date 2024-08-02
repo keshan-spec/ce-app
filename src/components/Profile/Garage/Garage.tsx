@@ -1,17 +1,17 @@
 'use client';
-import { getGarageById, getUserGarage } from "@/actions/garage-actions";
+import { getUserGarage } from "@/actions/garage-actions";
 import { Garage as GarageType } from "@/types/garage";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import Link from "next/link";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
 interface GarageProps {
     profileId: string;
     edit?: boolean;
 }
 
-export const Garage: React.FC<GarageProps> = ({
+const Garage: React.FC<GarageProps> = ({
     profileId,
     edit = false
 }) => {
@@ -121,3 +121,5 @@ export const GarageItemSkeleton: React.FC = () => {
         </>
     );
 };
+
+export default Garage;

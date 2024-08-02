@@ -5,9 +5,11 @@ import { useState } from 'react';
 import { Html5QrcodeError } from 'html5-qrcode/esm/core';
 import { verifyScan } from '@/actions/qr-actions';
 import { Loader } from '../Loader';
-import { Html5QRScanner } from './Html5QRScanner';
-import { ScanResult } from './ScanResult';
 import { ScanResponse } from '@/types/qr-code';
+import dynamic from 'next/dynamic';
+
+const ScanResult = dynamic(() => import('@/components/Scanner/ScanResult'), { ssr: false });
+const Html5QRScanner = dynamic(() => import('@/components/Scanner/Html5QRScanner'), { ssr: false });
 
 interface QRScannerProps {
 }

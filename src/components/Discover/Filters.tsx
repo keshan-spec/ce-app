@@ -1,6 +1,5 @@
 'use client';
 import { DiscoverFilterContextType, useDiscoverFilters } from "@/app/context/DiscoverFilterContext";
-import SlideInFromBottomToTop from "@/shared/SlideIn";
 import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
 import { IonIcon } from "@ionic/react";
 import { DatePicker, NextUIProvider } from "@nextui-org/react";
@@ -9,6 +8,10 @@ import { calendarOutline, caretDownOutline, closeCircle, locationOutline, pieCha
 import { useEffect, useRef, useState } from "react";
 
 import { useJsApiLoader } from '@react-google-maps/api';
+import dynamic from "next/dynamic";
+
+const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'), { ssr: false });
+
 
 export const AutocompleteInput: React.FC<{
     onSelect: (place: google.maps.places.PlaceResult) => void;
@@ -407,7 +410,7 @@ interface DiscoverFiltersProps {
     type: 'events' | 'venues' | 'users';
 }
 
-export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({
+const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({
     defaultLocation,
     type
 }) => {
@@ -617,3 +620,5 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({
     );
 
 };
+
+export default DiscoverFilters;
