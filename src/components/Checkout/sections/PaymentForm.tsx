@@ -312,7 +312,7 @@ const PaymentForm = () => {
     );
 };
 
-const renderCardLogo = memo((brand: string) => {
+const renderCardLogo = (brand: string) => {
     switch (brand) {
         case "visa":
             return <BiLogoVisa size={44} />;
@@ -323,7 +323,7 @@ const renderCardLogo = memo((brand: string) => {
         default:
             return <IonIcon icon={cardOutline} className="text-4xl mx-1" />;
     }
-});
+};
 
 const SavedCard: React.FC<{ method: Stripe.PaymentMethod, onClick: (id: string) => void; selectedCard?: string | null; onDeleted: () => void; }> = (
     { method,

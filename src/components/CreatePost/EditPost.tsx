@@ -1,7 +1,9 @@
 'use client';
-import { EditPostProvider } from '@/app/context/EditPostProvider';
-import { PostEditSharePanel } from './CreatePost';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
+
+const EditPostProvider = dynamic(() => import('@/app/context/EditPostProvider'), { ssr: false });
+const PostEditSharePanel = dynamic(() => import('./CreatePost'), { ssr: false });
 
 interface EditPostProps {
     post_id: string;
@@ -11,6 +13,7 @@ export const EditPost: React.FC<EditPostProps> = ({
     post_id
 }) => {
     const router = useRouter();
+
     const onPostSuccess = () => {
         // Redirect to post detail page
         router.push(`/post/${post_id}`);

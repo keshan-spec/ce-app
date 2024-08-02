@@ -1,10 +1,7 @@
 'use client';
-import QRScanner from '@/components/Scanner/Scanner';
-import { SidePanel } from '@/components/SidePanel';
 import { useCartStore } from '@/hooks/useCartStore';
 import { useTopNav } from '@/hooks/useTopNav';
 import { useUser } from '@/hooks/useUser';
-import PopUp from '@/shared/Dialog';
 import { sendRNMessage } from '@/utils/nativeFeel';
 import { IonIcon } from '@ionic/react';
 import clsx from 'clsx';
@@ -15,13 +12,18 @@ import { memo, useEffect, useMemo, useState } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { getNotificationCount } from "@/actions/notification-actions";
 import useLoading from '@/hooks/useLoading';
+import dynamic from 'next/dynamic';
+
+const SidePanel = dynamic(() => import('@/components/SidePanel'), { ssr: false });
+const QRScanner = dynamic(() => import('@/components/Scanner/Scanner'), { ssr: false });
+const PopUp = dynamic(() => import('@/shared/Dialog'), { ssr: false });
 
 const TopNav = () => {
     const pathname = usePathname();
+
     const { user } = useUser();
     const { totalItems } = useCartStore();
     const [isScanning, setIsScanning] = useState(false);
-
     const { loading, nextPage } = useLoading();
 
     const activePath = useMemo(() => {
@@ -106,7 +108,7 @@ const TopNav = () => {
 
                 {showLogo && (
                     <div className="max-w-36 !mt-5">
-                        <Link prefetch={true} href="/">
+                        <Link href="/">
                             <img src="/assets/img/logo-dark.png" alt="Logo" />
                         </Link>
                     </div>

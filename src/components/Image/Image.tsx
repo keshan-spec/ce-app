@@ -131,9 +131,10 @@ const NcImage: FC<NcImageProps> = ({
         >
             {__src && imageLoaded ? (
                 <NextImage
-                    src={__src} className={`w-full ${className}`}
-                    alt={alt} {...args}
-                    loading="lazy"
+                    src={__src}
+                    className={`w-full ${className}`}
+                    alt={alt}
+                    {...args}
                     width={100}
                     height={imageDimension.height}
                     unoptimized

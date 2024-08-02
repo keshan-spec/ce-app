@@ -2,10 +2,8 @@ import React, { createContext, useState, ReactNode, useContext, useCallback, use
 import Webcam from 'react-webcam';
 import { vibrateDevice } from '@/utils/nativeFeel';
 import { Area } from 'react-easy-crop';
-import { EditMediaPanel, PostEditSharePanel, PostInitialPanel, PostSharePanel, PostTagPanel } from '@/components/CreatePost/CreatePost';
-import { addTagsForPost, fetchPost } from '@/actions/post-actions';
-import { useQuery } from '@tanstack/react-query';
-import { Post } from '@/types/posts';
+import { EditMediaPanel, PostInitialPanel, PostSharePanel, PostTagPanel } from '@/components/CreatePost/CreatePost';
+import { addTagsForPost } from '@/actions/post-actions';
 
 export type ImageMeta = {
     width: number;

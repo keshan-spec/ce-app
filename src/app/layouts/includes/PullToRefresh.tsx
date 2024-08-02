@@ -1,8 +1,11 @@
 'use client';
 import { usePathname } from "next/navigation";
-import PullToRefresh from 'react-simple-pull-to-refresh';
 import { BiLoader } from "react-icons/bi";
 import { getQueryClient } from "../../context/QueryClientProvider";
+
+// import PullToRefresh from 'react-simple-pull-to-refresh';
+import dynamic from "next/dynamic";
+const PullToRefresh = dynamic(() => import('react-simple-pull-to-refresh'), { ssr: false });
 
 const queryClient = getQueryClient();
 

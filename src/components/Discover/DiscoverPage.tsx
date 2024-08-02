@@ -12,7 +12,6 @@ const Venues = dynamic(() => import('@/components/Home/Cards/Venue'), { ssr: fal
 const Events = dynamic(() => import('@/components/Home/Cards/Events'), { ssr: false });
 const TrendingVenues = dynamic(() => import('@/components/Home/Cards/TrendingVenues'), { ssr: false });
 const TrendingEvents = dynamic(() => import('@/components/Home/Cards/TrendingEvents'), { ssr: false });
-
 const DiscoverFilters = dynamic(() => import('./Filters'), { ssr: false });
 
 const bannerData = [

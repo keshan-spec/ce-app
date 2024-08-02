@@ -11,7 +11,6 @@ import clsx from "clsx";
 import { formatPostDate, isValidDate } from "@/utils/dateUtils";
 import Link from "next/link";
 import { useObservedQuery } from "@/app/context/ObservedQuery";
-import { PostActionsSheet } from "./PostActionSheets";
 import { IonIcon } from "@ionic/react";
 import { carOutline, chatboxOutline, heart, heartOutline } from "ionicons/icons";
 import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
@@ -22,6 +21,7 @@ const AssociatedCar = dynamic(() => import('@/components/TagEntity/AssociateCar'
 const NcImage = dynamic(() => import('@/components/Image/Image'), { ssr: false });
 const TagEntity = dynamic(() => import('@/components/TagEntity/TagEntity'), { ssr: false });
 const NativeShare = dynamic(() => import('@/components/ActionSheets/Share'), { ssr: false });
+const PostActionsSheet = dynamic(() => import('./PostActionSheets'), { ssr: false });
 
 const PostCard = ({ post, muted, setMuted, openComments }: {
     post: Post,
@@ -39,6 +39,16 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
     const [isLiked, setIsLiked] = useState<boolean>(post.is_liked);
     const [tags, setTags] = useState<PostTag[]>([]);
     const [showTags, setShowTags] = useState(false);
+
+    const abortControllerRef = useRef<AbortController | null>(null);
+
+    useEffect(() => {
+        return () => {
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+            }
+        };
+    }, []);
 
     const fetchTags = async () => {
         if (!post || !post.has_tags) return;
@@ -227,6 +237,14 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
             return null;
         }
 
+        const handleVideoLoad = (videoElement: HTMLVideoElement) => {
+            if (abortControllerRef.current) {
+                videoElement.src = videoElement.src + `?controller=${abortControllerRef.current}`;
+                videoElement.load();
+            }
+        };
+
+
         return (
             <div className="embla !mb-0" onDoubleClick={onLikePost}>
                 <div className="embla__viewport relative bg-black" ref={emblaRef}>
@@ -277,6 +295,7 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
                                                     src={item.media_url}
                                                     width={parseInt(item.media_width) || 400}
                                                     height={'auto'}
+                                                    onLoadedData={(e) => handleVideoLoad(e.currentTarget)}
                                                 />
                                                 <button className="absolute bottom-3 left-3 text-white hidden group-hover:block p-2 bg-black/40 rounded-full" onClick={() => setMuted(prevMuted => !prevMuted)}>
                                                     {muted ? <BiVolumeMute /> : <BiVolumeFull />}

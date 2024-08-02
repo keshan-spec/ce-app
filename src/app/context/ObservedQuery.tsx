@@ -26,7 +26,7 @@ export const useObservedQuery = (): ObservedQueryContextProps => {
     return useContext(ObservedQueryContext);
 };
 
-export const ObservedQueryProvider = ({ children }: any) => {
+const ObservedQueryProvider = ({ children }: any) => {
     const [followingOnly, setFollowingOnly] = useState(false);
     const key = followingOnly ? 'following-posts' : 'latest-posts';
     const { isLoading, error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
@@ -87,3 +87,5 @@ export const ObservedQueryProvider = ({ children }: any) => {
         </ObservedQueryContext.Provider>
     );
 };
+
+export default ObservedQueryProvider;

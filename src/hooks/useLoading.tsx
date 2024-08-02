@@ -5,14 +5,12 @@ const IMPORTANT_ROUTES = [
     '/discover',
     '/store',
     '/profile',
-    '/profile/edit',
+    '/'
 ];
 
 const useLoading = () => {
     const [loading, setLoading] = useState(false);
     const [nextPage, setNextPage] = useState<string | null>(null);
-
-    const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
@@ -33,9 +31,11 @@ const useLoading = () => {
     //                 // split the href to get the pathname 
     //                 // split by first / to get the pathname
     //                 const pathname = target.pathname;
-    //                 router.prefetch(pathname);
-    //                 setNextPage(pathname);
-    //                 setLoading(true);
+
+    //                 if (IMPORTANT_ROUTES.includes(pathname)) {
+    //                     setNextPage(pathname);
+    //                     setLoading(true);
+    //                 }
     //             }
     //         }
     //     };

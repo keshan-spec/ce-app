@@ -1,12 +1,11 @@
 import { fetchPosts } from "@/actions/post-actions";
-import ProtectedLayout from "./(protected)/layout";
-import { ObservedQueryProvider } from "@/app/context/ObservedQuery";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { Metadata } from "next";
-import React from "react";
 import dynamic from 'next/dynamic';
 
+const ProtectedLayout = dynamic(() => import('@/app/(protected)/layout'));
 const Posts = dynamic(() => import('@/components/Posts/Posts'));
+const ObservedQueryProvider = dynamic(() => import('@/app/context/ObservedQuery'));
 
 export const metadata: Metadata = {
   title: 'Social | Drive Life',

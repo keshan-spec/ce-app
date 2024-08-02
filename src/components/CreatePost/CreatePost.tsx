@@ -565,7 +565,7 @@ const editPostSchema = z.object({
 
 type EditPostData = z.infer<typeof editPostSchema>;
 
-export const PostEditSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess }) => {
+const PostEditSharePanel: React.FC<PostSharePanelProps> = ({ onPostSuccess }) => {
     const errorDiv = useRef<HTMLDivElement>(null);
 
     const { post, loading, error } = useEditPost();
@@ -732,6 +732,8 @@ export const PostEditSharePanel: React.FC<PostSharePanelProps> = ({ onPostSucces
         </>
     );
 };
+
+export default PostEditSharePanel;
 
 interface TagSectionProps {
     title: string;

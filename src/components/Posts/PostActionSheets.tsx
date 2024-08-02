@@ -10,7 +10,7 @@ interface PostActionsProps {
     onDeleteStart?: () => void;
 }
 
-export const PostActionsSheet: React.FC<PostActionsProps> = ({
+const PostActionsSheet: React.FC<PostActionsProps> = ({
     isOwner,
     postId,
     onDeleted,
@@ -82,3 +82,5 @@ export const PostActionsSheet: React.FC<PostActionsProps> = ({
         </>
     );
 };
+
+export default PostActionsSheet;

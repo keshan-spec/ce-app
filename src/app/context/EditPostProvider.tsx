@@ -36,4 +36,6 @@ const useEditPost = () => {
     return context;
 };
 
-export { EditPostContext, EditPostProvider, useEditPost };
+export { EditPostContext, useEditPost };
+
+export default EditPostProvider;
