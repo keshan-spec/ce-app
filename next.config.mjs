@@ -3,9 +3,21 @@ const nextConfig = {
     experimental: {
         serverActions: {
             bodySizeLimit: '20mb',
-            allowedOrigins: ['phpstack-889362-4370795.cloudwaysapps.com']
+            allowedOrigins: [
+                'phpstack-889362-4370795.cloudwaysapps.com',
+                'd3gv6k8qu6wcqs.cloudfront.net',
+                'wordpress-889362-4267074.cloudwaysapps.com',
+            ]
         },
     },
+    images: {
+        domains: [
+            'phpstack-889362-4370795.cloudwaysapps.com',
+            'wordpress-889362-4267074.cloudwaysapps.com',
+            'd3gv6k8qu6wcqs.cloudfront.net',
+        ]
+    }
+
 };
 
 export default nextConfig;

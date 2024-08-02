@@ -1,6 +1,6 @@
 'use client';
 
-import { PostCardSkeleton } from "./PostCardSkeleton";
+import PostCardSkeleton from "./PostCardSkeleton";
 import { memo, useMemo, useState } from 'react';
 
 import useEmblaCarousel from 'embla-carousel-react';
@@ -15,13 +15,13 @@ import { Post } from "@/types/posts";
 import { useObservedQuery } from "@/app/context/ObservedQuery";
 
 import clsx from "clsx";
+import dynamic from "next/dynamic";
 
 // lazy load
-const PostCard = React.lazy(() => import('@/components/Posts/PostCard'));
-const ComentsSection = React.lazy(() => import('@/components/Posts/ComentSection'));
-const SlideInFromBottomToTop = React.lazy(() => import('@/shared/SlideIn'));
+const PostCard = dynamic(() => import('@/components/Posts/PostCard'), { ssr: false });
+const ComentsSection = dynamic(() => import('@/components/Posts/ComentSection'));
+const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'));
 
-import Link from "next/link";
 
 type DotButtonPropType = PropsWithChildren<
     React.DetailedHTMLProps<

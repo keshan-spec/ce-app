@@ -1,19 +1,18 @@
 'use client';
 
-import React, { Suspense, useMemo } from "react";
+import React, { useMemo } from "react";
 import { usePathname } from "next/navigation";
 import PullToRefresh from 'react-simple-pull-to-refresh';
 import clsx from "clsx";
 import { BiLoader } from "react-icons/bi";
 import { getQueryClient } from "../context/QueryClientProvider";
 import { footerLessPaths } from "@/hooks/useTopNav";
-import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import useLoading from "@/hooks/useLoading";
 
-import { Loader } from "@/components/Loader";
+import dynamic from "next/dynamic";
 
-const TopNav = React.lazy(() => import('@/app/layouts/includes/TopNav'));
-const Footer = React.lazy(() => import('@/app/layouts/includes/Footer'));
+const TopNav = dynamic(() => import('@/app/layouts/includes/TopNav'));
+const Footer = dynamic(() => import('@/app/layouts/includes/Footer'));
 
 // const ROUTE_TO_SKELETON_MAP = {
 //     '/': React.lazy(() => import('@/components/Posts/Posts')),
@@ -92,6 +91,7 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
     //     return null;
     // }, [loading, nextPage]);
 
+
     return (
         <>
             <TopNav />
@@ -125,14 +125,12 @@ export default function MainLayout({ children }: { children: React.ReactNode; })
                         }
                     >
                         <>
-                            <Suspense fallback={<Loader />}>
-                                {children}
-                            </Suspense>
+                            {children}
                         </>
                     </PullToRefresh>
                 </div>
-
             </div>
+
             {showFooter() && (
                 <Footer />
             )}

@@ -5,13 +5,14 @@ import { Post } from "@/types/posts";
 import { PostNotFound } from '@/components/Posts/PostNotFound';
 
 import { fetchPost } from "@/actions/post-actions";
-import { PostCardSkeleton } from "@/components/Posts/PostCardSkeleton";
+import PostCardSkeleton from "@/components/Posts/PostCardSkeleton";
 import { useQuery } from "@tanstack/react-query";
+import dynamic from "next/dynamic";
 
 // lazy load
-const PostCard = React.lazy(() => import('@/components/Posts/PostCard'));
-const ComentsSection = React.lazy(() => import('@/components/Posts/ComentSection'));
-const SlideInFromBottomToTop = React.lazy(() => import('@/shared/SlideIn'));
+const PostCard = dynamic(() => import('@/components/Posts/PostCard'), { ssr: false });
+const ComentsSection = dynamic(() => import('@/components/Posts/ComentSection'));
+const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'));
 
 const PostClient = ({ postId }: { postId: string; }) => {
     const { data, error, isLoading, isFetching } = useQuery<Post | null, Error>({

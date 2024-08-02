@@ -1,4 +1,5 @@
-import { PostCardSkeleton } from "../Posts/PostCardSkeleton";
+import PostCardSkeleton from "../Posts/PostCardSkeleton";
+
 
 const HomePageSkeleton: React.FC = () => {
     return (

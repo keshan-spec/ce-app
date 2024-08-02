@@ -1,4 +1,6 @@
-export const PostCardSkeleton: React.FC = () => {
+import { memo } from "react";
+
+const PostCardSkeleton = () => {
     return (
         <div className="max-w-md w-full pt-2">
             <div className="bg-white h-full cursor-pointer">
@@ -24,3 +26,6 @@ export const PostCardSkeleton: React.FC = () => {
         </div>
     );
 };
+
+
+export default memo(PostCardSkeleton);

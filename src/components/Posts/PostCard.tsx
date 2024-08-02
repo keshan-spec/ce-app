@@ -95,25 +95,24 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
         };
     }, []);
 
-    // // when swipe to next slide, pause the video
-    // useEffect(() => {
-    //     const video = videoRef.current;
+    // when swipe to next slide, pause the video
+    useEffect(() => {
+        const video = videoRef.current;
 
-    //     if (!video) return;
+        if (!video) return;
 
-    //     const onUserScroll = (e: any) => {
-    //         // const slidesInView = emblaApi?.slidesInView(); // <-- Pass true to the slidesInView method
-    //         // console.log(slidesInView);
-    //         video.pause();
-    //     };
+        const onUserScroll = (e: any) => {
+            // const slidesInView = emblaApi?.slidesInView(); // <-- Pass true to the slidesInView method
+            // console.log(slidesInView);
+            video.pause();
+        };
 
-    //     emblaApi?.on('select', onUserScroll);
+        emblaApi?.on('select', onUserScroll);
 
-    //     return () => {
-    //         emblaApi?.off('select', onUserScroll);
-    //     };
-    // }, [emblaApi]);
-
+        return () => {
+            emblaApi?.off('select', onUserScroll);
+        };
+    }, [emblaApi]);
 
     const onLikePost = async () => {
         if (!isLoggedIn) {
@@ -433,4 +432,4 @@ const MediaPostDescription = (post: Post) => {
     );
 };
 
-export default memo(PostCard);
+export default PostCard;
