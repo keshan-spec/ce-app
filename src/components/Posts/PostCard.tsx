@@ -16,6 +16,8 @@ import { carOutline, chatboxOutline, heart, heartOutline } from "ionicons/icons"
 import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 import dynamic from "next/dynamic";
 import { DotButton } from "@/shared/Carousel";
+import { useQuery } from "@tanstack/react-query";
+import { useInView } from "react-intersection-observer";
 
 const AssociatedCar = dynamic(() => import('@/components/TagEntity/AssociateCar'), { ssr: false });
 const NcImage = dynamic(() => import('@/components/Image/Image'), { ssr: false });
@@ -29,15 +31,25 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
     setMuted: React.Dispatch<React.SetStateAction<boolean>>;
     openComments: (postId: number) => void;
 }) => {
+    const { ref, inView } = useInView({
+        triggerOnce: true,
+        threshold: 0.1,
+    });
+
     const { isLoggedIn, user } = useUser();
     const { refetch } = useObservedQuery();
+
+    const { data } = useQuery({
+        queryKey: ['tags', post.id],
+        queryFn: () => fetchTags(),
+        enabled: post.has_tags && inView,
+    });
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false },/*[AutoHeight({ delay: 5000, stopOnInteraction: false })]*/);
     const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi);
 
     const [isLiked, setIsLiked] = useState<boolean>(post.is_liked);
-    const [tags, setTags] = useState<PostTag[]>([]);
     const [showTags, setShowTags] = useState(false);
 
     const abortControllerRef = useRef<AbortController | null>(null);
@@ -54,31 +66,8 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
         if (!post || !post.has_tags) return;
 
         const data = await fetchTagsForPost(post.id);
-        if (data) {
-            setTags(data);
-        }
+        return data || [];
     };
-
-    // intersection observer to fetch tags
-    useEffect(() => {
-        if (!post || !post.has_tags) return;
-
-        const postMainElement = document.getElementById(`PostMain-${post.id}`);
-
-        let observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                fetchTags();
-            }
-        }, { threshold: [0.6] });
-
-        if (postMainElement) {
-            observer.observe(postMainElement);
-        }
-
-        return () => {
-            observer.disconnect();
-        };
-    }, []);
 
     useEffect(() => {
         const video = videoRef.current;
@@ -176,7 +165,11 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
     };
 
     const renderTags = (index: number) => {
-        const userTags = tags.filter(tag => tag.type === 'user');
+        if (!data || data.length === 0) {
+            return null;
+        }
+
+        const userTags = data.filter(tag => tag.type === 'user');
         const filteredTags = userTags.filter(tag => tag.media_id === post.media[index].id);
 
         if (filteredTags.length === 0) {
@@ -210,7 +203,11 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
     };
 
     const renderAssociatedCarTags = (index: number) => {
-        const vehicleTags = tags.filter(tag => tag.type === 'car');
+        if (!data || data.length === 0) {
+            return null;
+        }
+
+        const vehicleTags = data.filter(tag => tag.type === 'car');
         const filteredTags = vehicleTags.filter(tag => tag.media_id === post.media[index].id);
 
         if (filteredTags.length === 0) {
@@ -337,10 +334,10 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
                 </div>
             </div>
         );
-    }, [post.id, muted, isLiked, selectedIndex, scrollSnaps, showTags, tags]);
+    }, [post.id, muted, isLiked, selectedIndex, scrollSnaps, showTags, data]);
 
     return (
-        <div className="media-post-content relative mb-6 text-black" id={`PostMain-${post.id}`}>
+        <div className="media-post-content relative mb-6 text-black" id={`PostMain-${post.id}`} ref={ref}>
             <div className="media-post-header">
                 <Link prefetch={false} href={`/profile/${post.user_id}`} passHref>
                     <div className="media-post-avatar border-black border-2" style={{
@@ -397,11 +394,13 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
                     </div>
                 )}
 
-                <AssociatedCar
-                    tags={tags}
-                    post={post}
-                    index={selectedIndex}
-                />
+                {data && (
+                    <AssociatedCar
+                        tags={data}
+                        post={post}
+                        index={selectedIndex}
+                    />
+                )}
             </div>
 
             <span className="media-post-likecount">{post.likes_count ?? 0} likes</span>
