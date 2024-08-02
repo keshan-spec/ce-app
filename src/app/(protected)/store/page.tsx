@@ -23,7 +23,6 @@ export default async function Page() {
         queryKey: ['store-products'],
         queryFn: ({ pageParam }) => getStoreProducts(pageParam || 1),
         initialPageParam: 1,
-        staleTime: 1000 * 60 * 5,
     });
 
     return (

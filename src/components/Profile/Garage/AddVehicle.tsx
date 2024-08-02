@@ -1,5 +1,4 @@
 'use client';
-
 import { IonIcon } from "@ionic/react";
 import { closeCircle, cloudUploadOutline } from "ionicons/icons";
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -117,7 +116,7 @@ interface AddVehicleProps {
     garageId?: string;
 }
 
-export const AddVehicle: React.FC<AddVehicleProps> = ({
+const AddVehicle: React.FC<AddVehicleProps> = ({
     isEditing = false,
     vehicleValues,
     garageId
@@ -460,3 +459,5 @@ export const AddVehicle: React.FC<AddVehicleProps> = ({
         </form>
     );
 };
+
+export default AddVehicle;

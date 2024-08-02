@@ -3,8 +3,11 @@ import { getUserGarage } from "@/actions/garage-actions";
 import { Garage as GarageType } from "@/types/garage";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useMemo } from "react";
+
+const NcImage = dynamic(() => import("@/components/Image/Image"), { ssr: false });
 
 interface GarageProps {
     profileId: string;
@@ -21,7 +24,6 @@ const Garage: React.FC<GarageProps> = ({
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         retry: 1,
-        staleTime: 60 * 1000 * 10,
     });
 
     const garage = useMemo(() => {
@@ -56,7 +58,7 @@ const Garage: React.FC<GarageProps> = ({
                     <li key={garage.id}>
                         <Link prefetch={true} href={edit ? `/garage/edit/${garage.id}` : `/profile/garage/${garage.id}`} className="item">
                             <div className="imageWrapper">
-                                <img src={garage.cover_photo} alt="image" className="max-w-24 mr-3 object-contain h-full w-full" />
+                                <NcImage src={garage.cover_photo} alt="image" className="max-w-24 mr-3 object-contain h-full w-full" />
                             </div>
                             <div className="in">
                                 <div>
@@ -83,7 +85,7 @@ const Garage: React.FC<GarageProps> = ({
                             garage.status === 'deleted' ? "opacity-50" : ""
                         )}>
                             <div className="imageWrapper">
-                                <img src={garage.cover_photo} alt="image" className="max-w-24 mr-3 object-contain h-full" />
+                                <NcImage src={garage.cover_photo} alt="image" className="max-w-24 mr-3 object-contain h-full" />
                             </div>
                             <div className="in">
                                 <div>

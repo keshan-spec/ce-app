@@ -3,10 +3,12 @@ import { useUser } from "@/hooks/useUser";
 import { Garage } from "@/types/garage";
 import { getGarageById } from "@/actions/garage-actions";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { NoAuthWall } from "@/components/Protected/NoAuthWall";
-import { AddVehicle, GarageFormType, vehicleMakes } from "../AddVehicle";
+import { GarageFormType, vehicleMakes } from "../AddVehicle";
 import { useMemo } from "react";
+import dynamic from "next/dynamic";
+
+const AddVehicle = dynamic(() => import('@/components/Profile/Garage/AddVehicle'), { ssr: false });
+const NoAuthWall = dynamic(() => import('@/components/Protected/NoAuthWall'), { ssr: false });
 
 interface EditGarageProps {
     garage_id: string;
@@ -20,7 +22,7 @@ export const EditGarage: React.FC<EditGarageProps> = ({
     garage_id
 }) => {
     const { user, isLoggedIn } = useUser();
-    const { data, error, isLoading, isFetching } = useQuery<Garage | null, Error>({
+    const { data, error, isLoading } = useQuery<Garage | null, Error>({
         queryKey: [`edit-garage`, garage_id],
         queryFn: () => getGarageById(garage_id),
         refetchOnWindowFocus: false,

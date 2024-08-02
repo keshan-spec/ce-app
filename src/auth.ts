@@ -70,35 +70,6 @@ export const {
         signIn: "/auth/login",
     },
     callbacks: {
-        // session: async ({ session, token }) => {
-        //     if (session.user && token?.sub) {
-        //         session.user.id = token?.sub;
-        //         const data = await getUserDetails(token.sub);
-
-        //         if (data && data.user) {
-        //             session.user.first_name = data.user.first_name;
-        //             session.user.last_name = data.user.last_name;
-        //             session.user.username = data.user.username;
-        //             session.user.roles = data.user.roles;
-        //             session.user.profile_image = data.user.profile_image;
-        //             session.user.followers = data.user.followers;
-        //             session.user.following = data.user.following;
-        //             session.user.posts_count = data.user.posts_count;
-        //             session.user.profile_links = data.user.profile_links;
-        //             session.user.email = data.user.email;
-        //             session.user.cover_image = data.user.cover_image;
-        //             session.user.can_update_username = data.user.can_update_username;
-        //             session.user.next_update_username = data.user.next_update_username;
-        //             session.user.last_location = data.user.last_location;
-
-        //             if (data.user.billing_info) {
-        //                 session.user.billing_info = data.user.billing_info;
-        //             }
-        //         }
-        //     }
-
-        //     return session;
-        // },
         session: async ({ session, token }) => {
             if (session.user && token?.sub) {
                 session.user.id = token.sub;

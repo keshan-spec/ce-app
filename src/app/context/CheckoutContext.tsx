@@ -20,7 +20,7 @@ export const useCheckout = () => {
     return context;
 };
 
-export const CheckoutProvider: React.FC<{ children: ReactNode; }> = ({ children }) => {
+const CheckoutProvider: React.FC<{ children: ReactNode; }> = ({ children }) => {
     const { user } = useUser();
 
     const [shippingInfo, setShippingInfo] = useState<UserSchema>({
@@ -76,3 +76,5 @@ export const CheckoutProvider: React.FC<{ children: ReactNode; }> = ({ children 
         </CheckoutContext.Provider>
     );
 };
+
+export default CheckoutProvider;

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
-import { auth } from "@/auth";
+// import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 import "../../public/assets/css/style.css";

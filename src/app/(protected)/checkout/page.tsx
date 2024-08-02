@@ -1,16 +1,18 @@
 "use client";
 import { FIXED_SHIPPING_COST } from "@/actions/api";
-import { CheckoutProvider } from "@/app/context/CheckoutContext";
-import { CheckoutForm } from "@/components/Checkout/Checkout";
 import { useCartStore } from "@/hooks/useCartStore";
 import { convertToSubcurrency } from "@/utils/utils";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
     throw new Error("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set");
 }
+
+const CheckoutProvider = dynamic(() => import("@/app/context/CheckoutContext"), { ssr: false });
+const CheckoutForm = dynamic(() => import("@/components/Checkout/Checkout"), { ssr: false });
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 

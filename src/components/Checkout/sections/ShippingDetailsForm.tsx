@@ -27,7 +27,7 @@ const fields: BillingFieldType[] = [
     }
 ];
 
-export const ShippingForm: React.FC = () => {
+const ShippingForm = () => {
     const { shippingInfo, setShippingInfo, setEditShippingInfo, isShippingInfoValid } = useCheckout();
 
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<UserSchema>({
@@ -119,3 +119,5 @@ export const ShippingForm: React.FC = () => {
         </form>
     );
 };
+
+export default ShippingForm;

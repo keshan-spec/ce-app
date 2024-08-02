@@ -1,7 +1,7 @@
 import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 import { memo } from "react";
 
-export const UserNotFound: React.FC = memo(() => {
+const UserNotFound: React.FC = memo(() => {
     return (
         <div className="flex flex-col items-center justify-center min-h-56 z-20 relative">
             <div className="avatar mt-10 mb-2">
@@ -12,3 +12,5 @@ export const UserNotFound: React.FC = memo(() => {
         </div>
     );
 });
+
+export default UserNotFound;

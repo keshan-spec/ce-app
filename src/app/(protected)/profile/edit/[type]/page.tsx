@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic';
 
-const EditImages = dynamic(() => import('@/components/Profile/Settings/EditImages'));
-const EditProfile = dynamic(() => import('@/components/Profile/Settings/EditProfile'));
-const EditSocialLinks = dynamic(() => import('@/components/Profile/Settings/EditSocialLinks'));
-const EditUsername = dynamic(() => import('@/components/Profile/Settings/EditUsername'));
+const EditImages = dynamic(() => import('@/components/Profile/Settings/EditImages'), { ssr: false });
+const EditProfile = dynamic(() => import('@/components/Profile/Settings/EditProfile'), { ssr: false });
+const EditSocialLinks = dynamic(() => import('@/components/Profile/Settings/EditSocialLinks'), { ssr: false });
+const EditUsername = dynamic(() => import('@/components/Profile/Settings/EditUsername'), { ssr: false });
 
 import { Metadata } from "next";
 

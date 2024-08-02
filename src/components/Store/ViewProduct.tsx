@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { cartOutline } from 'ionicons/icons';
 import React, { useEffect, useRef, useState } from 'react';
 import { BiLoader } from 'react-icons/bi';
+
 import { Options } from "@splidejs/splide";
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
@@ -24,7 +25,7 @@ interface ViewProductProps {
     id: number;
 }
 
-export const ViewProduct: React.FC<ViewProductProps> = ({
+const ViewProduct: React.FC<ViewProductProps> = ({
     id
 }) => {
     const { data, isFetching } = useQuery({
@@ -232,3 +233,5 @@ const ViewProductSkeleton = () => {
         </>
     );
 };
+
+export default ViewProduct;

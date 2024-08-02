@@ -1,10 +1,6 @@
 'use client';
-import { Button } from '@/shared/Button';
 import { useUser } from '@/hooks/useUser';
-import { NoAuthWall } from '../Protected/NoAuthWall';
 import { getUserDetails } from '@/actions/auth-actions';
-import { UserNotFound } from './UserNotFound';
-import { UserProfileSkeleton } from './UserProfileSkeleton';
 import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
 import { maybeFollowUser } from '@/actions/profile-actions';
 import { redirect } from 'next/navigation';
@@ -16,10 +12,13 @@ import dynamic from 'next/dynamic';
 
 const Tabs = dynamic(() => import('@/components/Profile/Tabs'), { ssr: false });
 const ProfileEditPanel = dynamic(() => import('@/components/Profile/Settings/ProfileEditPanel'), { ssr: false });
+const NoAuthWall = dynamic(() => import('@/components/Protected/NoAuthWall'), { ssr: false });
+const UserProfileSkeleton = dynamic(() => import('@/components/Profile/UserProfileSkeleton'), { ssr: false });
+const UserNotFound = dynamic(() => import('@/components/Profile/UserNotFound'), { ssr: false });
 
 interface ProfileLayoutProps {
     profileId?: string;
-    currentUser: boolean;
+    currentUser?: boolean;
 }
 
 const getUser = (profileId: string | undefined) => {
@@ -62,7 +61,7 @@ const getUser = (profileId: string | undefined) => {
 };
 
 const ProfileLayout: React.FC<ProfileLayoutProps> = ({
-    currentUser,
+    currentUser = true,
     profileId
 }) => {
     const { user, isLoggedIn, isFetching, sessionUser, refetch, canEditProfile } = getUser(profileId);
@@ -106,11 +105,11 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({
         }
 
         return (
-            <Button className="w-full profile-link capitalize" onClick={handleFollowClick}>
+            <button className="btn btn-primary btn-block btn-lg w-full profile-link capitalize" onClick={handleFollowClick}>
                 <i className={`${icon} mr-2`}></i> {text}
-            </Button>
+            </button>
         );
-    }, [user]);
+    }, [user, sessionUser, isLoggedIn]);
 
     if (!isLoggedIn && currentUser) {
         return <NoAuthWall redirectTo="/profile" />;

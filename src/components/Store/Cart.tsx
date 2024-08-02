@@ -1,6 +1,5 @@
 'use client';
 import { FIXED_SHIPPING_COST } from '@/actions/api';
-import { cancelPaymentIntent } from '@/actions/store-actions';
 import { useCartStore } from '@/hooks/useCartStore';
 import { StoreQtyButton } from '@/shared/StoreQtyButton';
 import { convertToCurrency } from '@/utils/utils';
@@ -9,17 +8,19 @@ import { closeCircle } from 'ionicons/icons';
 import Link from 'next/link';
 import { useEffect } from 'react';
 
-export const Cart: React.FC = () => {
+const Cart = () => {
     const { cart, removeFromCart, totalItems, totalPrice, updateQty, stripeIntent, clearCart } = useCartStore();
     const isHydrated = true;
 
     useEffect(() => {
         if (cart.length === 0) {
-            if (stripeIntent) {
-                // Cancel the payment intent
-                cancelPaymentIntent(stripeIntent);
-                clearCart();
-            }
+            // if (stripeIntent) {
+            //     // Cancel the payment intent
+            //     cancelPaymentIntent(stripeIntent);
+            //     clearCart();
+            // }
+
+            clearCart();
         }
     }, [cart]);
 
@@ -132,3 +133,5 @@ export const Cart: React.FC = () => {
         </>
     );
 };
+
+export default Cart;

@@ -4,7 +4,7 @@ import PopUp from "./Dialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export const GeneralErrorPopUp: React.FC = () => {
+const GeneralErrorPopUp: React.FC = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [hasError, setError] = useState<boolean>(!!searchParams.get('error') || !!searchParams.get('deeplink'));
@@ -68,3 +68,5 @@ export const GeneralErrorPopUp: React.FC = () => {
         </PopUp>
     );
 };
+
+export default GeneralErrorPopUp;

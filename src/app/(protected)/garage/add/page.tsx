@@ -1,5 +1,7 @@
-import { AddVehicle } from "@/components/Profile/Garage/AddVehicle";
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
+
+const AddVehicle = dynamic(() => import('@/components/Profile/Garage/AddVehicle'), { ssr: false });
 
 export const metadata: Metadata = {
     title: 'Add Vehicle | Drive Life',
@@ -9,7 +11,6 @@ export const metadata: Metadata = {
         siteName: 'Drive Life',
     },
 };
-
 
 const Page = () => {
     return (

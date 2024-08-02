@@ -1,8 +1,8 @@
 'use client';
-
 import {
     FC,
     ImgHTMLAttributes,
+    memo,
     useEffect,
     useMemo,
     useRef,
@@ -10,7 +10,7 @@ import {
 } from "react";
 import checkInViewIntersectionObserver from "@/utils/isInViewPortIntersectionObserver";
 import { BiLoader } from "react-icons/bi";
-
+import { default as NextImage } from "next/image";
 
 export interface NcImageProps extends ImgHTMLAttributes<HTMLImageElement> {
     containerClassName?: string;
@@ -130,10 +130,17 @@ const NcImage: FC<NcImageProps> = ({
             ref={_containerRef}
         >
             {__src && imageLoaded ? (
-                <img src={__src} className={`w-full ${className}`} alt={alt} {...args} loading="lazy" />
+                <NextImage
+                    src={__src} className={`w-full ${className}`}
+                    alt={alt} {...args}
+                    loading="lazy"
+                    width={100}
+                    height={imageDimension.height}
+                    unoptimized
+                />
             ) : renderLoadingPlaceholderMemo}
         </div>
     );
 };
 
-export default NcImage;
+export default memo(NcImage);

@@ -3,6 +3,7 @@ import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query
 import dynamic from "next/dynamic";
 
 const DiscoverPage = dynamic(() => import("@/components/Discover/DiscoverPage"));
+
 const queryClient = new QueryClient();
 
 export default async function Page() {
@@ -16,6 +17,7 @@ export default async function Page() {
             queryFn: () => fetchTrendingVenues(1),
         }),
     ]);
+
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>

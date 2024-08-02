@@ -2,11 +2,12 @@
 import { useCartStore } from '@/hooks/useCartStore';
 import { FIXED_SHIPPING_COST } from '@/actions/api';
 import { useCheckout } from '@/app/context/CheckoutContext';
-import { PaymentForm } from './sections/PaymentForm';
-import { ShippingForm } from './sections/ShippingDetailsForm';
-import SlideInFromBottomToTop from '@/shared/SlideIn';
 import { convertToCurrency } from '@/utils/utils';
+import dynamic from 'next/dynamic';
 
+const PaymentForm = dynamic(() => import('./sections/PaymentForm'), { ssr: false });
+const ShippingForm = dynamic(() => import('./sections/ShippingDetailsForm'), { ssr: false });
+const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'), { ssr: false });
 
 const OrderTotals = () => {
     const { totalPrice } = useCartStore();
@@ -28,7 +29,7 @@ const OrderTotals = () => {
 };
 
 const SelectedShippingDetails = () => {
-    const { shippingInfo, editShippingInfo, setEditShippingInfo, isShippingInfoValid } = useCheckout();
+    const { shippingInfo, editShippingInfo, setEditShippingInfo } = useCheckout();
 
     return (
         <div className="flex flex-col">
@@ -62,7 +63,7 @@ const SelectedShippingDetails = () => {
     );
 };
 
-export const CheckoutForm = () => {
+const CheckoutForm = () => {
     return (
         <div className="flex flex-col">
             <SelectedShippingDetails />
@@ -71,4 +72,6 @@ export const CheckoutForm = () => {
         </div>
     );
 };
+
+export default CheckoutForm;
 

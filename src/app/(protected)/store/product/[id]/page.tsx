@@ -5,8 +5,10 @@ import {
     HydrationBoundary,
     QueryClient,
 } from '@tanstack/react-query';
-import { ViewProduct } from "@/components/Store/ViewProduct";
 import { getStoreProduct } from "@/actions/store-actions";
+import dynamic from "next/dynamic";
+
+const ViewProduct = dynamic(() => import('@/components/Store/ViewProduct'), { ssr: false });
 
 type Props = {
     params: { id: number; };
@@ -53,14 +55,13 @@ export async function generateMetadata(
 const queryClient = new QueryClient();
 
 const Page = async ({ params }: { params: { id: number; }; }) => {
-
     await queryClient.prefetchQuery({
         queryKey: ['view-product', params.id],
         queryFn: () => getStoreProduct(params.id),
     });
 
     return (
-        <div className="relative min-h-[100dvh]">
+        <div className="relative">
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <ViewProduct id={params.id} />
             </HydrationBoundary>

@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-export const UserProfileSkeleton: React.FC = memo(() => {
+const UserProfileSkeleton: React.FC = memo(() => {
     return (
         <>
             <div className="section !p-0 relative bg-gray-300" style={{
@@ -64,3 +64,5 @@ export const UserProfileSkeleton: React.FC = memo(() => {
         </>
     );
 });
+
+export default UserProfileSkeleton;

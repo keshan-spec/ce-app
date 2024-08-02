@@ -15,14 +15,16 @@ export default auth((req) => {
     const isLoggedIn = !!req.auth;
 
     const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-    const isApiWebhookRoute = apiRoutes.includes(nextUrl.pathname);
+    if (isApiAuthRoute) {
+        return NextResponse.next();
+    }
 
-    if (isApiAuthRoute || isApiWebhookRoute) {
+    const isApiWebhookRoute = apiRoutes.includes(nextUrl.pathname);
+    if (isApiWebhookRoute) {
         return NextResponse.next();
     }
 
     const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-
     if (isAuthRoute) {
         if (isLoggedIn) {
             return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));

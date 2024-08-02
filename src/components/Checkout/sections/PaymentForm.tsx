@@ -10,13 +10,13 @@ import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js"
 import clsx from "clsx";
 import { cardOutline, trashBinOutline } from "ionicons/icons";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { BiLoader, BiLogoMastercard, BiLogoVisa } from "react-icons/bi";
 import Stripe from "stripe";
 import { SetupCardForm } from "./SetupCardForm";
 import { Loader } from "@/components/Loader";
 
-export const PaymentForm: React.FC = () => {
+const PaymentForm = () => {
     const { cart, totalPrice, stripeIntent, setStripeIntent } = useCartStore();
 
     const { shippingInfo, isShippingInfoValid } = useCheckout();
@@ -312,7 +312,7 @@ export const PaymentForm: React.FC = () => {
     );
 };
 
-const renderCardLogo = (brand: string) => {
+const renderCardLogo = memo((brand: string) => {
     switch (brand) {
         case "visa":
             return <BiLogoVisa size={44} />;
@@ -323,7 +323,7 @@ const renderCardLogo = (brand: string) => {
         default:
             return <IonIcon icon={cardOutline} className="text-4xl mx-1" />;
     }
-};
+});
 
 const SavedCard: React.FC<{ method: Stripe.PaymentMethod, onClick: (id: string) => void; selectedCard?: string | null; onDeleted: () => void; }> = (
     { method,
@@ -368,3 +368,5 @@ const SavedCard: React.FC<{ method: Stripe.PaymentMethod, onClick: (id: string) 
         </div>
     );
 };
+
+export default PaymentForm;

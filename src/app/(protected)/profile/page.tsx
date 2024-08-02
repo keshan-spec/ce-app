@@ -1,4 +1,3 @@
-import React from "react";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
@@ -13,7 +12,7 @@ export const metadata: Metadata = {
     },
 };
 
-const Page = () => {
+const Page = async () => {
     return (
         <div className="relative min-h-[150dvh]">
             <ProfileLayout currentUser={true} />

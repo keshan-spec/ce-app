@@ -1,14 +1,15 @@
-import { AUTH_LANDING_PAGE, DEFAULT_LOGIN_REDIRECT, LOGIN_PAGE } from "@/routes";
+import { AUTH_LANDING_PAGE, DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { ThemeBtn } from "@/shared/ThemeBtn";
 import { IonIcon } from "@ionic/react";
 import Link from "next/link";
 import { keyOutline } from 'ionicons/icons';
+import { memo } from "react";
 
 interface NoAuthWallProps {
     redirectTo?: string;
 }
 
-export const NoAuthWall: React.FC<NoAuthWallProps> = ({
+const NoAuthWall: React.FC<NoAuthWallProps> = ({
     redirectTo = DEFAULT_LOGIN_REDIRECT
 }) => {
     const encodedCallbackUrl = encodeURIComponent(redirectTo);
@@ -27,3 +28,5 @@ export const NoAuthWall: React.FC<NoAuthWallProps> = ({
         </div>
     );
 };
+
+export default memo(NoAuthWall);
