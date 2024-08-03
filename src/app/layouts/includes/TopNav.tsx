@@ -8,10 +8,9 @@ import clsx from 'clsx';
 import { menuOutline, notifications, chevronBackOutline, cartOutline, qrCodeOutline, searchOutline } from 'ionicons/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { getNotificationCount } from "@/actions/notification-actions";
-import useLoading from '@/hooks/useLoading';
 import dynamic from 'next/dynamic';
 
 const SidePanel = dynamic(() => import('@/components/SidePanel'), { ssr: false });
@@ -24,15 +23,6 @@ const TopNav = () => {
     const { user } = useUser();
     const { totalItems } = useCartStore();
     const [isScanning, setIsScanning] = useState(false);
-    const { loading, nextPage } = useLoading();
-
-    const activePath = useMemo(() => {
-        if (loading && nextPage) {
-            return nextPage;
-        }
-
-        return pathname;
-    }, [pathname, loading, nextPage]);
 
     const { data } = useQuery({
         queryKey: ["notification-count"],
@@ -58,7 +48,7 @@ const TopNav = () => {
         showMenuIcon,
         showHeaderIcons,
         subtitle,
-    } = useTopNav({ pathname: activePath });
+    } = useTopNav({ pathname });
 
     const onHeaderSave = () => {
         // press different submit buttons based on the page
@@ -123,7 +113,7 @@ const TopNav = () => {
 
                 {showHeaderIcons && (
                     <div className="right">
-                        {activePath.includes('/store') || activePath.includes('/cart') ? (
+                        {pathname.includes('/store') || pathname.includes('/cart') ? (
                             <Link prefetch={true} href="/cart" className="headerButton mr-1">
                                 <IonIcon icon={cartOutline} role="img" className="md hydrated" />
                                 {totalItems > 0 && (
@@ -134,7 +124,7 @@ const TopNav = () => {
                             </Link>
                         ) : (
                             <>
-                                {!activePath.includes('/profile') && (
+                                {!pathname.includes('/profile') && (
                                     <button className="headerButton" onClick={() => setIsScanning(true)}>
                                         <IonIcon icon={qrCodeOutline} role="img" className="md hydrated" />
                                     </button>
@@ -142,7 +132,7 @@ const TopNav = () => {
                             </>
                         )}
 
-                        {!activePath.includes('/notifications') && (
+                        {!pathname.includes('/notifications') && (
                             <Link prefetch={true} href="/notifications" className="headerButton relative">
                                 <IonIcon icon={notifications} role="img" className="md hydrated" />
                                 {data && data.count > 0 && (
@@ -153,7 +143,7 @@ const TopNav = () => {
                             </Link>
                         )}
 
-                        {activePath.includes('/profile') && (
+                        {pathname.includes('/profile') && (
                             <Link prefetch={true} href="/search" className="headerButton">
                                 <IonIcon icon={searchOutline} role="img" className="md hydrated" />
                             </Link>
@@ -161,14 +151,14 @@ const TopNav = () => {
                     </div>
                 )}
 
-                {activePath === '/garage' && (
+                {pathname === '/garage' && (
                     <div className="right">
                         <Link prefetch={true} href={'/garage/add'} className='headerButton headerSave'>
                             Add +
                         </Link>
                     </div>
                 )}
-                {(/*pathname.includes('/profile/edit/') || pathname.includes('/garage/edit/') ||*/ activePath.includes('/garage/add')) && (
+                {(/*pathname.includes('/profile/edit/') || pathname.includes('/garage/edit/') ||*/ pathname.includes('/garage/add')) && (
                     <div className="right">
                         <button className='headerButton headerSave' onClick={onHeaderSave}>
                             Save
@@ -177,7 +167,7 @@ const TopNav = () => {
                 )}
             </div>
 
-            {activePath == '/store' && (
+            {pathname == '/store' && (
                 <StoreTabs />
             )}
 

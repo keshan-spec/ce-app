@@ -1,12 +1,14 @@
 import { handleSignOut } from "@/actions/auth-actions";
 import { useUser } from "@/hooks/useUser";
-import { ThemeBtn } from "@/shared/ThemeBtn";
 import Link from "next/link";
 import { IonIcon } from '@ionic/react';
 import { close, cubeOutline, homeOutline } from "ionicons/icons";
 import { memo, useState } from "react";
 import { Loader } from "./Loader";
 import { PLACEHOLDER_PFP, sendRNMessage } from "@/utils/nativeFeel";
+import dynamic from "next/dynamic";
+
+const ThemeBtn = dynamic(() => import('@/shared/ThemeBtn'), { ssr: false });
 
 const SidePanel = () => {
     const { isLoggedIn, user } = useUser();

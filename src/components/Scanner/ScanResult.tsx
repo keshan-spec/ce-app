@@ -1,8 +1,11 @@
 import { linkProfile } from "@/actions/qr-actions";
 import { useUser } from "@/hooks/useUser";
-import { ThemeBtn } from "@/shared/ThemeBtn";
 import { ScanResponse } from "@/types/qr-code";
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+
+const ThemeBtn = dynamic(() => import('@/shared/ThemeBtn'), { ssr: false });
+
 
 interface ScanResultProps {
     result: ScanResponse | null;

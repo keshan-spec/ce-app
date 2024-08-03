@@ -1,11 +1,12 @@
 import clsx from 'clsx';
+import { memo } from 'react';
 
 interface ThemeBtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     loading?: boolean;
     icon?: string;
 }
 
-export const ThemeBtn: React.FC<ThemeBtnProps> = (props) => {
+const ThemeBtn: React.FC<ThemeBtnProps> = (props) => {
     const { onClick, className, children, loading, icon } = props;
 
     return (
@@ -26,3 +27,5 @@ export const ThemeBtn: React.FC<ThemeBtnProps> = (props) => {
         </button>
     );
 };
+
+export default memo(ThemeBtn);

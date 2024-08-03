@@ -1,8 +1,10 @@
-import { ThemeBtn } from '../../shared/ThemeBtn';
 import { CameraDevice, Html5Qrcode, Html5QrcodeScannerState } from 'html5-qrcode';
 import { Html5QrcodeError } from 'html5-qrcode/esm/core';
 import { Html5QrcodeScannerConfig } from 'html5-qrcode/esm/html5-qrcode-scanner';
+import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
+
+const ThemeBtn = dynamic(() => import('@/shared/ThemeBtn'), { ssr: false });
 
 interface Html5QRScannerProps {
     onScanSuccess: (decodedText: string) => void;

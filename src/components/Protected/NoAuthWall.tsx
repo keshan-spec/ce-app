@@ -1,9 +1,11 @@
 import { AUTH_LANDING_PAGE, DEFAULT_LOGIN_REDIRECT } from "@/routes";
-import { ThemeBtn } from "@/shared/ThemeBtn";
 import { IonIcon } from "@ionic/react";
 import Link from "next/link";
 import { keyOutline } from 'ionicons/icons';
 import { memo } from "react";
+import dynamic from "next/dynamic";
+
+const ThemeBtn = dynamic(() => import('@/shared/ThemeBtn'), { ssr: false });
 
 interface NoAuthWallProps {
     redirectTo?: string;
