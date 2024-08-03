@@ -6,16 +6,17 @@ import React, {
 
 import { Post } from "@/types/posts";
 import { useObservedQuery } from "@/app/context/ObservedQuery";
+import { Virtuoso } from 'react-virtuoso';
 
 import dynamic from "next/dynamic";
 
 const PostCard = dynamic(() => import('@/components/Posts/PostCard'), { ssr: false });
 const ComentsSection = dynamic(() => import('@/components/Posts/ComentSection'), { ssr: false });
 const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'), { ssr: false });
-const PostCardSkeleton = dynamic(() => import('./PostCardSkeleton'), { ssr: false });
+const PostCardSkeleton = dynamic(() => import('./PostCardSkeleton'));
 
 const Posts = () => {
-    const { data, isFetching, setFollowingOnly } = useObservedQuery();
+    const { data, isFetching, setFollowingOnly, getMorePosts } = useObservedQuery();
     const [muted, setMuted] = useState(true); // State to track muted state
 
     const [activeSection, setActiveSection] = useState<number | undefined>();
@@ -58,6 +59,37 @@ const Posts = () => {
         </>;
     }, []);
 
+    const posts = data ? data.pages.flatMap((page: any) => page.data) : [];
+
+    const renderPosts = () => {
+        if (!data || (data && !data.pages)) return null;
+
+        if (!isFetching && !posts) return null;
+
+        const totalPosts = data.pages[0].total_pages * data.pages[0].limit;
+
+        return (
+            <Virtuoso
+                totalCount={totalPosts}
+                style={{ height: "100vh", paddingBottom: '2rem' }}
+                data={posts}
+                itemContent={(_, post: Post) => (
+                    <PostCard
+                        key={post.id}
+                        post={post}
+                        muted={muted}
+                        setMuted={setMuted}
+                        openComments={handleOpenComments}
+                    />
+                )}
+                components={{
+                    Footer: () => isFetching ? memoizedSkeleton : null
+                }}
+                endReached={getMorePosts}
+            />
+        );
+    };
+
     return (
         <div className="w-full h-full bg-white">
             <div className="fixed w-full social-tabs !mt-0 z-50">
@@ -97,6 +129,22 @@ const Posts = () => {
             <ul className={"listview flush transparent no-line image-listview max-w-md mx-auto !pt-16"}>
                 <div className="tab-content">
                     <div className="tab-pane fade active show" id="latest-posts" role="tabpanel">
+                        {/* {data && data.pages.map((page: any) => (
+                            page.data.map((post: Post) => (
+                                <PostCard
+                                    key={post.id}
+                                    post={post}
+                                    muted={muted}
+                                    setMuted={setMuted}
+                                    openComments={handleOpenComments}
+                                />
+                            ))
+                        ))} */}
+                        {renderPosts()}
+
+                        {isFetching && memoizedSkeleton}
+                    </div>
+                    {/* <div className="tab-pane fade" id="following-posts" role="tabpanel">
                         {data && data.pages.map((page: any) => (
                             page.data.map((post: Post) => (
                                 <PostCard
@@ -110,23 +158,7 @@ const Posts = () => {
                         ))}
 
                         {isFetching && memoizedSkeleton}
-                    </div>
-
-                    <div className="tab-pane fade" id="following-posts" role="tabpanel">
-                        {data && data.pages.map((page: any) => (
-                            page.data.map((post: Post) => (
-                                <PostCard
-                                    key={post.id}
-                                    post={post}
-                                    muted={muted}
-                                    setMuted={setMuted}
-                                    openComments={handleOpenComments}
-                                />
-                            ))
-                        ))}
-
-                        {isFetching && memoizedSkeleton}
-                    </div>
+                    </div> */}
                 </div>
             </ul>
         </div>

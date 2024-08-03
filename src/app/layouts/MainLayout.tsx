@@ -1,6 +1,6 @@
 'use client';
-import React, { useEffect, useMemo } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import React, { useMemo } from "react";
+import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { footerLessPaths } from "@/hooks/useTopNav";
 import useLoading from "@/hooks/useLoading";
@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 
 const TopNav = dynamic(() => import('@/app/layouts/includes/TopNav'), { ssr: false });
 const Footer = dynamic(() => import('@/app/layouts/includes/Footer'), { ssr: false });
-const PullToRefreshContext = dynamic(() => import('@/app/layouts/includes/PullToRefresh'), { ssr: false });
+const PullToRefreshContext = dynamic(() => import('@/app/layouts/includes/PullToRefresh'));
 
 // Uncomment and use if skeleton loading is needed
 // const ROUTE_TO_SKELETON_MAP = {
@@ -25,15 +25,6 @@ interface MainLayoutProps {
 export default function MainLayout({ children }: MainLayoutProps) {
     const pathname = usePathname();
     const { loading, nextPage } = useLoading();
-
-    const router = useRouter();
-
-    useEffect(() => {
-        // Prefetch the pages
-        router.prefetch('/discover');
-        router.prefetch('/store');
-    }, [router]);
-
 
     const activePath = useMemo(() => loading && nextPage ? nextPage : pathname, [pathname, loading, nextPage]);
 

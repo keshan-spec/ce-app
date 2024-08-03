@@ -1,7 +1,5 @@
 "use client";
 import Image from "next/image";
-import Action from "./Action";
-import CommentPhoto from "./CommentPhoto";
 import clsx from "clsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Notification, NotificationResponse } from "@/types/notifications";
@@ -10,9 +8,14 @@ import Link from "next/link";
 import { useUser } from "@/hooks/useUser";
 import { Loader } from "../Loader";
 import { getUserNotifications, markMultipleNotificationsAsRead } from "@/actions/notification-actions";
-import { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { getQueryClient } from "@/app/context/QueryClientProvider";
 import { maybeFollowUser } from "@/actions/profile-actions";
+import { Virtuoso } from "react-virtuoso";
+import dynamic from "next/dynamic";
+
+const Action = dynamic(() => import('./Action'), { ssr: false });
+const CommentPhoto = dynamic(() => import('./CommentPhoto'), { ssr: false });
 
 const queryClient = getQueryClient();
 
@@ -128,22 +131,47 @@ const UserNotifications = () => {
         );
     };
 
+    const notifications = useMemo(() => {
+        if (!data) return [];
+        return [
+            ...(data.data.recent || []).map(item => ({ ...item, category: 'Recent' })),
+            ...(data.data.last_week || []).map(item => ({ ...item, category: 'Last Week' })),
+            ...(data.data.last_30_days || []).map(item => ({ ...item, category: 'Last 30 Days' }))
+        ];
+    }, [data]);
+
+
     return (
         <div className="w-full listview flush transparent no-line min-h-screen">
             {isFetching && <Loader transulcent />}
+
             {error && <p>Error: {error.message}</p>}
             {(!data && !error && !isFetching) && (
                 <p className="text-center mt-10 text-lg text-gray-500">No notifications yet</p>
             )}
 
-            {(data && data.data.recent.length > 0) && <h1 className="px-3 mt-2 text-sm font-medium">Recent</h1>}
+            <Virtuoso
+                useWindowScroll
+                style={{ height: "100vh", paddingBottom: '2rem' }}
+                data={notifications}
+                itemContent={(index, item) => renderNotifications(item)}
+                components={{
+                    List: React.forwardRef(({ children, ...props }, ref) => (
+                        <div ref={ref} {...props}>
+                            {children}
+                        </div>
+                    )),
+                }}
+            />
+
+            {/* {(data && data.data.recent.length > 0) && <h1 className="px-3 mt-2 text-sm font-medium">Recent</h1>}
             {data && data?.data?.recent?.map((item) => renderNotifications(item))}
 
             {(data && data.data.last_week.length > 0) && <h1 className="px-3 mt-2 text-sm font-medium">Last Week</h1>}
             {data && data?.data?.last_week?.map((item) => renderNotifications(item))}
 
             {(data && data.data.last_30_days.length > 0) && <h1 className="px-3 mt-2 text-sm font-medium">Last 30 Days</h1>}
-            {data && data?.data?.last_30_days?.map((item) => renderNotifications(item))}
+            {data && data?.data?.last_30_days?.map((item) => renderNotifications(item))} */}
         </div>
     );
 };

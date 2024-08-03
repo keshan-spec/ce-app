@@ -10,7 +10,7 @@ import { ProfileLinksExternal } from './ProfileLinks';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
-const Tabs = dynamic(() => import('@/components/Profile/Tabs'), { ssr: false });
+const Tabs = dynamic(() => import('@/components/Profile/Tabs'));
 const ProfileEditPanel = dynamic(() => import('@/components/Profile/Settings/ProfileEditPanel'), { ssr: false });
 const NoAuthWall = dynamic(() => import('@/components/Protected/NoAuthWall'), { ssr: false });
 const UserProfileSkeleton = dynamic(() => import('@/components/Profile/UserProfileSkeleton'), { ssr: false });

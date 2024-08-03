@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { Post } from '../../types/posts';
 import { fetchPosts } from '@/actions/post-actions';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -16,6 +16,7 @@ interface ObservedQueryContextProps {
     refetch: () => Promise<any>;
     followingOnly: boolean;
     setFollowingOnly: (value: boolean) => void;
+    getMorePosts: () => void;
 }
 
 const ObservedQueryContext = createContext<ObservedQueryContextProps>(
@@ -29,6 +30,7 @@ export const useObservedQuery = (): ObservedQueryContextProps => {
 const ObservedQueryProvider = ({ children }: any) => {
     const [followingOnly, setFollowingOnly] = useState(false);
     const key = followingOnly ? 'following-posts' : 'latest-posts';
+
     const { isLoading, error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
         queryKey: [key],
         queryFn: ({ pageParam }) => {
@@ -46,27 +48,33 @@ const ObservedQueryProvider = ({ children }: any) => {
         gcTime: 1000 * 60 * 30,
     });
 
-    // Infinite scroll
-    useEffect(() => {
-        let fetching = false;
-        const onScroll = async (event: any) => {
+    const getMorePosts = useCallback(async () => {
+        if (hasNextPage && !isFetchingNextPage) {
+            await fetchNextPage();
+        }
+    }, [hasNextPage, fetchNextPage]);
 
-            const { scrollHeight, scrollTop, clientHeight } =
-                event.target.scrollingElement;
+    // // Infinite scroll
+    // useEffect(() => {
+    //     let fetching = false;
+    //     const onScroll = async (event: any) => {
 
-            if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.2) {
-                fetching = true;
-                if (hasNextPage) await fetchNextPage();
-                fetching = false;
-            }
-        };
+    //         const { scrollHeight, scrollTop, clientHeight } =
+    //             event.target.scrollingElement;
 
-        document.addEventListener("scroll", onScroll);
-        return () => {
-            document.removeEventListener("scroll", onScroll);
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [hasNextPage]);
+    //         if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.2) {
+    //             fetching = true;
+    //             if (hasNextPage) await fetchNextPage();
+    //             fetching = false;
+    //         }
+    //     };
+
+    //     document.addEventListener("scroll", onScroll);
+    //     return () => {
+    //         document.removeEventListener("scroll", onScroll);
+    //     };
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [hasNextPage]);
 
     const contextValue = {
         data,
@@ -79,6 +87,7 @@ const ObservedQueryProvider = ({ children }: any) => {
         refetch,
         followingOnly,
         setFollowingOnly,
+        getMorePosts,
     };
 
     return (

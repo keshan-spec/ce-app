@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 
 const NcImage = dynamic(() => import("@/components/Image/Image"), { ssr: false });
 
@@ -58,7 +58,14 @@ const Garage: React.FC<GarageProps> = ({
                     <li key={garage.id}>
                         <Link prefetch={true} href={edit ? `/garage/edit/${garage.id}` : `/profile/garage/${garage.id}`} className="item">
                             <div className="imageWrapper">
-                                <NcImage src={garage.cover_photo} alt="image" className="max-w-24 mr-3 object-contain h-full w-full" />
+                                <NcImage
+                                    src={garage.cover_photo} alt="image"
+                                    className="max-w-24 max-h-10 mr-3 object-contain h-full w-full"
+                                    imageDimension={{
+                                        width: 80,
+                                        height: 50,
+                                    }}
+                                />
                             </div>
                             <div className="in">
                                 <div>
@@ -85,7 +92,14 @@ const Garage: React.FC<GarageProps> = ({
                             garage.status === 'deleted' ? "opacity-50" : ""
                         )}>
                             <div className="imageWrapper">
-                                <NcImage src={garage.cover_photo} alt="image" className="max-w-24 mr-3 object-contain h-full" />
+                                <NcImage
+                                    src={garage.cover_photo} alt="image"
+                                    className="max-w-24 max-h-10 mr-3 object-contain h-full w-full"
+                                    imageDimension={{
+                                        width: 80,
+                                        height: 50,
+                                    }}
+                                />
                             </div>
                             <div className="in">
                                 <div>
@@ -105,7 +119,7 @@ const Garage: React.FC<GarageProps> = ({
 
 };
 
-export const GarageItemSkeleton: React.FC = () => {
+export const GarageItemSkeleton: React.FC = memo(() => {
     return (
         <>
             <li>
@@ -122,6 +136,6 @@ export const GarageItemSkeleton: React.FC = () => {
             </li>
         </>
     );
-};
+});
 
 export default Garage;

@@ -7,11 +7,12 @@ import { SearchType } from "@/actions/home-actions";
 
 import dynamic from "next/dynamic";
 
-const Carousel = dynamic(() => import('@/shared/Carousel'), { ssr: false });
+const Carousel = dynamic(() => import('@/shared/Carousel'));
+const TrendingVenues = dynamic(() => import('@/components/Home/Cards/TrendingVenues'));
+const TrendingEvents = dynamic(() => import('@/components/Home/Cards/TrendingEvents'));
+
 const Venues = dynamic(() => import('@/components/Home/Cards/Venue'), { ssr: false });
 const Events = dynamic(() => import('@/components/Home/Cards/Events'), { ssr: false });
-const TrendingVenues = dynamic(() => import('@/components/Home/Cards/TrendingVenues'), { ssr: false });
-const TrendingEvents = dynamic(() => import('@/components/Home/Cards/TrendingEvents'), { ssr: false });
 const DiscoverFilters = dynamic(() => import('./Filters'), { ssr: false });
 
 const bannerData = [
