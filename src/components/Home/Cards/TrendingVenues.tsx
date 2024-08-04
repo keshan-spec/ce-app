@@ -1,12 +1,13 @@
 "use client";
 import { memo, useState } from "react";
-import { fetchTrendingVenues } from "@/actions/home-actions";
 import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
+
 import { CarEventCardSkeleton, carouselOptions, VenueCard } from "../Events";
+import { fetchTrendingVenues } from "@/api-functions/discover";
 
 const ViewEvent = dynamic(() => import('@/components/Home/ViewEvent'), { ssr: false });
 const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'), { ssr: false });

@@ -1,4 +1,4 @@
-import { fetchTrendingEvents, fetchTrendingVenues } from "@/actions/home-actions";
+import { fetchTrendingEvents, fetchTrendingVenues } from "@/api-functions/discover";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 

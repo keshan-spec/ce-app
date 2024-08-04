@@ -1,12 +1,12 @@
 'use client';
-import { getStoreProducts } from '@/actions/store-actions';
+import { getStoreProducts } from '@/api-functions/store';
 import { StoreProduct } from '@/types/store';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import React, { memo, useEffect } from 'react';
 
-const NcImage = dynamic(() => import('@/components/Image/Image'), { ssr: false });
+const NcImage = dynamic(() => import('@/components/Image/Image'));
 
 const Products = () => {
     const { data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({

@@ -26,6 +26,7 @@
     "@tanstack/react-query-devtools": "^5.51.18",
     "@types/react-slick": "^0.23.13",
     "@types/uuid": "^10.0.0",
+    "axios": "^1.7.3",
     "clsx": "^2.1.1",
     "embla-carousel-auto-height": "^8.0.2",
     "embla-carousel-react": "^8.0.2",

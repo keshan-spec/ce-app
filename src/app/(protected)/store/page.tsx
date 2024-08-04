@@ -1,8 +1,8 @@
-import { getStoreProducts } from "@/actions/store-actions";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { Metadata } from "next";
 import React from "react";
 import dynamic from 'next/dynamic';
+import { getStoreProducts } from "@/api-functions/store";
 
 const Products = dynamic(() => import('@/components/Store/Products'));
 const UserOrders = dynamic(() => import('@/components/Store/UserOrders'));

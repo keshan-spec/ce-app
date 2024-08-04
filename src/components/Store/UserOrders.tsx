@@ -1,11 +1,12 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
-import { getUserOrders } from '@/actions/store-actions';
+
 import { UserOrderData } from '@/types/store';
 import { formatPostDate } from '@/utils/dateUtils';
 import clsx from 'clsx';
 import { FIXED_SHIPPING_COST } from '@/actions/api';
 import { memo } from 'react';
+import { getUserOrders } from '@/api-functions/store';
 
 const UserOrders = () => {
     const { data, isFetching } = useQuery({
@@ -15,7 +16,6 @@ const UserOrders = () => {
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         retryOnMount: false,
-        staleTime: 60 * 1000,
     });
 
     if (isFetching) return <div>Loading...</div>;

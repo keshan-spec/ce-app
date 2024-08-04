@@ -14,6 +14,10 @@ export default auth((req) => {
 
     const isLoggedIn = !!req.auth;
 
+    if (nextUrl.pathname.startsWith('/api/')) {
+        return NextResponse.next();
+    }
+
     const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
     if (isApiAuthRoute) {
         return NextResponse.next();
@@ -65,6 +69,6 @@ export const config = {
     matcher: [
         '/((?!.*\\..*|_next|api/auth/session).*)',
         '/',
-        '/(api|trpc)(.*)'
+        '/(api|trpc)(.*)',
     ],
 };

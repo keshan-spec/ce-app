@@ -3,7 +3,7 @@ import { CarEventCard, CarEventCardSkeleton } from "../Events";
 import { useDiscoverFilters } from "@/app/context/DiscoverFilterContext";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { memo, useEffect, useState } from "react";
-import { fetchTrendingEvents } from "@/actions/home-actions";
+import { fetchTrendingEvents } from "@/api-functions/discover";
 
 const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'), { ssr: false });
 const ViewEvent = dynamic(() => import('@/components/Home/ViewEvent'), { ssr: false });

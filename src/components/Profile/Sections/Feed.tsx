@@ -1,4 +1,4 @@
-import { getUserPosts } from "@/actions/profile-actions";
+import { getUserPosts } from "@/api-functions/posts";
 import { Post } from "@/types/posts";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
@@ -21,8 +21,7 @@ const Feed: React.FC<FeedProps> = ({
     const { error, data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
         queryKey: [key, profileId],
         queryFn: ({ pageParam }) => {
-            if (tagged) return getUserPosts(profileId, pageParam || 1, true);
-            return getUserPosts(profileId, pageParam || 1);
+            return getUserPosts(profileId, pageParam || 1, tagged);
         },
         getNextPageParam: (lastPage: { total_pages: number, data: Post[], limit: number; }, pages: any[]) => {
             const maxPages = Math.ceil(lastPage.total_pages / lastPage.limit);

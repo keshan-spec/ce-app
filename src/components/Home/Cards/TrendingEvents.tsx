@@ -7,7 +7,7 @@ import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
 
 import { CarEventCard, CarEventCardSkeleton, carouselOptions } from "../Events";
-import { fetchTrendingEvents } from "@/actions/home-actions";
+import { fetchTrendingEvents } from "@/api-functions/discover";
 
 const ViewEvent = dynamic(() => import('@/components/Home/ViewEvent'), { ssr: false });
 const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'), { ssr: false });

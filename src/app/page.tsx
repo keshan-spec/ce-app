@@ -1,7 +1,8 @@
-import { fetchPosts } from "@/actions/post-actions";
+import { fetchPosts } from '@/api-functions/posts';
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { Metadata } from "next";
 import dynamic from 'next/dynamic';
+
 
 const ProtectedLayout = dynamic(() => import('@/app/(protected)/layout'));
 const Posts = dynamic(() => import('@/components/Posts/Posts'), { ssr: false });
