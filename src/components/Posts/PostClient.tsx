@@ -4,10 +4,10 @@ import React, { memo, useCallback, useState } from "react";
 import { Post } from "@/types/posts";
 import { PostNotFound } from '@/components/Posts/PostNotFound';
 
-import { fetchPost } from "@/actions/post-actions";
 import PostCardSkeleton from "@/components/Posts/PostCardSkeleton";
 import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
+import { fetchPost } from "@/api-functions/posts";
 
 // lazy load
 const PostCard = dynamic(() => import('@/components/Posts/PostCard'), { ssr: false });

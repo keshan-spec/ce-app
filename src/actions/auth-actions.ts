@@ -10,6 +10,20 @@ import { auth } from "@/auth";
 import { NewUser } from "@/app/context/SignUpProvider";
 import { UserDetailsForm } from "@/zod-schemas/profile";
 
+interface SignUpResponse {
+    success: boolean;
+    message: string;
+    code?: 'email_exists' | 'password_invalid' | 'username_exists' | 'uncaught_exception' | 'registration_failed';
+    username?: string;
+    user_id?: number;
+}
+
+export type UserResponse = {
+    success: boolean;
+    error?: string;
+    user?: AuthUser;
+};
+
 export const getSessionUser = async () => {
     const session = await auth();
 
@@ -37,27 +51,6 @@ export const verifyUser = async (credentials: { email: string; password: string;
         console.error(error);
         return error;
     }
-};
-
-export type UserResponse = {
-    success: boolean;
-    error?: string;
-    user?: AuthUser;
-};
-
-export const getUserDetails = async (id: string): Promise<UserResponse | null> => {
-    let url = `${API_URL}/wp-json/app/v1/get-user-profile`;
-    let response = await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user_id: id }),
-    });
-
-    const data = await response.json();
-    if (response.status !== 200) throw new Error(data.message);
-    return data;
 };
 
 export const handleSignOut = async () => {
@@ -91,14 +84,6 @@ export const handleSignIn = async (credentials: {
         throw error;
     }
 };
-
-interface SignUpResponse {
-    success: boolean;
-    message: string;
-    code?: 'email_exists' | 'password_invalid' | 'username_exists' | 'uncaught_exception' | 'registration_failed';
-    username?: string;
-    user_id?: number;
-}
 
 export const handleSignUp = async (user: NewUser): Promise<SignUpResponse | null> => {
     try {
@@ -154,7 +139,6 @@ export const updatePassword = async (new_password: string, old_password: string)
     const data = await response.json();
     return data;
 };
-
 
 export const updateUserDetails = async (details: UserDetailsForm, email_changed: boolean) => {
     const user = await getSessionUser();

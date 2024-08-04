@@ -1,5 +1,5 @@
 'use client';
-import { getUserGarage } from "@/actions/garage-actions";
+import { getUserGarage } from "@/api-functions/garage";
 import { Garage as GarageType } from "@/types/garage";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";

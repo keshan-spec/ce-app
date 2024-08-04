@@ -1,6 +1,5 @@
 'use client';
 import { useUser } from '@/hooks/useUser';
-import { getUserDetails } from '@/actions/auth-actions';
 import { PLACEHOLDER_PFP } from '@/utils/nativeFeel';
 import { maybeFollowUser } from '@/actions/profile-actions';
 import { redirect } from 'next/navigation';
@@ -9,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ProfileLinksExternal } from './ProfileLinks';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { getUserDetails } from '@/api-functions/auth';
 
 const Tabs = dynamic(() => import('@/components/Profile/Tabs'));
 const ProfileEditPanel = dynamic(() => import('@/components/Profile/Settings/ProfileEditPanel'), { ssr: false });

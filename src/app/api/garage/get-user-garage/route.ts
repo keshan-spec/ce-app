@@ -4,22 +4,20 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
     try {
         const params = request.nextUrl.searchParams;
-        const page = params.get("page") || 1;
-        const limit = params.get("limit") || 10;
         const profileId = params.get("profileId");
-        const tagged = params.get("tagged") === 'true';
 
-        const response = await fetch(`${API_URL}/wp-json/app/v1/get-user-posts`, {
+        const response = await fetch(`${API_URL}/wp-json/app/v1/get-user-garage`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ user_id: profileId, page, limit, tagged }),
+            body: JSON.stringify({ user_id: profileId }),
         });
 
         const data = await response.json();
+
         if (response.status !== 200) {
-            return NextResponse.json([]);
+            throw new Error('Failed to fetch users posts');
         }
 
         return NextResponse.json(data);

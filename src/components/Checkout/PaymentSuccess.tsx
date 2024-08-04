@@ -1,17 +1,16 @@
 "use client";
 
-import { getOrder, getPaymentIntent } from "@/actions/store-actions";
 import { useCartStore } from "@/hooks/useCartStore";
 import { IonIcon } from "@ionic/react";
-import { refreshCircle, reload } from "ionicons/icons";
-import { useEffect, useState } from "react";
-import Stripe from "stripe";
+import { reload } from "ionicons/icons";
+import { useEffect } from "react";
 import { Loader } from "../Loader";
 import { useQuery } from "@tanstack/react-query";
 import { convertToCurrency } from "@/utils/utils";
 import { OrderData } from "@/types/store";
 import { formatEventDate } from "@/utils/dateUtils";
 import clsx from "clsx";
+import { getOrder } from "@/api-functions/store";
 interface PaymentSuccessProps {
     payment_intent: string;
     order_id: number;
@@ -37,16 +36,6 @@ export const PaymentSuccess: React.FC<PaymentSuccessProps> = ({
         }
 
         clearCart();
-        // setLoading(true);
-        // getPaymentIntent(payment_intent)
-        //     .then((data) => {
-        //         setStripeData(data);
-        //         setLoading(false);
-        //     })
-        //     .catch((error) => {
-        //         setError(error.message);
-        //         setLoading(false);
-        //     });
     }, [payment_intent]);
 
     return (

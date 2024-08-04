@@ -1,7 +1,7 @@
 // https://authjs.dev/getting-started/deployment
 import NextAuth, { DefaultSession } from "next-auth";
 import authConfig from "@/auth.config";
-import { getUserDetails } from "@/actions/auth-actions";
+import { getUserDetails } from "./api-functions/auth";
 
 export type ExternalLinkType = {
     id: string;

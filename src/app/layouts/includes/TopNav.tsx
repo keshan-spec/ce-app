@@ -10,8 +10,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { memo, useEffect, useState } from 'react';
 import { useQuery } from "@tanstack/react-query";
-import { getNotificationCount } from "@/actions/notification-actions";
 import dynamic from 'next/dynamic';
+import { getNotificationCount } from '@/api-functions/notfications';
 
 const SidePanel = dynamic(() => import('@/components/SidePanel'), { ssr: false });
 const QRScanner = dynamic(() => import('@/components/Scanner/Scanner'), { ssr: false });

@@ -4,20 +4,9 @@ import { API_URL } from "./api";
 import { getSessionUser } from "./auth-actions";
 import { UserSchema } from "@/zod-schemas/billing-form";
 
-export const getUserPosts = async (profileId: string, page: number, tagged = false, limit = 10) => {
-    const response = await fetch(`${API_URL}/wp-json/app/v1/get-user-posts`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user_id: profileId, page, limit, tagged }),
-    });
-
-    const data = await response.json();
-    if (response.status !== 200) {
-        return [];
-    }
-    return data;
+export type ProfileLinks = {
+    type: 'instagram' | 'tiktok' | 'facebook' | 'email' | 'youtube' | 'custodian' | 'mivia' | 'external_links';
+    link: string | { label: string; url: string; };
 };
 
 export const maybeFollowUser = async (profileId: string | number) => {
@@ -34,11 +23,6 @@ export const maybeFollowUser = async (profileId: string | number) => {
 
     const data = await response.json();
     return data;
-};
-
-export type ProfileLinks = {
-    type: 'instagram' | 'tiktok' | 'facebook' | 'email' | 'youtube' | 'custodian' | 'mivia' | 'external_links';
-    link: string | { label: string; url: string; };
 };
 
 export const addUserProfileLinks = async ({

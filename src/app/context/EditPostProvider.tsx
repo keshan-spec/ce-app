@@ -1,5 +1,5 @@
 'use client';
-import { fetchPost } from "@/actions/post-actions";
+import { fetchPost } from "@/api-functions/posts";
 import { Post } from "@/types/posts";
 import { useQuery } from "@tanstack/react-query";
 import { createContext, ReactNode, useContext } from "react";

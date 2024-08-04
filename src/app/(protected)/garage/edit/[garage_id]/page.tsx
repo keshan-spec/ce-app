@@ -1,4 +1,4 @@
-import { getGarageById } from '@/actions/garage-actions';
+import { getGarageById } from '@/api-functions/garage';
 import { EditGarage } from '@/components/Profile/Garage/EditGarage/EditGarage';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { Metadata } from 'next';

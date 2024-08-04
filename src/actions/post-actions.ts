@@ -4,6 +4,38 @@ import { API_URL } from "./api";
 import { getSessionUser } from "./auth-actions";
 import { ImageMeta, Tag } from "@/app/context/CreatePostContext";
 
+export interface PostTag {
+    entity_id: number;
+    type: 'car' | 'user' | 'event';
+    x: number;
+    y: number;
+    entity: {
+        id: number;
+        name: string;
+        image?: string;
+        owner?: {
+            id: number;
+            name: string;
+        };
+    };
+    media_id: number;
+}
+
+export interface PartialPostTag {
+    entity_id: number;
+    type: 'car' | 'user' | 'event';
+    name: string;
+    image: string;
+}
+
+interface UpdateTagRequest {
+    post_id: string | number;
+    new_tags: PostTag[];
+    removed_tags: number[];
+    caption?: string;
+    location?: string;
+}
+
 export const maybeLikePost = async (postId: number) => {
     const user = await getSessionUser();
 
@@ -34,21 +66,6 @@ export const maybeBookmarkPost = async (postId: number) => {
     return data;
 };
 
-export const fetchPosts = async (page: number, following_only = false) => {
-    const user = await getSessionUser();
-
-    const response = await fetch(`${API_URL}/wp-json/app/v1/get-posts?page=${page}&limit=10`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user_id: user?.id, following_only }),
-    });
-
-    const data = await response.json();
-    return data;
-};
-
 export const addComment = async (postId: number, comment: string, comment_id?: string) => {
     const user = await getSessionUser();
 
@@ -58,21 +75,6 @@ export const addComment = async (postId: number, comment: string, comment_id?: s
             "Content-Type": "application/json",
         },
         body: JSON.stringify({ user_id: user?.id, post_id: postId, comment, parent_id: comment_id }),
-    });
-
-    const data = await response.json();
-    return data;
-};
-
-export const fetchPostComments = async (postId: number) => {
-    const user = await getSessionUser();
-
-    const response = await fetch(`${API_URL}/wp-json/app/v1/get-post-comments`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user_id: user?.id, post_id: postId }),
     });
 
     const data = await response.json();
@@ -109,26 +111,6 @@ export const addPost = async (mediaList: ImageMeta, caption?: string, location?:
         console.log(e.message);
         throw new Error("Failed to create post");
     }
-};
-
-export const fetchPost = async (postId: string): Promise<Post | null> => {
-    const user = await getSessionUser();
-
-    const response = await fetch(`${API_URL}/wp-json/app/v1/get-post`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user_id: user?.id, post_id: postId }),
-    });
-
-    const data = await response.json();
-
-    if (response.status !== 200) {
-        return null;
-    }
-
-    return data;
 };
 
 export const deletePost = async (postId: number) => {
@@ -208,30 +190,28 @@ export const addTagsForPost = async (postId: number, tags: Tag[]) => {
     }
 };
 
-export interface PostTag {
-    entity_id: number;
-    type: 'car' | 'user' | 'event';
-    x: number;
-    y: number;
-    entity: {
-        id: number;
-        name: string;
-        image?: string;
-        owner?: {
-            id: number;
-            name: string;
-        };
-    };
-    media_id: number;
-}
+export const updatePost = async (data: UpdateTagRequest) => {
+    try {
+        const user = await getSessionUser();
+        if (!user || !user.id) throw new Error("User session expired. Please login again.");
 
-export interface PartialPostTag {
-    entity_id: number;
-    type: 'car' | 'user' | 'event';
-    name: string;
-    image: string;
-}
+        const response = await fetch(`${API_URL}/wp-json/app/v1/edit-post`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user_id: user.id, ...data }),
+        });
 
+        const res = await response.json();
+        return res;
+    } catch (e: any) {
+        console.error("Error updating post", e.message);
+        return null;
+    }
+};
+
+// GET
 export const fetchTagsForPost = async (postId: number): Promise<PostTag[] | null> => {
     try {
         const response = await fetch(`${API_URL}/wp-json/app/v1/get-post-tags`, {
@@ -251,7 +231,6 @@ export const fetchTagsForPost = async (postId: number): Promise<PostTag[] | null
         return [];
     }
 };
-
 
 export const fetchTaggableEntites = async (search: string, tagged_entities: Partial<Tag>[], is_vehicle?: boolean): Promise<any> => {
     const url = is_vehicle ? `${API_URL}/wp-json/app/v1/get-taggable-vehicles` : `${API_URL}/wp-json/app/v1/get-taggable-entities`;
@@ -278,34 +257,5 @@ export const fetchTaggableEntites = async (search: string, tagged_entities: Part
         return data;
     } catch (e: any) {
         return [];
-    }
-};
-
-interface UpdateTagRequest {
-    post_id: string | number;
-    new_tags: PostTag[];
-    removed_tags: number[];
-    caption?: string;
-    location?: string;
-}
-
-export const updatePost = async (data: UpdateTagRequest) => {
-    try {
-        const user = await getSessionUser();
-        if (!user || !user.id) throw new Error("User session expired. Please login again.");
-
-        const response = await fetch(`${API_URL}/wp-json/app/v1/edit-post`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ user_id: user.id, ...data }),
-        });
-
-        const res = await response.json();
-        return res;
-    } catch (e: any) {
-        console.error("Error updating post", e.message);
-        return null;
     }
 };

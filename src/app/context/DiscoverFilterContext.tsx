@@ -2,7 +2,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { useQuery } from "@tanstack/react-query";
-import { getEventCategories } from "@/actions/home-actions";
+import { getEventCategories } from "@/api-functions/discover";
 
 export interface DiscoverFilterContextType {
     dateFilter: 'anytime' | 'today' | 'tomorrow' | 'this-week' | 'this-weekend' | 'custom';

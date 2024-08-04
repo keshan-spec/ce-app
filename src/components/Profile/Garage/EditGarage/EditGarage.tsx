@@ -1,11 +1,11 @@
 'use client';
 import { useUser } from "@/hooks/useUser";
 import { Garage } from "@/types/garage";
-import { getGarageById } from "@/actions/garage-actions";
 import { useQuery } from "@tanstack/react-query";
 import { GarageFormType, vehicleMakes } from "../AddVehicle";
 import { useMemo } from "react";
 import dynamic from "next/dynamic";
+import { getGarageById } from "@/api-functions/garage";
 
 const AddVehicle = dynamic(() => import('@/components/Profile/Garage/AddVehicle'), { ssr: false });
 const NoAuthWall = dynamic(() => import('@/components/Protected/NoAuthWall'), { ssr: false });

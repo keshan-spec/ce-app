@@ -1,3 +1,7 @@
+import { BASE_URL } from "@/actions/api";
+import { getSessionUser } from "@/actions/auth-actions";
+import { Post } from "@/types/posts";
+
 export const fetchPosts = async (page: number, following_only = false) => {
     const query = new URLSearchParams({
         page: page.toString(),
@@ -42,6 +46,36 @@ export const getUserPosts = async (profileId: string, page: number, tagged = fal
 
     if (response.status !== 200) {
         return [];
+    }
+
+    return data;
+};
+
+export const fetchPostComments = async (postId: number) => {
+    const response = await fetch(`/api/get-post-comments?post_id=${postId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    const data = await response.json();
+    return data;
+};
+
+export const fetchPost = async (postId: string): Promise<Post | null> => {
+    const user = await getSessionUser();
+    const response = await fetch(`${BASE_URL}/api/get-post?post_id=${postId}${user ? `&user_id=${user.id}` : ""}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    const data = await response.json();
+
+    if (response.status !== 200) {
+        return null;
     }
 
     return data;

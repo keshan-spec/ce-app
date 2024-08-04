@@ -1,8 +1,5 @@
-import { fetchPosts } from '@/api-functions/posts';
-import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { Metadata } from "next";
 import dynamic from 'next/dynamic';
-
 
 const ProtectedLayout = dynamic(() => import('@/app/(protected)/layout'));
 const Posts = dynamic(() => import('@/components/Posts/Posts'), { ssr: false });
@@ -17,23 +14,11 @@ export const metadata: Metadata = {
   },
 };
 
-const queryClient = new QueryClient();
-
 const Page = async () => {
-  await queryClient.prefetchInfiniteQuery({
-    queryKey: ['latest-posts'],
-    queryFn: ({ pageParam }) => {
-      return fetchPosts(pageParam || 1, false);
-    },
-    initialPageParam: 1,
-  });
-
   return (
     <ProtectedLayout>
       <ObservedQueryProvider>
-        <HydrationBoundary state={dehydrate(queryClient)}>
-          <Posts />
-        </HydrationBoundary>
+        <Posts />
       </ObservedQueryProvider>
     </ProtectedLayout>
   );

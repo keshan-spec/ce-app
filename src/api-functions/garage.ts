@@ -1,12 +1,11 @@
 import { Garage } from "@/types/garage";
 
 export const getGarageById = async (garageId: string): Promise<Garage | null> => {
-    const response = await fetch(`/api/garage/get-garage?id=${garageId}`, {
+    const response = await fetch(`/api/garage/get-garage?garageId=${garageId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ garage_id: garageId }),
     });
 
     const data = await response.json();
@@ -17,13 +16,13 @@ export const getGarageById = async (garageId: string): Promise<Garage | null> =>
 };
 
 export const getUserGarage = async (profileId: string) => {
-    const response = await fetch(`/api/garage/get-user-garage`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user_id: profileId }),
-    });
+    const response = await fetch(`/api/garage/get-user-garage?profileId=${profileId}`,
+        {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
 
     const data = await response.json();
     if (response.status !== 200) {
@@ -33,12 +32,18 @@ export const getUserGarage = async (profileId: string) => {
 };
 
 export const getGaragePosts = async (garageId: string, tagged: boolean, page: number, limit = 10,) => {
-    const response = await fetch(`/api/garage/get-posts`, {
+    const query = new URLSearchParams({
+        garageId,
+        tagged: tagged.toString(),
+        page: page.toString(),
+        limit: limit.toString(),
+    });
+
+    const response = await fetch(`/api/garage/get-posts?${query}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ garage_id: garageId, page, limit, tagged }),
     });
 
     const data = await response.json();

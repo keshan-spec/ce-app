@@ -7,12 +7,13 @@ import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 import Link from "next/link";
 import { useUser } from "@/hooks/useUser";
 import { Loader } from "../Loader";
-import { getUserNotifications, markMultipleNotificationsAsRead } from "@/actions/notification-actions";
+import { markMultipleNotificationsAsRead } from "@/actions/notification-actions";
 import React, { useEffect, useMemo } from "react";
 import { getQueryClient } from "@/app/context/QueryClientProvider";
 import { maybeFollowUser } from "@/actions/profile-actions";
 import { Virtuoso } from "react-virtuoso";
 import dynamic from "next/dynamic";
+import { getUserNotifications } from "@/api-functions/notfications";
 
 const Action = dynamic(() => import('./Action'), { ssr: false });
 const CommentPhoto = dynamic(() => import('./CommentPhoto'), { ssr: false });

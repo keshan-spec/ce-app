@@ -1,5 +1,4 @@
 'use client';
-import { getStoreProduct } from '@/actions/store-actions';
 import { useCartStore } from '@/hooks/useCartStore';
 import { StoreQtyButton } from '@/shared/StoreQtyButton';
 import { ProductVariationTypes } from '@/types/store';
@@ -12,6 +11,7 @@ import { BiLoader } from 'react-icons/bi';
 import { Options } from "@splidejs/splide";
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
+import { getStoreProduct } from '@/api-functions/store';
 
 const carouselOptions: Options = {
     perPage: 1,

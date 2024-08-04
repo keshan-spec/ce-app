@@ -3,40 +3,6 @@
 import { API_URL } from "./api";
 import { getSessionUser } from "./auth-actions";
 
-export const fetchTrendingEvents = async (page: number, paginate = false, filters?: any) => {
-    const user = await getSessionUser();
-
-    const response = await fetch(`${API_URL}/wp-json/app/v1/get-events-trending`, {
-        method: "POST",
-        cache: "force-cache",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user_id: user?.id, page, per_page: 10, paginate, filters }),
-    });
-
-
-    const data = await response.json();
-    return data;
-};
-
-export const fetchTrendingVenues = async (page: number, paginate = false, filters?: any) => {
-    const user = await getSessionUser();
-
-    const response = await fetch(`${API_URL}/wp-json/app/v1/get-venues-trending`, {
-        method: "POST",
-        cache: "force-cache",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user_id: user?.id, page, per_page: 10, paginate, filters }),
-    });
-
-
-    const data = await response.json();
-    return data;
-};
-
 export const fetchEvent = async (eventId: string) => {
     let user;
     try {
@@ -100,16 +66,6 @@ export const getDiscoverData = async (search: string, type: SearchType, page: nu
             "Content-Type": "application/json",
         },
         body: JSON.stringify({ search, user_id: user?.id, page, type, per_page: 10 }),
-    });
-
-    const data = await response.json();
-    return data;
-};
-
-export const getEventCategories = async () => {
-    const response = await fetch(`${API_URL}/wp-json/app/v1/get-event-categories`, {
-        method: "GET",
-        cache: "force-cache",
     });
 
     const data = await response.json();

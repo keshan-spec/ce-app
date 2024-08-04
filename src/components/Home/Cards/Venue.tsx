@@ -1,10 +1,10 @@
-import { fetchTrendingVenues } from "@/actions/home-actions";
 import { useDiscoverFilters } from "@/app/context/DiscoverFilterContext";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { memo, useEffect, useState } from "react";
 
 import dynamic from "next/dynamic";
 import { CarEventCardSkeleton, VenueCard } from "../Events";
+import { fetchTrendingVenues } from "@/api-functions/discover";
 
 const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'), { ssr: false });
 const ViewEvent = dynamic(() => import('@/components/Home/ViewEvent'), { ssr: false });

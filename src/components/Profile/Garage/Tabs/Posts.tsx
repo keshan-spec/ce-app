@@ -1,11 +1,11 @@
 'use client';
-import { getGaragePosts } from '@/actions/garage-actions';
 import NcImage from '@/components/Image/Image';
 import { Post } from '@/types/posts';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import React, { useEffect, useMemo } from 'react';
 import { MiniPostSkeleton } from '../../Sections/Feed';
+import { getGaragePosts } from '@/api-functions/garage';
 
 interface GaragePostsProps {
     garageId: string;
@@ -33,8 +33,6 @@ export const GaragePostsTab: React.FC<GaragePostsProps> = ({
         retry: 1,
         initialPageParam: null,
     });
-
-    console.log(data);
 
     // Infinite scroll
     useEffect(() => {

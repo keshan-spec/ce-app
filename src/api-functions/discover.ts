@@ -43,3 +43,13 @@ export const fetchTrendingVenues = async (page: number, paginate = false, filter
     const data = await response.json();
     return data;
 };
+
+export const getEventCategories = async () => {
+    const response = await fetch(`/api/discover/get-event-categories`, {
+        method: "GET",
+        cache: "force-cache",
+    });
+
+    const data = await response.json();
+    return data;
+};

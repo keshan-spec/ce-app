@@ -1,4 +1,4 @@
-import { fetchPost } from "@/actions/post-actions";
+import { fetchPost } from "@/api-functions/posts";
 import { EditPost } from "@/components/CreatePost/EditPost";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 

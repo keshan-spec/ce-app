@@ -1,5 +1,4 @@
 'use client';
-import { getGarageById } from "@/actions/garage-actions";
 import { useUser } from "@/hooks/useUser";
 import { Garage } from "@/types/garage";
 import { useQuery } from "@tanstack/react-query";
@@ -9,6 +8,7 @@ import { MiniPostSkeleton } from "../Sections/Feed";
 import { PLACEHOLDER_PFP, sendRNMessage } from "@/utils/nativeFeel";
 import { isValidDate } from "@/utils/dateUtils";
 import { memo } from "react";
+import { getGarageById } from "@/api-functions/garage";
 
 interface GarageViewProps {
     garageId: string;

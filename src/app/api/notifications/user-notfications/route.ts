@@ -1,29 +1,27 @@
 import { API_URL } from '@/actions/api';
+import { getSessionUser } from '@/actions/auth-actions';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
     try {
-        const params = request.nextUrl.searchParams;
-        const garageId = params.get("garageId");
+        const user = await getSessionUser();
+        if (!user) {
+            throw new Error('Session user not found');
+        }
 
-        const response = await fetch(`${API_URL}/wp-json/app/v1/get-garage`, {
+        const response = await fetch(`${API_URL}/wp-json/app/v1/get-notifications`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ garage_id: garageId }),
+            body: JSON.stringify({ user_id: user.id }),
         });
 
         const data = await response.json();
-
-        if (response.status !== 200) {
-            throw new Error('Failed to fetch users posts');
-        }
-
         return NextResponse.json(data);
     } catch (error: any) {
         return NextResponse.json({
-            error: error.message || 'Failed to fetch users posts',
+            error: 'Failed to fetch notification count',
         }, {
             status: 500,
         });

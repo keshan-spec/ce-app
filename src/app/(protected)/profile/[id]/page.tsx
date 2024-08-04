@@ -1,4 +1,4 @@
-import { getUserDetails } from "@/actions/auth-actions";
+// import { getUserDetails } from "@/actions/auth-actions";
 import { Metadata, ResolvingMetadata } from "next";
 
 import {
@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-query';
 
 import dynamic from "next/dynamic";
+import { getUserDetails } from "@/api-functions/auth";
 
 const ProfileLayout = dynamic(() => import('@/components/Profile/ProfileLayout'));
 

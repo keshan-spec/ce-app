@@ -1,5 +1,5 @@
 'use client';
-import { addComment, fetchPostComments, fetchTaggableEntites, maybeLikeComment } from "@/actions/post-actions";
+import { addComment, fetchTaggableEntites, maybeLikeComment } from "@/actions/post-actions";
 import { useUser } from "@/hooks/useUser";
 import { formatPostDate } from "@/utils/dateUtils";
 import { useQuery } from "@tanstack/react-query";
@@ -11,6 +11,7 @@ import { BiLoader } from "react-icons/bi";
 import { PLACEHOLDER_PFP } from "@/utils/nativeFeel";
 import { debounce } from "@/utils/utils";
 import { TComment } from "@/types/comments";
+import { fetchPostComments } from "@/api-functions/posts";
 
 interface ComentsSectionProps {
     postId: number;
@@ -29,7 +30,6 @@ const ComentsSection: React.FC<ComentsSectionProps> = ({
         retry: 0,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
-        // keepPreviousData: true,
     });
 
     const [replyingTo, setReplyingTo] = useState<TComment | null>(null);
