@@ -1,9 +1,9 @@
 'use client';
 import React, { useMemo } from "react";
 import { usePathname } from "next/navigation";
-import clsx from "clsx";
 import { footerLessPaths } from "@/hooks/useTopNav";
 import dynamic from "next/dynamic";
+import { PageProvider } from "../context/PageProvider";
 
 const TopNav = dynamic(() => import('@/app/layouts/includes/TopNav'));
 const Footer = dynamic(() => import('@/app/layouts/includes/Footer'));
@@ -17,35 +17,15 @@ export default function MainLayout({ children }: MainLayoutProps) {
     const pathname = usePathname();
     const showFooter = useMemo(() => !footerLessPaths.some((path) => pathname.includes(path)), [pathname]);
 
-    const appCapsuleClass = useMemo(() => {
-        switch (pathname) {
-            case '/':
-                return 'social';
-            case '/discover':
-            case '/search':
-                return 'extra-header-active';
-            case '/store':
-                return 'store';
-            default:
-                return '';
-        }
-    }, [pathname]);
-
     return (
-        <>
+        <PageProvider>
             <TopNav />
 
-            <div className={clsx(
-                'flex justify-between mx-auto w-full lg:px-2.5 px-0',
-                pathname === '/' && 'max-w-[1140px]',
-            )}>
-                <div id="appCapsule" className={clsx(appCapsuleClass)}>
-                    <PullToRefreshContext>
-                        {children}
-                    </PullToRefreshContext>
-                </div>
-            </div>
+            <PullToRefreshContext>
+                {children}
+            </PullToRefreshContext>
+
             {showFooter && <Footer />}
-        </>
+        </PageProvider>
     );
 }
