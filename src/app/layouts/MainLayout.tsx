@@ -5,8 +5,8 @@ import clsx from "clsx";
 import { footerLessPaths } from "@/hooks/useTopNav";
 import dynamic from "next/dynamic";
 
-const TopNav = dynamic(() => import('@/app/layouts/includes/TopNav'));
-const Footer = dynamic(() => import('@/app/layouts/includes/Footer'));
+const TopNav = dynamic(() => import('@/app/layouts/includes/TopNav'), { ssr: false });
+const Footer = dynamic(() => import('@/app/layouts/includes/Footer'), { ssr: false });
 const PullToRefreshContext = dynamic(() => import('@/app/layouts/includes/PullToRefresh'));
 
 interface MainLayoutProps {

@@ -2,11 +2,11 @@ import { STORE_API_URL } from '@/actions/api';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
-    try {
-        const params = request.nextUrl.searchParams;
-        const page = params.get("page") || 1;
-        const limit = params.get("limit") || 10;
+    const params = request.nextUrl.searchParams;
+    const page = params.get("page") || 1;
+    const limit = params.get("limit") || 10;
 
+    try {
         const response = await fetch(`${STORE_API_URL}/wp-json/app/v1/get-products`, {
             method: "POST",
             headers: {

@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
+import { Suspense } from "react";
 
-const DiscoverPage = dynamic(() => import("@/components/Discover/DiscoverPage"));
+const DiscoverPage = dynamic(() => import("@/components/Discover/DiscoverPage"), { ssr: false });
 
 export default async function Page() {
     // await Promise.all([
@@ -15,6 +16,8 @@ export default async function Page() {
     // ]);
 
     return (
-        <DiscoverPage />
+        <Suspense fallback={<div>Loading...</div>}>
+            <DiscoverPage />
+        </Suspense>
     );
 }

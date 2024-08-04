@@ -10,7 +10,7 @@ import { Virtuoso } from 'react-virtuoso';
 
 import dynamic from "next/dynamic";
 
-const PostCard = dynamic(() => import('@/components/Posts/PostCard'), { ssr: false });
+const PostCard = dynamic(() => import('@/components/Posts/PostCard'));
 const ComentsSection = dynamic(() => import('@/components/Posts/ComentSection'), { ssr: false });
 const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'), { ssr: false });
 const PostCardSkeleton = dynamic(() => import('./PostCardSkeleton'));
@@ -64,7 +64,18 @@ const Posts = () => {
     const renderPosts = () => {
         if (!data || (data && !data.pages)) return null;
 
-        if (!isFetching && !posts) return null;
+        if (isFetching) {
+            return memoizedSkeleton;
+        }
+
+        if (!isFetching && posts.length === 0) {
+            return (
+                <div className="w-full h-full flex items-center justify-center text-lg text-neutral-500 dark:text-neutral-400">
+                    No posts found
+                </div>
+            );
+        }
+
 
         const totalPosts = data.pages[0].total_pages * data.pages[0].limit;
 

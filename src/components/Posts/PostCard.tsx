@@ -20,7 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 
 const AssociatedCar = dynamic(() => import('@/components/TagEntity/AssociateCar'), { ssr: false });
-const NcImage = dynamic(() => import('@/components/Image/Image'), { ssr: false });
+const NcImage = dynamic(() => import('@/components/Image/Image'));
 const TagEntity = dynamic(() => import('@/components/TagEntity/TagEntity'), { ssr: false });
 const NativeShare = dynamic(() => import('@/components/ActionSheets/Share'), { ssr: false });
 const PostActionsSheet = dynamic(() => import('./PostActionSheets'), { ssr: false });

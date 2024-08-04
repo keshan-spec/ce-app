@@ -16,6 +16,8 @@ const NoAuthWall = dynamic(() => import('@/components/Protected/NoAuthWall'), { 
 const UserProfileSkeleton = dynamic(() => import('@/components/Profile/UserProfileSkeleton'), { ssr: false });
 const UserNotFound = dynamic(() => import('@/components/Profile/UserNotFound'), { ssr: false });
 
+const NcImage = dynamic(() => import('@/components/Image/Image'));
+
 interface ProfileLayoutProps {
     profileId?: string;
     currentUser?: boolean;
@@ -129,17 +131,25 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({
 
     return (
         <>
-            <div className="profile-background"
-                style={{
-                    backgroundImage: `url(${user.cover_image || "https://www.motortrend.com/uploads/2023/08/008-2024-Ford-Mustang-GT-Premium-Performance-pack-front-three-quarters.jpg"})`
-                }}
-            />
-            <div className="section mt-3">
-                <div className="profile-head">
-                    <img src={user.profile_image || PLACEHOLDER_PFP} alt="avatar" className="profile-image object-cover" />
-                    <div className="in">
-                        <h3 className="name profile-username">@{user.username}</h3>
-                        <h5 className="subtext profile-name">{user.first_name} {user.last_name}</h5>
+            <div className="min-h-[120px]">
+                <div className="profile-background"
+                    style={{
+                        backgroundImage: `url(${user.cover_image || "https://www.motortrend.com/uploads/2023/08/008-2024-Ford-Mustang-GT-Premium-Performance-pack-front-three-quarters.jpg"})`
+                    }}
+                />
+
+                <div className="section mt-3">
+                    <div className="profile-head">
+                        <NcImage
+                            src={user.profile_image || PLACEHOLDER_PFP}
+                            alt="avatar"
+                            className="profile-image object-cover overflow-hidden rounded-full"
+                            containerClassName='profile-image object-cover overflow-hidden rounded-full'
+                        />
+                        <div className="in">
+                            <h3 className="name profile-username">@{user.username}</h3>
+                            <h5 className="subtext profile-name">{user.first_name} {user.last_name}</h5>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -3,12 +3,11 @@ import { getSessionUser } from '@/actions/auth-actions';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
+    const params = request.nextUrl.searchParams;
+    const page = params.get("page") || 1;
+    const user = await getSessionUser();
+
     try {
-        const params = request.nextUrl.searchParams;
-        const page = params.get("page") || 1;
-
-        const user = await getSessionUser();
-
         const response = await fetch(`${API_URL}/wp-json/app/v1/get-posts?page=${page}&limit=10`, {
             method: "POST",
             headers: {

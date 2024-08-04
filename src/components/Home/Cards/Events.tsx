@@ -77,7 +77,7 @@ const Events = memo(() => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hasNextPage, isFetchingNextPage]);
 
-    const hasRows = data?.pages && data.pages.length > 0 && data?.pages[0].data.length > 0;
+    const hasRows = (data?.pages && data.pages.length > 0) && data?.pages[0].data && data?.pages[0].data.length > 0;
 
     return (
         <>

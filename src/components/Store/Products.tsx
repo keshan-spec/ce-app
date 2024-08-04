@@ -59,10 +59,17 @@ const Products = () => {
                                             {/* <div className="card-img-box" style={{
                                                 backgroundImage: `url('${product.thumb}')`,
                                             }}/> */}
-                                            <NcImage src={product.thumb} alt={product.title} className="card-img-top" imageDimension={{
-                                                height: 200,
-                                                width: 200,
-                                            }} />
+                                            <div className="min-h-20 w-full">
+                                                <NcImage
+                                                    src={product.thumb} alt={product.title}
+                                                    containerClassName='min-h-20 w-full'
+                                                    className="card-img-top w-full h-full"
+                                                    imageDimension={{
+                                                        height: 200,
+                                                        width: 200,
+                                                    }}
+                                                />
+                                            </div>
                                             <h2 className="title truncate" dangerouslySetInnerHTML={{ __html: product.title }}></h2>
                                             <p className="text">{product.highlight}</p>
                                             <div className="price">£{product.price}</div>
