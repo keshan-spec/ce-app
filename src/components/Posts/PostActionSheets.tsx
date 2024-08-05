@@ -44,9 +44,9 @@ const PostActionsSheet: React.FC<PostActionsProps> = ({
                 <IonIcon icon={settingsOutline} role="img" className="md hydrated" aria-label="settings outline" />
             </div>
             <div className="offcanvas offcanvas-bottom action-sheet rounded-t-lg" tabIndex={-1} id={`postSettings-${postId}`}
-                style={{
-                    visibility: 'visible',
-                }}
+                // style={{
+                //     visibility: 'visible',
+                // }}
                 aria-modal="true" role="dialog">
                 <div className="offcanvas-body">
                     <ul className="action-button-list">

@@ -2,10 +2,12 @@
 import Link from "next/link";
 import { BiCaretRight } from "react-icons/bi";
 import { DiscoverFilterProvider } from "@/app/context/DiscoverFilterContext";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { SearchType } from "@/actions/home-actions";
 
 import dynamic from "next/dynamic";
+import useSwipeableIndexes from "@/hooks/useSwipable";
+import clsx from "clsx";
 
 const Carousel = dynamic(() => import('@/shared/Carousel'));
 const TrendingVenues = dynamic(() => import('@/components/Home/Cards/TrendingVenues'));
@@ -84,9 +86,82 @@ export const BannerSkeleton = () => {
 
 const DiscoverPage = () => {
     const [searchType, setSearchType] = useState<SearchType>('all');
+    const {
+        activeIndex,
+        distance,
+        handlers,
+        swiping,
+        onActiveIndexChange,
+    } = useSwipeableIndexes(4);
+
+    console.log('activeIndex', activeIndex);
+
+
+    useEffect(() => {
+        switch (activeIndex) {
+            case 0:
+                setSearchType('all');
+                break;
+            case 1:
+                setSearchType('events');
+                break;
+            case 2:
+                setSearchType('venues');
+                break;
+            case 3:
+                setSearchType('users');
+                break;
+            default:
+                setSearchType('all');
+                break;
+        }
+    }, [activeIndex]);
+
+    const renderActiveTab = () => {
+        switch (searchType) {
+            case 'events':
+                return (
+                    <DiscoverFilterProvider>
+                        <div className="tab-pane fade show active" id="events" role="tabpanel">
+                            <div className="section full mt-1">
+                                <DiscoverFilters key={'events'} type="events" />
+                                <ul className="listview image-listview media search-result mb-2 !border-none">
+                                    <Events />
+                                </ul>
+                            </div>
+                        </div>
+                    </DiscoverFilterProvider>
+                );
+            case 'venues':
+                return (
+                    <DiscoverFilterProvider>
+                        <div className="tab-pane fade show active" id="venues" role="tabpanel">
+                            <div className="section full mt-1">
+                                <DiscoverFilters key={'venues'} type="venues" />
+                                <ul className="listview image-listview media search-result mb-2">
+                                    <Venues />
+                                </ul>
+                            </div>
+                        </div>
+                    </DiscoverFilterProvider>
+                );
+            case 'users':
+                return <div>Users & Vehicles</div>;
+            default:
+                return (
+                    <div className="tab-pane fade show active" id="top" role="tabpanel">
+                        <div className="section full mt-1">
+                            <Banner />
+                            <TrendingEvents />
+                            <TrendingVenues />
+                        </div>
+                    </div>
+                );
+        }
+    };
 
     return (
-        <div className="home min-h-screen">
+        <div className="home min-h-screen" {...handlers}>
             <div className={"extraHeader p-0"}>
                 <div className="search-container">
                     <div className="search-box-top flex items-center gap-2">
@@ -98,22 +173,34 @@ const DiscoverPage = () => {
 
                 <ul className="nav nav-tabs lined" role="tablist">
                     <li className="nav-item">
-                        <a className="nav-link active" data-bs-toggle="tab" href="#top" role="tab" onClick={() => setSearchType("all")}>
+                        <a className={clsx(
+                            "nav-link",
+                            searchType === 'all' && 'active'
+                        )} data-bs-toggle="tab" href="#top" role="tab" onClick={() => setSearchType("all")}>
                             Featured
                         </a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" data-bs-toggle="tab" href="#events" role="tab" onClick={() => setSearchType("events")}>
+                        <a className={clsx(
+                            "nav-link",
+                            searchType === 'events' && 'active'
+                        )} data-bs-toggle="tab" href="#events" role="tab" onClick={() => setSearchType("events")}>
                             Events
                         </a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" data-bs-toggle="tab" href="#venues" role="tab" onClick={() => setSearchType("venues")}>
+                        <a className={clsx(
+                            "nav-link",
+                            searchType === 'venues' && 'active'
+                        )} data-bs-toggle="tab" href="#venues" role="tab" onClick={() => setSearchType("venues")}>
                             Venues
                         </a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" data-bs-toggle="tab" href="#users" role="tab" onClick={() => setSearchType("users")}>
+                        <a className={clsx(
+                            "nav-link",
+                            searchType === 'users' && 'active'
+                        )} data-bs-toggle="tab" href="#users" role="tab" onClick={() => setSearchType("users")}>
                             Users & Vehicles
                         </a>
                     </li>
@@ -121,7 +208,8 @@ const DiscoverPage = () => {
             </div>
 
             <div className="tab-content pt-14 pb-10">
-                <div className="tab-pane fade show active" id="top" role="tabpanel">
+                {renderActiveTab()}
+                {/* <div className="tab-pane fade show active" id="top" role="tabpanel">
                     <div className="section full mt-1">
                         <Banner />
                         <TrendingEvents />
@@ -163,7 +251,7 @@ const DiscoverPage = () => {
                             </ul>
                         )}
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     );

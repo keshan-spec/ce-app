@@ -49,7 +49,7 @@ const Garage: React.FC<GarageProps> = ({
     }
 
     return (
-        <div className="tab-pane fade show active min-h-screen" id="garage" role="tabpanel">
+        <div className="tab-pane fade show active" id="garage" role="tabpanel">
             <div className="listview-title garage-sub-title mt-2">Current Vehicles</div>
             <ul className="listview image-listview media transparent flush pt-1">
                 {isLoading || isFetching ? <GarageItemSkeleton /> : null}

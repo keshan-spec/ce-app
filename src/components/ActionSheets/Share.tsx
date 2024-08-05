@@ -67,7 +67,7 @@ const NativeShare: React.FC<ShareProps> = ({
                 <IonIcon icon={shareSocialOutline} role="img" className="md hydrated" aria-label="chatbox ellipses sharp" />
             </span>
             <div className="offcanvas offcanvas-bottom action-sheet rounded-t-lg" tabIndex={-1} id={`actionSheetCreate_${id}`} style={{
-                visibility: 'visible',
+                // visibility: 'visible',
             }} aria-modal="true" role="dialog">
                 <div className="offcanvas-body">
                     <ul className="action-button-list">

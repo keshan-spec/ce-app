@@ -1,6 +1,6 @@
 'use client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 const variants = {
     initial: { x: '100%', opacity: 0 },
@@ -16,34 +16,41 @@ const animatedPaths = [
     '/profile/edit/',
     '/garage/edit/',
     '/garage/add',
+    '/profile/garage/',
+    '/garage',
     '/edit-post/',
     '/notifications',
     '/search',
-    '/profile',
 ];
 
 const AnimatedLayout = ({ children }: { children: React.ReactNode; }) => {
     const asPath = usePathname();
+    const searchParams = useSearchParams();
 
     const shouldAnimate = animatedPaths.some(path => asPath.startsWith(path));
+    const hasAnimation = searchParams.get('ref') === 'redirect' || searchParams.get('ref') === 'back';
 
     return (
-        <AnimatePresence mode="wait">
-            {shouldAnimate ? (
+        <AnimatePresence mode="popLayout">
+            {shouldAnimate || hasAnimation ? (
                 <motion.div
+                    transition={{
+                        ease: 'easeIn',
+                        type: 'tween',
+                    }}
                     key={asPath}
                     initial="initial"
                     animate="enter"
                     exit="exit"
                     variants={variants}
-                    style={{ position: 'relative', width: '100%' }}
+                    style={{ width: '100%', height: '100%', overflow: 'hidden' }}
                 >
                     {children}
                 </motion.div>
             ) : (
-                <div style={{ width: '100%' }}>
+                <>
                     {children}
-                </div>
+                </>
             )}
         </AnimatePresence>
     );

@@ -67,7 +67,7 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
     });
 
     return (
-        <div className="relative min-h-[150dvh]">
+        <div className="relative">
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <ProfileLayout currentUser={false} profileId={params.id} />
             </HydrationBoundary>

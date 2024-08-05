@@ -243,7 +243,10 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
 
 
         return (
-            <div className="embla !mb-0" onDoubleClick={onLikePost}>
+            <div className={clsx(
+                "!mb-0",
+                media.length > 1 && "embla",
+            )} onDoubleClick={onLikePost}>
                 <div className="embla__viewport relative bg-black" ref={emblaRef}>
                     <div className="embla__container !items-center">
                         {media.map((item, index) => {
@@ -363,8 +366,8 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
                     {renderLike()}
                 </div>
 
-                <div className="media-post-comment" onClick={() => openComments(post.id)}>
-                    <IonIcon icon={chatboxOutline} role="img" className="md hydrated" aria-label="chatbox outline" />
+                <div className="media-post-comment mr-2" onClick={() => openComments(post.id)}>
+                    <IonIcon icon={chatboxOutline} role="img" className="md hydrated !m-0" aria-label="chatbox outline" />
                 </div>
 
                 <div className="media-post-share">

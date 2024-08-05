@@ -3,7 +3,9 @@ import { memo } from "react";
 
 const ProfileEditPanel = () => {
     return (
-        <div className="offcanvas offcanvas-bottom action-sheet" tabIndex={-1} id="profileActions" style={{ visibility: 'visible' }} aria-modal="true" role="dialog">
+        <div className="offcanvas offcanvas-bottom action-sheet" tabIndex={-1} id="profileActions"
+            // style={{ visibility: 'visible' }} 
+            aria-modal="true" role="dialog">
             <div className="offcanvas-body">
 
                 <ul className="listview image-listview text flush pt-1">

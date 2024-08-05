@@ -33,13 +33,17 @@ const Feed: React.FC<FeedProps> = ({
         retry: 1,
         initialPageParam: null,
     });
+
     console.log(data);
+
 
     // Infinite scroll
     useEffect(() => {
         let fetching = isFetchingNextPage || isFetching || false;
-        const onScroll = async (event: any) => {
 
+        console.log(fetching, hasNextPage);
+
+        const onScroll = async (event: any) => {
             const { scrollHeight, scrollTop, clientHeight } =
                 event.target.scrollingElement;
 

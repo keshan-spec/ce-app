@@ -40,6 +40,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                 <div className={clsx(
                     'flex justify-between mx-auto w-full lg:px-2.5 px-0',
                     pathname === '/' && 'max-w-[1140px]',
+                    pathname.includes('/post/') && 'overflow-hidden max-h-screen',
                 )}>
                     <div id="appCapsule" className={clsx(appCapsuleClass)}>
                         <PullToRefreshContext>

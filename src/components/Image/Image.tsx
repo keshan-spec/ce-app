@@ -125,7 +125,7 @@ const NcImage: FC<NcImageProps> = ({
 
     return (
         <div
-            className={`nc-NcImage lg:min-w-0 w-full ${containerClassName}`}
+            className={`nc-NcImage lg:min-w-0 w-full min-h-1 ${containerClassName}`}
             data-nc-id="NcImage"
             ref={_containerRef}
         >

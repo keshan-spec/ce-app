@@ -29,6 +29,7 @@ body {
     color: var(--text-high-contrast);
     font-size: 1.6rem;
     line-height: 1.65;
+    position: relative;
 }
 
 span.description {

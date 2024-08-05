@@ -28,8 +28,7 @@ export const addBackgroundOverlay = () => {
     if (overlay) {
         overlay.classList.remove('hidden');
     } else {
-        // add overlay
-        document.body.insertAdjacentHTML('beforeend', '<div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-[9998]"></div>');
+        document.body.insertAdjacentHTML('beforeend', '<div id="overlay" class="offcanvas-backdrop fade show"></div>');
     }
 };
 

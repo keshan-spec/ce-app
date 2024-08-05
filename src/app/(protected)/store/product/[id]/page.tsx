@@ -61,7 +61,7 @@ const Page = async ({ params }: { params: { id: number; }; }) => {
     });
 
     return (
-        <div className="relative h-full min-h-screen">
+        <div className="relative h-full">
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <ViewProduct id={params.id} />
             </HydrationBoundary>

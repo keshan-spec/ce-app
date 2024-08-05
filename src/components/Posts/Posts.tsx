@@ -1,5 +1,5 @@
 'use client';
-import { memo, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import React, {
     useCallback,
 } from 'react';
@@ -9,6 +9,8 @@ import { useObservedQuery } from "@/app/context/ObservedQuery";
 import { Virtuoso } from 'react-virtuoso';
 
 import dynamic from "next/dynamic";
+import useSwipeableIndexes from '@/hooks/useSwipable';
+import clsx from 'clsx';
 
 const PostCard = dynamic(() => import('@/components/Posts/PostCard'));
 const ComentsSection = dynamic(() => import('@/components/Posts/ComentSection'), { ssr: false });
@@ -18,6 +20,22 @@ const PostCardSkeleton = dynamic(() => import('./PostCardSkeleton'));
 const Posts = () => {
     const { data, isFetching, setFollowingOnly, getMorePosts } = useObservedQuery();
     const [muted, setMuted] = useState(true); // State to track muted state
+
+    const {
+        activeIndex,
+        handlers,
+        swiping,
+    } = useSwipeableIndexes(1);
+
+    console.log(activeIndex);
+
+    useEffect(() => {
+        if (activeIndex === 0) {
+            setFollowingOnly(false);
+        } else {
+            setFollowingOnly(true);
+        }
+    }, [activeIndex]);
 
     const [activeSection, setActiveSection] = useState<number | undefined>();
 
@@ -62,12 +80,6 @@ const Posts = () => {
     const posts = data ? data.pages.flatMap((page: any) => page.data) : [];
 
     const renderPosts = () => {
-        if (!data || (data && !data.pages)) return null;
-
-        if (isFetching) {
-            return memoizedSkeleton;
-        }
-
         if (!isFetching && posts.length === 0) {
             return (
                 <div className="w-full h-full flex items-center justify-center text-lg text-neutral-500 dark:text-neutral-400">
@@ -76,12 +88,8 @@ const Posts = () => {
             );
         }
 
-
-        const totalPosts = data.pages[0].total_pages * data.pages[0].limit;
-
         return (
             <Virtuoso
-                totalCount={totalPosts}
                 style={{ height: "100vh", paddingBottom: '2rem' }}
                 data={posts}
                 itemContent={(_, post: Post) => (
@@ -102,20 +110,27 @@ const Posts = () => {
     };
 
     return (
-        <div className="w-full h-full bg-white">
+        <div className="w-full h-full bg-white" {...handlers}>
             <div className="fixed w-full social-tabs !mt-0 z-50">
                 <ul className="nav nav-tabs capsuled" role="tablist">
                     <li className="nav-item" onClick={() => {
                         setFollowingOnly(false);
                     }}>
-                        <a className="nav-link active" data-bs-toggle="tab" href="#latest-posts" role="tab" aria-selected="false">
+                        <a className={clsx(
+                            "nav-link",
+                            activeIndex === 0 && 'active'
+                        )} href="#latest-posts" role="tab" aria-selected="false">
                             Latest
                         </a>
                     </li>
                     <li className="nav-item" onClick={() => {
                         setFollowingOnly(true);
                     }}>
-                        <a className="nav-link" data-bs-toggle="tab" href="#following-posts" role="tab" aria-selected="true">
+                        <a className={clsx(
+                            "nav-link",
+                            activeIndex === 1 && 'active'
+                        )}
+                            href="#following-posts" role="tab" aria-selected="true">
                             Following
                         </a>
                     </li>
@@ -139,37 +154,11 @@ const Posts = () => {
 
             <ul className={"listview flush transparent no-line image-listview max-w-md mx-auto !pt-16"}>
                 <div className="tab-content">
-                    <div className="tab-pane fade active show" id="latest-posts" role="tabpanel">
-                        {/* {data && data.pages.map((page: any) => (
-                            page.data.map((post: Post) => (
-                                <PostCard
-                                    key={post.id}
-                                    post={post}
-                                    muted={muted}
-                                    setMuted={setMuted}
-                                    openComments={handleOpenComments}
-                                />
-                            ))
-                        ))} */}
+                    <div className="tab-pane fade active show pb-2" id="latest-posts" role="tabpanel">
                         {renderPosts()}
 
                         {isFetching && memoizedSkeleton}
                     </div>
-                    {/* <div className="tab-pane fade" id="following-posts" role="tabpanel">
-                        {data && data.pages.map((page: any) => (
-                            page.data.map((post: Post) => (
-                                <PostCard
-                                    key={post.id}
-                                    post={post}
-                                    muted={muted}
-                                    setMuted={setMuted}
-                                    openComments={handleOpenComments}
-                                />
-                            ))
-                        ))}
-
-                        {isFetching && memoizedSkeleton}
-                    </div> */}
                 </div>
             </ul>
         </div>

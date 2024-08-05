@@ -152,6 +152,9 @@ export const useTopNav = ({
         if (searchParam.get('ref')) {
             const ref = searchParam.get('ref');
 
+            // // previous page
+            // const prevPath = window.history.state?.prevPath;
+
             if (ref === 'search') {
                 return window.history.length > 1 ? router.back() : router.push('/');
             }

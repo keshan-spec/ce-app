@@ -258,7 +258,7 @@ const DiscoverSearchPage = () => {
     };
 
     return (
-        <div className="home min-h-screen">
+        <div className="home">
             <div className={clsx("extraHeader p-0")}>
                 <div className="search-container">
                     <div className="search-box-top flex items-center gap-2">

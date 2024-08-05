@@ -51,13 +51,13 @@ const PostClient = ({ postId }: { postId: string; }) => {
                         height={"80%"}
                         title={`${getCommentCount()} comments`}
                         stickyScroll={true}
-                        className="offcanvas-large"
                     >
                         {commentsOpen && <ComentsSection
                             postId={parseInt(postId)}
                             onNewComment={incrementCommentCount}
                         />}
                     </SlideInFromBottomToTop>
+
                     <PostCard
                         post={data}
                         muted={muted}
@@ -76,7 +76,7 @@ const PostClient = ({ postId }: { postId: string; }) => {
     }, [commentsOpen, data, isLoading, muted, postId, isFetching]);
 
     return (
-        <div className="bg-white min-h-screen max-h-screen overflow-hidden">
+        <div className="w-full h-full bg-white">
             {(isFetching || isLoading) ? (
                 <PostCardSkeleton />
             ) : renderContent()}

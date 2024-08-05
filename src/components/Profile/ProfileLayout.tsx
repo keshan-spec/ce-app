@@ -131,7 +131,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({
 
     return (
         <>
-            <div className="min-h-[120px]">
+            <div className="h-full">
                 <div className="profile-background"
                     style={{
                         backgroundImage: `url(${user.cover_image || "https://www.motortrend.com/uploads/2023/08/008-2024-Ford-Mustang-GT-Premium-Performance-pack-front-three-quarters.jpg"})`
@@ -173,7 +173,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                     {profileId && renderFollowBtn()}
 
                     {(isLoggedIn && canEditProfile) && (
-                        <div className='flex gap-2'>
+                        <div className='flex gap-2 relative'>
                             <div className="profile-link" data-bs-toggle="offcanvas" data-bs-target="#profileActions">Edit Profile</div>
                             <ProfileEditPanel />
                             <Link prefetch={true} href={'/garage'} className="profile-link dark-bg">Edit Garage</Link>
