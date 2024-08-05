@@ -130,14 +130,13 @@ const NcImage: FC<NcImageProps> = ({
             ref={_containerRef}
         >
             {__src && imageLoaded ? (
-                <NextImage
+                <img
                     src={__src}
                     className={`w-full ${className}`}
                     alt={alt}
                     {...args}
-                    width={imageDimension.width}
-                    height={imageDimension.height}
-                    unoptimized
+                // width={imageDimension.width}
+                // height={imageDimension.height}
                 />
             ) : renderLoadingPlaceholderMemo}
         </div>
