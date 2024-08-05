@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname, useSearchParams } from 'next/navigation';
 
 const variants = {
-    initial: { x: '100%', opacity: 0 },
+    initial: { x: '100%', opacity: 1 },
     enter: { x: '0%', opacity: 1, transition: { duration: 0.2 } },
-    exit: { x: '100%', opacity: 0, transition: { duration: 0.2 } },
+    exit: { x: '100%', opacity: 1, transition: { duration: 0.2 } },
 };
 
 const animatedPaths = [
@@ -31,7 +31,7 @@ const AnimatedLayout = ({ children }: { children: React.ReactNode; }) => {
     const hasAnimation = searchParams.get('ref') === 'redirect' || searchParams.get('ref') === 'back';
 
     return (
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence mode="sync">
             {shouldAnimate || hasAnimation ? (
                 <motion.div
                     transition={{
@@ -43,7 +43,7 @@ const AnimatedLayout = ({ children }: { children: React.ReactNode; }) => {
                     animate="enter"
                     exit="exit"
                     variants={variants}
-                    style={{ width: '100%', height: '100%', overflow: 'hidden' }}
+                    style={{ width: '100%', height: '100%' }}
                 >
                     {children}
                 </motion.div>

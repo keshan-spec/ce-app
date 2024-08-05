@@ -100,7 +100,7 @@ const TopNav = () => {
                 {showLogo && (
                     <div className="max-w-36 !mt-5">
                         <Link href="/">
-                            <Image src="/assets/img/logo-dark.png" alt="Logo" width={200} height={200} unoptimized />
+                            <Image src="/assets/img/logo-dark.png" alt="Logo" width={200} height={0} unoptimized />
                         </Link>
                     </div>
                 )}

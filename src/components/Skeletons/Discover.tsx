@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 
 const EventsSliderSkeleton = dynamic(() => import('../Skeletons/EventsSliderSkeleton'), { ssr: false });
 
-const DiscoverSkeleton = () => {
+export const DiscoverSkeleton = () => {
     return (
         <div className="home min-h-screen">
             <div className={"extraHeader p-0"}>
@@ -63,4 +63,3 @@ const DiscoverSkeleton = () => {
     );
 };
 
-export default DiscoverSkeleton;

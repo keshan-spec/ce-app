@@ -4,10 +4,13 @@ import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { footerLessPaths } from "@/hooks/useTopNav";
 import dynamic from "next/dynamic";
+import TopNav from "@/app/layouts/includes/TopNav";
+import Footer from "@/app/layouts/includes/Footer";
 
-const TopNav = dynamic(() => import('@/app/layouts/includes/TopNav'));
-const Footer = dynamic(() => import('@/app/layouts/includes/Footer'));
+// const TopNav = dynamic(() => import('@/app/layouts/includes/TopNav'));
+// const Footer = dynamic(() => import('@/app/layouts/includes/Footer'));
 const PullToRefreshContext = dynamic(() => import('@/app/layouts/includes/PullToRefresh'));
+
 import AnimatedLayout from "@/shared/AnimatedLayout";
 
 interface MainLayoutProps {

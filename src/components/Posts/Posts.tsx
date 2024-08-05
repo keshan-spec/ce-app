@@ -18,7 +18,7 @@ const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'), { ssr: 
 const PostCardSkeleton = dynamic(() => import('./PostCardSkeleton'));
 
 const Posts = () => {
-    const { data, isFetching, setFollowingOnly, getMorePosts } = useObservedQuery();
+    const { data, isFetching, setFollowingOnly, getMorePosts, followingOnly } = useObservedQuery();
     const [muted, setMuted] = useState(true); // State to track muted state
 
     const {
@@ -26,8 +26,6 @@ const Posts = () => {
         handlers,
         swiping,
     } = useSwipeableIndexes(1);
-
-    console.log(activeIndex);
 
     useEffect(() => {
         if (activeIndex === 0) {
@@ -118,8 +116,8 @@ const Posts = () => {
                     }}>
                         <a className={clsx(
                             "nav-link",
-                            activeIndex === 0 && 'active'
-                        )} href="#latest-posts" role="tab" aria-selected="false">
+                            !followingOnly && 'active'
+                        )} href="#latest-posts" role="tab" aria-selected="true">
                             Latest
                         </a>
                     </li>
@@ -128,9 +126,9 @@ const Posts = () => {
                     }}>
                         <a className={clsx(
                             "nav-link",
-                            activeIndex === 1 && 'active'
+                            followingOnly && 'active'
                         )}
-                            href="#following-posts" role="tab" aria-selected="true">
+                            href="#following-posts" role="tab" aria-selected="false">
                             Following
                         </a>
                     </li>
