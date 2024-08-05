@@ -1,3 +1,4 @@
+// https://codesandbox.io/s/tabs-example-swipeable-tabs-f2wms?file=/src/SwipeablePanel.tsx
 import { useCallback, useReducer } from "react";
 import {
     SwipeableHandlers,
@@ -176,7 +177,7 @@ export default function useSwipeableIndexes(tabs: number): ReturnValue {
     const handlers = useSwipeable({
         // this is just for demo purposes, and you probably don't want mouse sliding.
         trackMouse: true,
-        onSwiping: move,
+        // onSwiping: move,
         onSwipedLeft: jump,
         onSwipedRight: jump,
     });

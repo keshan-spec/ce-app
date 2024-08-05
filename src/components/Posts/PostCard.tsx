@@ -18,9 +18,10 @@ import dynamic from "next/dynamic";
 import { DotButton } from "@/shared/Carousel";
 import { useQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
+import NcImage from "@/components/Image/Image";
 
 const AssociatedCar = dynamic(() => import('@/components/TagEntity/AssociateCar'), { ssr: false });
-const NcImage = dynamic(() => import('@/components/Image/Image'));
+// const NcImage = dynamic(() => import('@/components/Image/Image'));
 const TagEntity = dynamic(() => import('@/components/TagEntity/TagEntity'), { ssr: false });
 const NativeShare = dynamic(() => import('@/components/ActionSheets/Share'), { ssr: false });
 const PostActionsSheet = dynamic(() => import('./PostActionSheets'), { ssr: false });

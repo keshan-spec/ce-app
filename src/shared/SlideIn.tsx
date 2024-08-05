@@ -62,9 +62,9 @@ const SlideInFromBottomToTop: React.FC<SlideInFromBottomToTopProps> = ({
             }
 
             document.body.style.overflow = 'hidden';
-            // addBackgroundOverlay();
+            addBackgroundOverlay();
         } else {
-            // removeBackgroundOverlay();
+            removeBackgroundOverlay();
             setTimeout(() => {
                 document.body.style.overflow = 'auto';
             }, 500);

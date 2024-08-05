@@ -88,14 +88,8 @@ const DiscoverPage = () => {
     const [searchType, setSearchType] = useState<SearchType>('all');
     const {
         activeIndex,
-        distance,
         handlers,
-        swiping,
-        onActiveIndexChange,
-    } = useSwipeableIndexes(4);
-
-    console.log('activeIndex', activeIndex);
-
+    } = useSwipeableIndexes(3);
 
     useEffect(() => {
         switch (activeIndex) {

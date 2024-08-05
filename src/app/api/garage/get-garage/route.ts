@@ -8,6 +8,7 @@ export async function GET(request: NextRequest) {
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/get-garage`, {
             method: "POST",
+            cache: "force-cache",
             headers: {
                 "Content-Type": "application/json",
             },

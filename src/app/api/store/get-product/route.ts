@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
         const id = params.get("id");
 
         const response = await fetch(`${STORE_API_URL}/wp-json/app/v1/get-product`, {
+            cache: "force-cache",
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

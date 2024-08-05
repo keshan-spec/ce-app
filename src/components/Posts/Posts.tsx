@@ -14,8 +14,10 @@ import clsx from 'clsx';
 
 const PostCard = dynamic(() => import('@/components/Posts/PostCard'));
 const ComentsSection = dynamic(() => import('@/components/Posts/ComentSection'), { ssr: false });
-const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'), { ssr: false });
+// const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'), { ssr: false });
 const PostCardSkeleton = dynamic(() => import('./PostCardSkeleton'));
+
+import SlideInFromBottomToTop from '@/shared/SlideIn';
 
 const Posts = () => {
     const { data, isFetching, setFollowingOnly, getMorePosts, followingOnly } = useObservedQuery();
@@ -27,13 +29,13 @@ const Posts = () => {
         swiping,
     } = useSwipeableIndexes(1);
 
-    useEffect(() => {
-        if (activeIndex === 0) {
-            setFollowingOnly(false);
-        } else {
-            setFollowingOnly(true);
-        }
-    }, [activeIndex]);
+    // useEffect(() => {
+    //     if (activeIndex === 0) {
+    //         setFollowingOnly(false);
+    //     } else {
+    //         setFollowingOnly(true);
+    //     }
+    // }, [activeIndex]);
 
     const [activeSection, setActiveSection] = useState<number | undefined>();
 
@@ -117,7 +119,7 @@ const Posts = () => {
                         <a className={clsx(
                             "nav-link",
                             !followingOnly && 'active'
-                        )} href="#latest-posts" role="tab" aria-selected="true">
+                        )} role="tab" aria-selected="true">
                             Latest
                         </a>
                     </li>
@@ -128,7 +130,7 @@ const Posts = () => {
                             "nav-link",
                             followingOnly && 'active'
                         )}
-                            href="#following-posts" role="tab" aria-selected="false">
+                            role="tab" aria-selected="false">
                             Following
                         </a>
                     </li>

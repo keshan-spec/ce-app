@@ -74,7 +74,7 @@ const Tabs: React.FC<TabsProps> = ({
                             <a className={clsx(
                                 "nav-link",
                                 activeTab === 'garage' && 'active'
-                            )} href="#garage" role="tab" aria-selected="true" onClick={() => setActiveTab('garage')}>
+                            )} role="tab" aria-selected="true" onClick={() => setActiveTab('garage')}>
                                 Garage
                             </a>
                         </li>

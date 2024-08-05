@@ -125,19 +125,19 @@ const NcImage: FC<NcImageProps> = ({
 
     return (
         <div
-            className={`nc-NcImage lg:min-w-0 w-full min-h-1 ${containerClassName}`}
+            className={`nc-NcImage lg:min-w-0 w-full ${containerClassName}`}
             data-nc-id="NcImage"
             ref={_containerRef}
         >
             {__src && imageLoaded ? (
-                <img
+                <NextImage
                     src={__src}
                     className={`w-full ${className}`}
                     alt={alt}
                     {...args}
-                // width={imageDimension.width}
-                // height={imageDimension.height}
-                // unoptimized
+                    width={imageDimension.width}
+                    height={imageDimension.height}
+                    unoptimized
                 />
             ) : renderLoadingPlaceholderMemo}
         </div>

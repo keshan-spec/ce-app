@@ -11,7 +11,7 @@ import { markMultipleNotificationsAsRead } from "@/actions/notification-actions"
 import React, { useEffect, useMemo } from "react";
 import { getQueryClient } from "@/app/context/QueryClientProvider";
 import { maybeFollowUser } from "@/actions/profile-actions";
-import { Virtuoso } from "react-virtuoso";
+// import { Virtuoso } from "react-virtuoso";
 import dynamic from "next/dynamic";
 import { getUserNotifications } from "@/api-functions/notfications";
 
