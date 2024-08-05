@@ -245,8 +245,8 @@ const PostCard = ({ post, muted, setMuted, openComments }: {
 
         return (
             <div className={clsx(
-                "!mb-0",
-                media.length > 1 && "embla",
+                "!mb-0 embla",
+                // media.length > 1 && "embla",
             )} onDoubleClick={onLikePost}>
                 <div className="embla__viewport relative bg-black" ref={emblaRef}>
                     <div className="embla__container !items-center">

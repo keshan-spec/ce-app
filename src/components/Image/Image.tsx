@@ -135,8 +135,8 @@ const NcImage: FC<NcImageProps> = ({
                     className={`w-full ${className}`}
                     alt={alt}
                     {...args}
-                // width={imageDimension.width}
-                // height={imageDimension.height}
+                    width={imageDimension.width}
+                    height={imageDimension.height}
                 />
             ) : renderLoadingPlaceholderMemo}
         </div>
