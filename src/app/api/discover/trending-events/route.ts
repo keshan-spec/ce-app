@@ -17,7 +17,6 @@ export async function GET(request: NextRequest) {
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/get-events-trending`, {
             method: "POST",
-            cache: "no-cache",
             headers: {
                 "Content-Type": "application/json",
             },

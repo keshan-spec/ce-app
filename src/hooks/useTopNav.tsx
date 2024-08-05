@@ -4,7 +4,7 @@ import { Garage } from "@/types/garage";
 import { Post } from "@/types/posts";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useUser } from "./useUser";
 
 interface TopNavProps {
@@ -188,13 +188,17 @@ export const useTopNav = ({
         }
     };
 
+    const isViewPage = useMemo(() => {
+        return isGarageViewPage || isPostViewPage || isProfileEditView || isGarageEditView || isDiscoverPage;
+    }, [isGarageViewPage, isPostViewPage, isProfileEditView, isGarageEditView, isDiscoverPage]);
+
     return {
         returnTo: () => returnTo(),
         title: getHeaderTitle(),
         subtitle: getSubtitle(),
-        mode: isGarageViewPage || isPostViewPage || isProfileEditView || isGarageEditView || isDiscoverPage ? 'view-page' : 'view-page',
+        mode: isViewPage ? 'view-page' : 'view-page',
         showMenuIcon: showMenuIcon(),
-        showHeaderIcons: !isGarageViewPage && !isPostViewPage && !isProfileEditView && !isGarageEditView && !isDiscoverPage,
-        showLogo: !isGarageViewPage && !isPostViewPage && !isProfileEditView && !isGarageEditView && !isDiscoverPage,
+        showHeaderIcons: !isViewPage ?? true,
+        showLogo: !isViewPage ?? true,
     };
 };

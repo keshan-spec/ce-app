@@ -33,7 +33,6 @@ export const fetchTrendingEvents = async (page: number, paginate = false, filter
                 },
             });
 
-        console.log(response);
         return response.data;
     } catch (error) {
         console.error(error);

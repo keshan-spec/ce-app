@@ -5,6 +5,7 @@ import { sendRNMessage } from "@/utils/nativeFeel";
 import { IonIcon } from "@ionic/react";
 import clsx from "clsx";
 import { homeOutline, searchOutline, addOutline, cartOutline } from "ionicons/icons";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { memo } from "react";
@@ -60,7 +61,7 @@ const Footer = () => {
 
                 <Link prefetch={true} href="/profile" className={`item ${pathname.includes('/profile') ? 'active' : ''}`}>
                     <div className="col flex items-center flex-col ">
-                        <img src="/assets/img/icon/f-profile7.svg" alt="profile" className="w-6 h-6" />
+                        <Image src="/assets/img/icon/f-profile7.svg" alt="Profile" width={24} height={24} unoptimized />
                         <strong>Profile</strong>
                     </div>
                 </Link>

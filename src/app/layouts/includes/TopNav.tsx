@@ -12,6 +12,7 @@ import { memo, useEffect, useState } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import dynamic from 'next/dynamic';
 import { getNotificationCount } from '@/api-functions/notfications';
+import Image from 'next/image';
 
 const SidePanel = dynamic(() => import('@/components/SidePanel'), { ssr: false });
 const QRScanner = dynamic(() => import('@/components/Scanner/Scanner'), { ssr: false });
@@ -99,7 +100,7 @@ const TopNav = () => {
                 {showLogo && (
                     <div className="max-w-36 !mt-5">
                         <Link href="/">
-                            <img src="/assets/img/logo-dark.png" alt="Logo" />
+                            <Image src="/assets/img/logo-dark.png" alt="Logo" width={200} height={200} unoptimized />
                         </Link>
                     </div>
                 )}
