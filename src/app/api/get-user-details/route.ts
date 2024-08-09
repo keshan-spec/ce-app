@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
         const params = request.nextUrl.searchParams;
         const id = params.get("id");
 
-        let url = `${API_URL}/wp-json/app/v1/get-user-profile`;
+        let url = `${API_URL}/wp-json/app/v1/get-user-profile-next`;
         let response = await fetch(url, {
             method: "POST",
             headers: {

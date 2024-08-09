@@ -45,7 +45,7 @@ export const verifyUser = async (credentials: { email: string; password: string;
         });
 
         if (response.ok) {
-            return JSON.parse(await response.json());
+            return await response.json();
         }
     } catch (error) {
         console.error(error);

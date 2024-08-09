@@ -1,7 +1,6 @@
 import { verifyUser } from "@/actions/auth-actions";
 import Credentials from "next-auth/providers/credentials";
 import type { NextAuthConfig } from "next-auth";
-import { revalidatePath } from "next/cache";
 
 export default {
     providers: [
