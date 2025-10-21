@@ -47,7 +47,7 @@ const ObservedQueryProvider = ({ children }: any) => {
         if (hasNextPage && !isFetchingNextPage) {
             await fetchNextPage();
         }
-    }, [hasNextPage, fetchNextPage]);
+    }, [hasNextPage, fetchNextPage, isFetchingNextPage]);
 
     const contextValue = {
         data,

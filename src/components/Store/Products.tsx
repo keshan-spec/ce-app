@@ -51,39 +51,53 @@ const Products = () => {
 
                     {data && data.pages && data.pages.map((page: any, i: number) => (
                         <React.Fragment key={i}>
-                            {page.data.map((product: StoreProduct, j: number) => (
-                                <div className="col-6 mb-3" key={j}>
-                                    <div className="card product-card min-h-[310px] h-full flex justify-between">
-                                        <div className="card-body">
-                                            {/* <div className="card-img-box" style={{
-                                                backgroundImage: `url('${product.thumb}')`,
-                                            }}/> */}
-                                            <div className="min-h-20 w-full">
-                                                <NcImage
-                                                    src={product.thumb} alt={product.title}
-                                                    containerClassName='min-h-20 w-full'
-                                                    className="card-img-top w-full h-full"
-                                                    imageDimension={{
-                                                        height: 200,
-                                                        width: 200,
-                                                    }}
-                                                />
-                                            </div>
-                                            <h2 className="title truncate" dangerouslySetInnerHTML={{ __html: product.title }}></h2>
-                                            <p className="text">{product.highlight}</p>
-                                            <div className="price">£{product.price}</div>
-                                        </div>
-                                        <div className="card-body">
-                                            <Link
-                                                prefetch={true}
-                                                href={`/store/product/${product.id}`}
-                                                className="btn btn-sm btn-primary btn-block">
-                                                View
-                                            </Link>
-                                        </div>
+                            {/* Handle error responses safely */}
+                            {page?.error ? (
+                                <div className="col-12 mb-3" key={`error-${i}`}>
+                                    <div className="alert alert-danger text-center">
+                                        Failed to load products. Please try again later.
                                     </div>
                                 </div>
-                            ))}
+                            ) : Array.isArray(page?.data) ? (
+                                page.data.map((product: StoreProduct, j: number) => (
+                                    <div className="col-6 mb-3" key={j}>
+                                        <div className="card product-card min-h-[310px] h-full flex justify-between">
+                                            <div className="card-body">
+                                                <div className="min-h-20 w-full">
+                                                    <NcImage
+                                                        src={product.thumb}
+                                                        alt={product.title}
+                                                        containerClassName="min-h-20 w-full"
+                                                        className="card-img-top w-full h-full"
+                                                        imageDimension={{
+                                                            height: 200,
+                                                            width: 200,
+                                                        }}
+                                                    />
+                                                </div>
+                                                <h2 className="title truncate" dangerouslySetInnerHTML={{ __html: product.title }}></h2>
+                                                <p className="text">{product.highlight}</p>
+                                                <div className="price">£{product.price}</div>
+                                            </div>
+                                            <div className="card-body">
+                                                <Link
+                                                    prefetch={true}
+                                                    href={`/store/product/${product.id}`}
+                                                    className="btn btn-sm btn-primary btn-block"
+                                                >
+                                                    View
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="col-12 mb-3">
+                                    <div className="alert alert-warning text-center">
+                                        No products available.
+                                    </div>
+                                </div>
+                            )}
                         </React.Fragment>
                     ))}
 

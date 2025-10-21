@@ -20,6 +20,8 @@ const UserOrders = () => {
 
     if (isFetching) return <div>Loading...</div>;
 
+    console.log(data);
+    
     return (
         <div className="tab-pane fade" id="panels-tab2" role="tabpanel">
             <div className="section mt-2">
@@ -44,6 +46,8 @@ const ORDER_STATUS_COLORS = {
 };
 
 const OrderCard: React.FC<UserOrderData> = ({ ...order }) => {
+    if (!order) return null;
+
     return (
         <div className="bg-white shadow-md rounded-lg p-3 mb-2">
             <div className="flex justify-between items-center mb-2">

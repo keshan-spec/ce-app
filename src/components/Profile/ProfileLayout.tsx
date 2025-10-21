@@ -68,6 +68,9 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({
 }) => {
     const { user, isLoggedIn, isFetching, sessionUser, refetch, canEditProfile } = getUser(profileId);
 
+    console.log(user);
+    
+
     const handleFollowClick = async () => {
         if (!profileId) return;
 
@@ -180,7 +183,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                         </div>
                     )}
 
-                    <ProfileLinksExternal profileLinks={user.profile_links} isOwner={canEditProfile} />
+                    {/* <ProfileLinksExternal profileLinks={user.profile_links} isOwner={canEditProfile} /> */}
 
                     <div className="mt-4 bio hidden">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur at magna porttitor lorem mollis

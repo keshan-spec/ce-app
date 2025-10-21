@@ -71,13 +71,15 @@ export const {
     },
     callbacks: {
         session: async ({ session, token }) => {
+            console.log(session, token);
+            
             if (session.user && token?.sub) {
-                session.user.id = token.sub;
+                session.user.id = token.id as string;
 
                 // Only fetch user details if they are not already in the session
                 if (!session.user.detailsFetched) {
                     try {
-                        const data = await getUserDetails(token.sub);
+                        const data = await getUserDetails(token.id as string);
 
                         if (!data || !data.user) {
                             return session;
@@ -126,12 +128,22 @@ export const {
                     } catch (error) {
                         console.error('Error fetching user details:', error);
                     }
+                } else {
+                    console.log('User details already fetched, skipping API call.');
                 }
             }
 
             return session;
         },
-        jwt: async ({ token }) => {
+        jwt: async ({ token, user }) => {
+            // console.log(user);
+            if (user) {
+                const auser = user as any;
+                // if user was returned from authorize()
+                token.id = auser.user?.id || auser.id;
+                token.accessToken = auser.token; // store your API token
+            }
+
             return token;
         },
     },

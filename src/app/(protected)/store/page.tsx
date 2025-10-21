@@ -19,8 +19,13 @@ export default async function Page() {
         <div className="section full">
             <div className="home-tabs-wrapper">
                 <div className="tab-content">
-                    <Products />
-                    <UserOrders />
+                    {/* <Products /> */}
+                    {/* <UserOrders /> */}
+                    {/* Coming soon */}
+                    <div className="text-center p-5">
+                        <h2 className="title">Coming Soon!</h2>
+                        <p className="text-muted">Our store is under construction. Stay tuned for exciting products and offers!</p>
+                    </div>
                 </div>
             </div>
         </div>

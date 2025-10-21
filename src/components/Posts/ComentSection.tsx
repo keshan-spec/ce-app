@@ -60,7 +60,7 @@ const ComentsSection: React.FC<ComentsSectionProps> = ({
 
                 {error && <p className="px-3">{error.message}</p>}
 
-                {(data && data.length === 0 && !(isLoading || isFetching)) && (
+                {((!data || (Array.isArray(data) && data.length === 0)) && !(isLoading || isFetching)) && (
                     <p className="px-3">No comments found</p>
                 )}
 

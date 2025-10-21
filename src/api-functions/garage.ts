@@ -28,6 +28,11 @@ export const getUserGarage = async (profileId: string) => {
     if (response.status !== 200) {
         return [];
     }
+
+    if (data.error) {
+        return null;
+    }
+    
     return data;
 };
 

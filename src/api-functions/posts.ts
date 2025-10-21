@@ -60,6 +60,11 @@ export const fetchPostComments = async (postId: number) => {
     });
 
     const data = await response.json();
+
+    if (data.message === "No comments found") {
+        return null;
+    }
+    
     return data;
 };
 

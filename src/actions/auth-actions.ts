@@ -9,6 +9,8 @@ const API_URL = process.env.HEADLESS_CMS_API_URL ?? "https://www.carevents.com";
 import { auth } from "@/auth";
 import { NewUser } from "@/app/context/SignUpProvider";
 import { UserDetailsForm } from "@/zod-schemas/profile";
+import { getSession } from "next-auth/react";
+import { getQueryClient } from "@/app/context/QueryClientProvider";
 
 interface SignUpResponse {
     success: boolean;
@@ -36,16 +38,22 @@ export const getSessionUser = async () => {
 
 export const verifyUser = async (credentials: { email: string; password: string; }) => {
     try {
-        const response = await fetch(`${API_URL}/wp-json/ticket_scanner/v1/verify_user`, {
-            method: "POST",
+        const queryParams = new URLSearchParams(credentials).toString();
+
+        // Make a GET request with the query parameters
+        const response = await fetch(`${API_URL}/wp-json/ticket_scanner/v1/verify_user/?${queryParams}`, {
+            method: "GET",
+            mode: 'cors',
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(credentials),
         });
-
+        
         if (response.ok) {
             return await response.json();
+        } else {
+            console.error('Failed to verify user:', response.statusText);
+            return null;
         }
     } catch (error) {
         console.error(error);
@@ -58,6 +66,8 @@ export const handleSignOut = async () => {
         redirect: true,
         redirectTo: "/auth/login",
     });
+
+    await getSession();
 };
 
 export const handleSignIn = async (credentials: {

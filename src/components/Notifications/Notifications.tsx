@@ -23,7 +23,7 @@ const queryClient = getQueryClient();
 const UserNotifications = () => {
     const { user } = useUser();
     const { data, error, isFetching } = useQuery<NotificationResponse | null, Error>({
-        queryKey: ["user-notifications"],
+        queryKey: ["user-notifications", user?.id],
         queryFn: () => getUserNotifications(),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
@@ -58,7 +58,7 @@ const UserNotifications = () => {
             return;
         }
 
-        if (data && !isPending) {
+        if (data && !isPending && data.success === true) {
             const unreadNotificationIds = [
                 ...data.data.recent,
                 ...data.data.last_week,
@@ -132,14 +132,14 @@ const UserNotifications = () => {
         );
     };
 
-    // const notifications = useMemo(() => {
-    //     if (!data) return [];
-    //     return [
-    //         ...(data.data.recent || []).map(item => ({ ...item, category: 'Recent' })),
-    //         ...(data.data.last_week || []).map(item => ({ ...item, category: 'Last Week' })),
-    //         ...(data.data.last_30_days || []).map(item => ({ ...item, category: 'Last 30 Days' }))
-    //     ];
-    // }, [data]);
+    const notifications = useMemo(() => {
+        if (!data) return [];
+        return [
+            ...(data.data.recent || []).map(item => ({ ...item, category: 'Recent' })),
+            ...(data.data.last_week || []).map(item => ({ ...item, category: 'Last Week' })),
+            ...(data.data.last_30_days || []).map(item => ({ ...item, category: 'Last 30 Days' }))
+        ];
+    }, [data]);
 
     return (
         <div className="w-full listview flush transparent no-line min-h-screen">
@@ -149,29 +149,27 @@ const UserNotifications = () => {
             {(!data && !error && !isFetching) && (
                 <p className="text-center mt-10 text-lg text-gray-500">No notifications yet</p>
             )}
-            {/* 
-            <Virtuoso
-                useWindowScroll
-                style={{ height: "100vh", paddingBottom: '2rem' }}
-                data={notifications}
-                itemContent={(index, item) => renderNotifications(item)}
-                components={{
-                    List: React.forwardRef(({ children, ...props }, ref) => (
-                        <div ref={ref} {...props}>
-                            {children}
-                        </div>
-                    )),
-                }}
-            /> */}
 
-            {(data && data.data.recent.length > 0) && <h1 className="px-3 mt-2 text-sm font-medium">Recent</h1>}
+            {/* {(data && data.data.recent.length > 0) && <h1 className="px-3 mt-2 text-sm font-medium">Recent</h1>}
             {data && data?.data?.recent?.map((item) => renderNotifications(item))}
 
             {(data && data.data.last_week.length > 0) && <h1 className="px-3 mt-2 text-sm font-medium">Last Week</h1>}
             {data && data?.data?.last_week?.map((item) => renderNotifications(item))}
 
             {(data && data.data.last_30_days.length > 0) && <h1 className="px-3 mt-2 text-sm font-medium">Last 30 Days</h1>}
-            {data && data?.data?.last_30_days?.map((item) => renderNotifications(item))}
+            {data && data?.data?.last_30_days?.map((item) => renderNotifications(item))} */}
+            {notifications.length === 0 && !isFetching && (
+                <p className="text-center mt-10 text-lg text-gray-500">No notifications yet</p>
+            )}
+
+            {notifications.length > 0 && notifications.map((item, index) => (
+                <React.Fragment key={item._id}>
+                    {(index === 0 || notifications[index - 1].category !== item.category) && (
+                        <h1 className="px-3 mt-2 text-sm font-medium">{item.category}</h1>
+                    )}
+                    {renderNotifications(item)}
+                </React.Fragment>
+            ))}
         </div>
     );
 };

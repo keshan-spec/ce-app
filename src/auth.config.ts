@@ -11,7 +11,7 @@ export default {
                     const response = await verifyUser(credentials);
 
                     if (response && response.success) {
-                        return response.user;
+                        return response
                     }
                 }
 

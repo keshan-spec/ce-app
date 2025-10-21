@@ -13,7 +13,7 @@ const ViewEvent = dynamic(() => import('@/components/Home/ViewEvent'), { ssr: fa
 const SlideInFromBottomToTop = dynamic(() => import('@/shared/SlideIn'), { ssr: false });
 
 const TrendingVenues = memo(() => {
-    const { data, error, isFetching, isLoading } = useQuery<any[], Error>({
+    const { data, error, isFetching, isLoading } = useQuery<any, Error>({
         queryKey: ["trending-venues"],
         queryFn: () => {
             return fetchTrendingVenues(1);
@@ -45,7 +45,7 @@ const TrendingVenues = memo(() => {
                         </SplideSlide>
                     )}
 
-                    {data && data?.map((venue: any, idx: number) => (
+                    {data && data.data?.map((venue: any, idx: number) => (
                         <SplideSlide className="card" key={idx}>
                             <VenueCard venue={venue} onClick={(id) => setActiveVenue(id)} />
                         </SplideSlide>

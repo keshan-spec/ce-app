@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/shared/Button";
 import { handleSignIn } from "@/actions/auth-actions";
 import { ErrorMessage } from "@/shared/ErrorMessage";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { IonIcon } from "@ionic/react";
 import { closeCircle } from "ionicons/icons";
 import Link from "next/link";
@@ -14,6 +14,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import clsx from "clsx";
 import { Loader } from "@/components/Loader";
+import { useSession } from "next-auth/react";
 
 // Define a schema that accepts either an email or a username
 const loginSchema = z.object({
@@ -27,6 +28,9 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 const Login = () => {
+    const { update } = useSession();
+    const router = useRouter();
+
     const {
         register,
         handleSubmit,
@@ -44,6 +48,9 @@ const Login = () => {
             if (response && response.error) {
                 throw new Error(response?.error || "An error occurred");
             }
+
+            await update();
+            router.push("/");
         } catch (error: any) {
             setError("root", {
                 type: "manual",
