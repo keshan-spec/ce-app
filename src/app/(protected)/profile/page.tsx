@@ -1,7 +1,10 @@
+import UserProfileSkeleton from "@/components/Profile/UserProfileSkeleton";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
-const ProfileLayout = dynamic(() => import('@/components/Profile/ProfileLayout'));
+const ProfileLayout = dynamic(() => import('@/components/Profile/ProfileLayout'), {
+    loading: () => <UserProfileSkeleton />,
+});
 
 export const metadata: Metadata = {
     title: 'Profile | Drive Life',

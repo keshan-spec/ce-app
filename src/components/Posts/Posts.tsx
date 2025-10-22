@@ -1,5 +1,5 @@
 'use client';
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState, useTransition } from 'react';
 import React, {
     useCallback,
 } from 'react';
@@ -19,7 +19,7 @@ const PostCardSkeleton = dynamic(() => import('./PostCardSkeleton'));
 
 import SlideInFromBottomToTop from '@/shared/SlideIn';
 
-const PostsOLD= () => {
+const Posts= () => {
     const { data, isFetching, setFollowingOnly, getMorePosts, followingOnly } = useObservedQuery();
     const [muted, setMuted] = useState(true); // State to track muted state
 
@@ -157,8 +157,7 @@ const PostsOLD= () => {
     );
 };
 
-
-const Posts = () => {
+const Postsa = () => {
     const {
         data,
         isFetching,
@@ -169,22 +168,32 @@ const Posts = () => {
     } = useObservedQuery();
 
     const [muted, setMuted] = useState(true);
-    const { handlers } = useSwipeableIndexes(1);
     const [activeSection, setActiveSection] = useState<number | undefined>();
+    const [isReady, setIsReady] = useState(false);
+    const [isPending, startTransition] = useTransition();
 
-    // stable posts reference
-    const posts = useMemo(() => {
-        return data ? data.pages.flatMap((page: any) => page.data) : [];
-    }, [data]);
+    // ✅ Show skeleton immediately, then load data
+    useEffect(() => {
+        const t = setTimeout(() => setIsReady(true), 150);
+        return () => clearTimeout(t);
+    }, []);
 
-    const handleOpenComments = useCallback((postId: number) => {
-        if (activeSection) {
-            setActiveSection(undefined);
-            setTimeout(() => setActiveSection(postId), 400);
-            return;
-        }
-        setActiveSection(postId);
-    }, [activeSection]);
+    const posts = useMemo(
+        () => (data ? data.pages.flatMap((page: any) => page.data) : []),
+        [data]
+    );
+
+    const handleOpenComments = useCallback(
+        (postId: number) => {
+            if (activeSection) {
+                setActiveSection(undefined);
+                setTimeout(() => setActiveSection(postId), 400);
+            } else {
+                setActiveSection(postId);
+            }
+        },
+        [activeSection]
+    );
 
     const getCommentCount = useCallback((): number => {
         if (!activeSection) return 0;
@@ -211,14 +220,27 @@ const Posts = () => {
         fetchNextPage();
     }, [isFetching, hasNextPage, fetchNextPage]);
 
-    const memoizedSkeleton = useMemo(() => (
-        <>
-            <PostCardSkeleton />
-            <PostCardSkeleton />
-        </>
-    ), []);
+    const memoizedSkeleton = useMemo(
+        () => (
+            <>
+                <PostCardSkeleton />
+                <PostCardSkeleton />
+                <PostCardSkeleton />
+            </>
+        ),
+        []
+    );
 
+    // ✅ Smooth skeleton until posts appear
     const renderPosts = useCallback(() => {
+        if (!isReady) {
+            return (
+                <div className="px-3 py-4">
+                    {memoizedSkeleton}
+                </div>
+            );
+        }
+
         if (!isFetching && posts.length === 0) {
             return (
                 <div className="w-full h-full flex items-center justify-center text-lg text-neutral-500 dark:text-neutral-400">
@@ -228,42 +250,52 @@ const Posts = () => {
         }
 
         return (
-            <div style={{ height: '100vh', overflow: 'hidden' }}>
-                <Virtuoso
-                    data={posts}
-                    itemContent={(index, post: Post) => (
-                        // ensure a stable React key here
-                        <div key={post.id}>
-                            <PostCard
-                                post={post}
-                                muted={muted}
-                                setMuted={setMuted}
-                                openComments={handleOpenComments}
-                            />
-                        </div>
-                    )}
-                    endReached={getMorePosts}
-                    overscan={200}
-                    components={{
-                        Footer: () => (isFetching ? memoizedSkeleton : null),
-                    }}
-                    style={{ height: '100%', paddingBottom: '2rem' }}
-                />
-            </div>
+            <Virtuoso
+                style={{ minHeight: "100vh", paddingBottom: '2rem' }}
+                key="feed"
+                data={posts}
+                itemContent={(index, post: Post) => (
+                    <div key={post.id}>
+                        <PostCard
+                            post={post}
+                            muted={muted}
+                            setMuted={setMuted}
+                            openComments={handleOpenComments}
+                        />
+                    </div>
+                )}
+                endReached={getMorePosts}
+                overscan={200}
+                components={{
+                    Footer: () => (isFetching ? memoizedSkeleton : null),
+                }}
+            />
         );
-    }, [posts, muted, handleOpenComments, getMorePosts, isFetching, memoizedSkeleton]);
+    }, [isReady, posts, muted, handleOpenComments, getMorePosts, isFetching, memoizedSkeleton]);
 
     return (
-        <div className="w-full h-full bg-white" {...handlers}>
+        <div className="w-full h-full bg-white">
             <div className="fixed w-full social-tabs !mt-0 z-50">
                 <ul className="nav nav-tabs capsuled" role="tablist">
-                    <li className="nav-item" onClick={() => setFollowingOnly(false)}>
-                        <a className={clsx("nav-link", !followingOnly && 'active')} role="tab" aria-selected={!followingOnly}>
+                    <li
+                        className="nav-item"
+                        onClick={() => startTransition(() => setFollowingOnly(false))}
+                    >
+                        <a
+                            className={clsx("nav-link", !followingOnly && "active")}
+                            role="tab"
+                        >
                             Latest
                         </a>
                     </li>
-                    <li className="nav-item" onClick={() => setFollowingOnly(true)}>
-                        <a className={clsx("nav-link", followingOnly && 'active')} role="tab" aria-selected={followingOnly}>
+                    <li
+                        className="nav-item"
+                        onClick={() => startTransition(() => setFollowingOnly(true))}
+                    >
+                        <a
+                            className={clsx("nav-link", followingOnly && "active")}
+                            role="tab"
+                        >
                             Following
                         </a>
                     </li>
@@ -280,13 +312,20 @@ const Posts = () => {
                 className="offcanvas-large"
             >
                 {activeSection && (
-                    <ComentsSection postId={activeSection} onNewComment={incrementCommentCount} />
+                    <ComentsSection
+                        postId={activeSection}
+                        onNewComment={incrementCommentCount}
+                    />
                 )}
             </SlideInFromBottomToTop>
 
             <ul className="listview flush transparent no-line image-listview max-w-md mx-auto !pt-16">
                 <div className="tab-content">
-                    <div className="tab-pane fade active show pb-2" id="latest-posts" role="tabpanel">
+                    <div
+                        className="tab-pane fade active show pb-2"
+                        id="latest-posts"
+                        role="tabpanel"
+                    >
                         {renderPosts()}
                     </div>
                 </div>
@@ -294,6 +333,5 @@ const Posts = () => {
         </div>
     );
 };
-
 
 export default memo(Posts);

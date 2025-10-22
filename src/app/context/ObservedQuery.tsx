@@ -41,6 +41,12 @@ const ObservedQueryProvider = ({ children }: any) => {
         initialPageParam: 1,
         retry: 1,
         gcTime: 1000 * 60 * 30,
+        placeholderData: () => {
+            return {
+                pages: [],
+                pageParams: [],
+            };
+        }
     });
 
     const getMorePosts = useCallback(async () => {

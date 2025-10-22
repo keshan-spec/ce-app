@@ -9,8 +9,11 @@ import {
 
 import dynamic from "next/dynamic";
 import { getUserDetails } from "@/api-functions/auth";
+import UserProfileSkeleton from "@/components/Profile/UserProfileSkeleton";
 
-const ProfileLayout = dynamic(() => import('@/components/Profile/ProfileLayout'));
+const ProfileLayout = dynamic(() => import('@/components/Profile/ProfileLayout'), {
+    loading: () => <UserProfileSkeleton />,
+});
 
 type Props = {
     params: { id: string; };

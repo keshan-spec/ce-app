@@ -67,10 +67,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({
     profileId
 }) => {
     const { user, isLoggedIn, isFetching, sessionUser, refetch, canEditProfile } = getUser(profileId);
-
-    console.log(user);
-    
-
+   
     const handleFollowClick = async () => {
         if (!profileId) return;
 
@@ -116,6 +113,10 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({
         );
     }, [user, sessionUser, isLoggedIn]);
 
+    if (isFetching || !user) {
+        return <UserProfileSkeleton />;
+    }
+
     if (!isLoggedIn && currentUser) {
         return <NoAuthWall redirectTo="/profile" />;
     }
@@ -124,24 +125,20 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({
         return <NoAuthWall redirectTo="/profile" />;
     }
 
-    if (isFetching) {
-        return <UserProfileSkeleton />;
-    }
-
     if (!user) {
         return <UserNotFound />;
     }
 
     return (
         <>
-            <div className="h-full">
+            <div className={`h-full`}>
                 <div className="profile-background"
                     style={{
-                        backgroundImage: `url(${user.cover_image || "https://www.motortrend.com/uploads/2023/08/008-2024-Ford-Mustang-GT-Premium-Performance-pack-front-three-quarters.jpg"})`
+                        backgroundImage: `url(${user.cover_image || ""})`
                     }}
                 />
 
-                <div className="section mt-3">
+                <div className="section mt-3 min-h-28">
                     <div className="profile-head">
                         <NcImage
                             src={user.profile_image || PLACEHOLDER_PFP}
@@ -183,7 +180,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({
                         </div>
                     )}
 
-                    {/* <ProfileLinksExternal profileLinks={user.profile_links} isOwner={canEditProfile} /> */}
+                    <ProfileLinksExternal profileLinks={user.profile_links} isOwner={canEditProfile} />
 
                     <div className="mt-4 bio hidden">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur at magna porttitor lorem mollis
